@@ -33,7 +33,6 @@ The programming language used is TypeScript, along with the following libraries:
 
 - **Next.js:** React framework for building user interfaces.
 - **Prisma:** ORM for database access.
-- **SQLite:** Lightweight, serverless database engine.
 - **NextAuth.js:** Authentication library for Next.js.
 - **Tailwind CSS:** Utility-first CSS framework.
 
