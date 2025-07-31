@@ -1,0 +1,201 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// User model for authentication
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  crops           Crop[]
+  tasks           Task[]
+  irrigationLogs  IrrigationLog[]
+  fertilizerLogs  FertilizerLog[]
+  pestDiseaseLogs PestDiseaseLog[]
+  harvestLogs     HarvestLog[]
+
+  @@map("users")
+}
+
+// Crop model for managing different crops
+model Crop {
+  id                  String    @id @default(cuid())
+  userId              String
+  name                String
+  variety             String?
+  plantingDate        DateTime
+  expectedHarvestDate DateTime
+  actualHarvestDate   DateTime?
+  status              CropStatus @default(PLANTED)
+  area                Float?    // in square meters
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  // Relations
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tasks           Task[]
+  irrigationLogs  IrrigationLog[]
+  fertilizerLogs  FertilizerLog[]
+  pestDiseaseLogs PestDiseaseLog[]
+  harvestLogs     HarvestLog[]
+
+  @@map("crops")
+}
+
+// Task model for planning and tracking farming activities
+model Task {
+  id          String        @id @default(cuid())
+  userId      String
+  cropId      String?
+  title       String
+  description String?
+  dueDate     DateTime
+  completedAt DateTime?
+  priority    TaskPriority  @default(MEDIUM)
+  category    TaskCategory
+  status      TaskStatus    @default(PENDING)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  // Relations
+  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  crop Crop? @relation(fields: [cropId], references: [id], onDelete: SetNull)
+
+  @@map("tasks")
+}
+
+// Irrigation logging model
+model IrrigationLog {
+  id          String   @id @default(cuid())
+  userId      String
+  cropId      String
+  date        DateTime
+  duration    Int      // in minutes
+  waterAmount Float    // in liters
+  method      String?
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  crop Crop @relation(fields: [cropId], references: [id], onDelete: Cascade)
+
+  @@map("irrigation_logs")
+}
+
+// Fertilizer application logging model
+model FertilizerLog {
+  id                String   @id @default(cuid())
+  userId            String
+  cropId            String
+  date              DateTime
+  fertilizerType    String
+  amount            Float
+  applicationMethod String
+  notes             String?
+  createdAt         DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  crop Crop @relation(fields: [cropId], references: [id], onDelete: Cascade)
+
+  @@map("fertilizer_logs")
+}
+
+// Pest and disease tracking model
+model PestDiseaseLog {
+  id           String              @id @default(cuid())
+  userId       String
+  cropId       String
+  date         DateTime
+  type         PestDiseaseType
+  name         String
+  severity     SeverityLevel
+  affectedArea Float
+  treatment    String
+  notes        String?
+  createdAt    DateTime            @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  crop Crop @relation(fields: [cropId], references: [id], onDelete: Cascade)
+
+  @@map("pest_disease_logs")
+}
+
+// Harvest tracking model
+model HarvestLog {
+  id           String   @id @default(cuid())
+  userId       String
+  cropId       String
+  harvestDate  DateTime
+  quantity     Float
+  unit         String
+  qualityGrade String
+  notes        String?
+  createdAt    DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  crop Crop @relation(fields: [cropId], references: [id], onDelete: Cascade)
+
+  @@map("harvest_logs")
+}
+
+// Enums
+enum CropStatus {
+  PLANTED
+  GROWING
+  FLOWERING
+  FRUITING
+  HARVESTED
+  COMPLETED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TaskCategory {
+  PLANTING
+  IRRIGATION
+  FERTILIZATION
+  PEST_CONTROL
+  HARVESTING
+  MAINTENANCE
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum PestDiseaseType {
+  PEST
+  DISEASE
+}
+
+enum SeverityLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}

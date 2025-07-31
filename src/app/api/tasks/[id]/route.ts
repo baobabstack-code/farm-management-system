@@ -1,0 +1,155 @@
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { TaskService } from "@/lib/db";
+import { taskUpdateSchema, taskCompleteSchema } from "@/lib/validations/task";
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const task = await TaskService.findByIdWithRelations(
+      params.id,
+      session.user.id
+    );
+
+    if (!task) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Task not found",
+          timestamp: new Date().toISOString(),
+        },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: task,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error("Error fetching task:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Internal server error",
+        timestamp: new Date().toISOString(),
+      },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const validatedData = taskUpdateSchema.parse(body);
+
+    // Check if task exists and belongs to user
+    const existingTask = await TaskService.findById(params.id, session.user.id);
+    if (!existingTask) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Task not found",
+          timestamp: new Date().toISOString(),
+        },
+        { status: 404 }
+      );
+    }
+
+    const updatedTask = await TaskService.update(
+      params.id,
+      session.user.id,
+      validatedData
+    );
+
+    return NextResponse.json({
+      success: true,
+      data: updatedTask,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error("Error updating task:", error);
+
+    if (error instanceof Error && error.name === "ZodError") {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Invalid input data",
+          details: error.message,
+          timestamp: new Date().toISOString(),
+        },
+        { status: 400 }
+      );
+    }
+
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Internal server error",
+        timestamp: new Date().toISOString(),
+      },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Check if task exists and belongs to user
+    const existingTask = await TaskService.findById(params.id, session.user.id);
+    if (!existingTask) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Task not found",
+          timestamp: new Date().toISOString(),
+        },
+        { status: 404 }
+      );
+    }
+
+    await TaskService.delete(params.id, session.user.id);
+
+    return NextResponse.json({
+      success: true,
+      message: "Task deleted successfully",
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error("Error deleting task:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Internal server error",
+        timestamp: new Date().toISOString(),
+      },
+      { status: 500 }
+    );
+  }
+}
