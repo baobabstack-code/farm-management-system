@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Overview
 
-## Getting Started
+This web app is a farm management system designed to help farmers manage their crops, tasks, and logs. It provides a user-friendly interface for creating, reading, updating, and deleting crop records, planning and tracking farming activities, and keeping track of irrigation, fertilization, pest and disease control, and harvesting activities.
 
-First, run the development server:
+To start a test server on your computer, run the command `pnpm dev` in the project directory. Then, open your browser and navigate to `http://localhost:3000` to see the first page of the app.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+The purpose of writing this software is to provide a comprehensive tool for farmers to efficiently manage their operations, improve productivity, and make data-driven decisions.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+[Software Demo Video](http://youtube.link.goes.here)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+# Web Pages
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The web app consists of several pages:
 
-## Learn More
+- **Dashboard:** The main page that displays an overview of the farm's activities and key metrics.
+- **Crops:** A page for managing crop records, including creating new crops, viewing existing crops, and updating crop information.
+- **Tasks:** A page for planning and tracking farming activities, with features for assigning tasks, setting priorities, and monitoring progress.
+- **Reports:** A page for generating reports on various aspects of the farm's operations, such as crop yields, task completion rates, and resource usage.
+- **Login/Register:** Pages for user authentication.
 
-To learn more about Next.js, take a look at the following resources:
+The app transitions between these pages using Next.js routing. Data is dynamically created on each page using React components and data fetched from the database via API endpoints.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Development Environment
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The software was developed using VS Code as the primary code editor. The following tools were also used:
 
-## Deploy on Vercel
+- **Node.js:** JavaScript runtime environment.
+- **pnpm:** Package manager.
+- **Git:** Version control system.
+- **GitHub:** Code hosting platform.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The programming language used is TypeScript, along with the following libraries:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Next.js:** React framework for building user interfaces.
+- **Prisma:** ORM for database access.
+- **SQLite:** Lightweight, serverless database engine.
+- **NextAuth.js:** Authentication library for Next.js.
+- **Tailwind CSS:** Utility-first CSS framework.
+
+# Useful Websites
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Prisma Documentation](https://www.prisma.io/docs)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+
+# Future Work
+
+- Implement more advanced reporting features.
+- Add support for multiple users and roles.
+- Integrate with external data sources, such as weather APIs.
