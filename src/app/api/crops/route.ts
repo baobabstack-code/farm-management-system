@@ -1,17 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { auth } from "@clerk/nextjs/server";
 import { CropService } from "@/lib/db";
 import { cropCreateSchema } from "@/lib/validations/crop";
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const { userId } = auth();
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const crops = await CropService.findAllByUser(session.user.id);
+    const crops = await CropService.findAllByUser(userId);
 
     return NextResponse.json({
       success: true,
@@ -33,8 +32,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const { userId } = auth();
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -42,7 +41,7 @@ export async function POST(request: NextRequest) {
     const validatedData = cropCreateSchema.parse(body);
 
     const crop = await CropService.create({
-      userId: session.user.id,
+      userId: userId,
       name: validatedData.name,
       variety: validatedData.variety,
       plantingDate: new Date(validatedData.plantingDate),

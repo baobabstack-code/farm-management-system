@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { auth } from "@clerk/nextjs/server";
 import { ActivityService } from "@/lib/db";
 import { harvestLogCreateSchema } from "@/lib/validations/activity";
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const { userId } = auth();
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -15,7 +14,7 @@ export async function GET(request: NextRequest) {
     const cropId = searchParams.get("cropId");
 
     const logs = await ActivityService.getHarvestLogs(
-      session.user.id,
+      userId,
       cropId || undefined
     );
 
@@ -39,8 +38,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const { userId } = auth();
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -48,7 +47,7 @@ export async function POST(request: NextRequest) {
     const validatedData = harvestLogCreateSchema.parse(body);
 
     const log = await ActivityService.createHarvestLog({
-      userId: session.user.id,
+      userId: userId,
       cropId: validatedData.cropId,
       harvestDate: new Date(validatedData.harvestDate),
       quantity: validatedData.quantity,

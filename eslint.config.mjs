@@ -21,7 +21,7 @@ const eslintConfig = [
       "react/no-unescaped-entities": "warn",
       "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/no-empty-object-type": "warn",
-      "react/jsx-no-undef": "error"
+      "react/jsx-no-undef": "error",
     },
   },
 ];

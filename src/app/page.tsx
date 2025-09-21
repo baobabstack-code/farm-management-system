@@ -1,13 +1,13 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import LandingPage from "@/components/landing-page";
 
 export default async function Home() {
-  const session = await getServerSession(authOptions);
+  const { userId } = auth();
 
-  if (session) {
+  if (userId) {
     redirect("/dashboard");
-  } else {
-    redirect("/login");
   }
+
+  return <LandingPage />;
 }

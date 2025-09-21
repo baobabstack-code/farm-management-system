@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { auth } from "@clerk/nextjs/server";
 import { ActivityService } from "@/lib/db";
 import { fertilizerLogCreateSchema } from "@/lib/validations/activity";
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const { userId } = auth();
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -15,7 +14,7 @@ export async function GET(request: NextRequest) {
     const cropId = searchParams.get("cropId");
 
     const logs = await ActivityService.getFertilizerLogs(
-      session.user.id,
+      userId,
       cropId || undefined
     );
 
@@ -39,8 +38,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const { userId } = auth();
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -48,7 +47,7 @@ export async function POST(request: NextRequest) {
     const validatedData = fertilizerLogCreateSchema.parse(body);
 
     const log = await ActivityService.createFertilizerLog({
-      userId: session.user.id,
+      userId: userId,
       cropId: validatedData.cropId,
       date: new Date(validatedData.date),
       fertilizerType: validatedData.fertilizerType,

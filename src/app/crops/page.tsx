@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
+import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Crop, CropStatus } from "@/types";
 
 export default function CropsPage() {
-  const { data: session, status } = useSession();
+  const { user, isLoaded } = useUser();
   const router = useRouter();
   const [crops, setCrops] = useState<Crop[]>([]);
   const [loading, setLoading] = useState(true);
@@ -24,15 +24,17 @@ export default function CropsPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login");
+    if (!isLoaded) return <div>Loading...</div>;
+
+    if (!user) {
+      router.push("/sign-in");
       return;
     }
 
-    if (status === "authenticated") {
+    if (user) {
       fetchCrops();
     }
-  }, [status, router]);
+  }, [user, isLoaded, router]);
 
   const fetchCrops = async () => {
     try {
@@ -142,7 +144,7 @@ export default function CropsPage() {
     return diffDays;
   };
 
-  if (status === "loading" || loading) {
+  if (!isLoaded || loading) {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">

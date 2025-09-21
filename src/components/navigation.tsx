@@ -1,155 +1,155 @@
 "use client";
 
 import { useState } from "react";
-import { useSession, signOut } from "next-auth/react";
+import { useUser, useClerk } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 
 const navigation = [
-  { name: "Dashboard", href: "/dashboard" },
-  { name: "Crops", href: "/crops" },
-  { name: "Tasks", href: "/tasks" },
-  { name: "Activities", href: "/activities" },
-  { name: "Reports", href: "/reports" },
+  { name: "Dashboard", href: "/dashboard", icon: "📊" },
+  { name: "Crops", href: "/crops", icon: "🌱" },
+  { name: "Tasks", href: "/tasks", icon: "✅" },
+  { name: "Activities", href: "/activities", icon: "📋" },
+  { name: "Reports", href: "/reports", icon: "📈" },
 ];
 
 export default function Navigation() {
-  const { data: session } = useSession();
+  const { user, isLoaded } = useUser();
+  const { signOut } = useClerk();
   const pathname = usePathname();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleSignOut = () => {
-    signOut({ callbackUrl: "/login" });
+    signOut({ redirectUrl: "/sign-in" });
   };
 
-  if (!session) {
+  if (!isLoaded || !user) {
     return null;
   }
 
   return (
-    <nav className="bg-white shadow">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex">
-            <div className="flex-shrink-0 flex items-center">
-              <Link
-                href="/dashboard"
-                className="text-xl font-bold text-green-600"
-              >
-                Farm Management
-              </Link>
-            </div>
-            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`${
-                    pathname === item.href
-                      ? "border-green-500 text-gray-900"
-                      : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                  } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </div>
-          </div>
-          <div className="hidden sm:ml-6 sm:flex sm:items-center">
-            <div className="ml-3 relative">
-              <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-700">
-                  Welcome, {session.user?.username}
-                </span>
-                <button
-                  onClick={handleSignOut}
-                  className="bg-white text-gray-400 hover:text-gray-600 px-3 py-2 rounded-md text-sm font-medium"
-                >
-                  Sign out
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="sm:hidden flex items-center">
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100"
-            >
-              <span className="sr-only">Open main menu</span>
-              {!isMenuOpen ? (
-                <svg
-                  className="block h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  className="block h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              )}
-            </button>
-          </div>
-        </div>
+    <>
+      {/* Mobile menu button */}
+      <div className="lg:hidden fixed top-4 left-4 z-50">
+        <button
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="bg-white p-2 rounded-md shadow-lg border border-gray-200 hover:bg-gray-50"
+        >
+          <svg
+            className="h-6 w-6 text-gray-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </button>
       </div>
 
-      {isMenuOpen && (
-        <div className="sm:hidden">
-          <div className="pt-2 pb-3 space-y-1">
+      {/* Sidebar overlay for mobile */}
+      {isSidebarOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <div
+        className={`
+        fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-xl border-r border-gray-200 transform transition-transform duration-300 ease-in-out
+        ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} 
+        lg:translate-x-0 lg:static lg:inset-0
+      `}
+      >
+        <div className="flex flex-col h-full">
+          {/* Header */}
+          <div className="flex items-center justify-between p-6 border-b border-gray-200">
+            <Link href="/dashboard" className="flex items-center space-x-2">
+              <span className="text-2xl">🌱</span>
+              <div>
+                <h1 className="text-xl font-bold text-gray-900">FarmFlow</h1>
+                <p className="text-sm text-gray-500">Farm Management</p>
+              </div>
+            </Link>
+            <button
+              onClick={() => setIsSidebarOpen(false)}
+              className="lg:hidden p-1 rounded-md hover:bg-gray-100"
+            >
+              <svg
+                className="h-5 w-5 text-gray-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+
+          {/* Navigation */}
+          <nav className="flex-1 px-4 py-6 space-y-2">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className={`${
-                  pathname === item.href
-                    ? "bg-green-50 border-green-500 text-green-700"
-                    : "border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700"
-                } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`}
-                onClick={() => setIsMenuOpen(false)}
+                onClick={() => setIsSidebarOpen(false)}
+                className={`
+                  flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors
+                  ${
+                    pathname === item.href
+                      ? "bg-green-100 text-green-800 border-r-4 border-green-500"
+                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                  }
+                `}
               >
-                {item.name}
+                <span className="text-lg">{item.icon}</span>
+                <span>{item.name}</span>
               </Link>
             ))}
-          </div>
-          <div className="pt-4 pb-3 border-t border-gray-200">
-            <div className="flex items-center px-4">
-              <div className="ml-3">
-                <div className="text-base font-medium text-gray-800">
-                  {session.user?.username}
-                </div>
-                <div className="text-sm font-medium text-gray-500">
-                  {session.user?.email}
-                </div>
+          </nav>
+
+          {/* User section */}
+          <div className="p-4 border-t border-gray-200">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                <span className="text-green-600 font-semibold text-lg">
+                  {(
+                    user.firstName?.[0] ||
+                    user.username?.[0] ||
+                    "U"
+                  ).toUpperCase()}
+                </span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">
+                  {user.firstName || user.username || "User"}
+                </p>
+                <p className="text-xs text-gray-500 truncate">
+                  {user.primaryEmailAddress?.emailAddress}
+                </p>
               </div>
             </div>
-            <div className="mt-3 space-y-1">
-              <button
-                onClick={handleSignOut}
-                className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 w-full text-left"
-              >
-                Sign out
-              </button>
-            </div>
+            <button
+              onClick={handleSignOut}
+              className="w-full flex items-center space-x-2 px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <span>🚪</span>
+              <span>Sign out</span>
+            </button>
           </div>
         </div>
-      )}
-    </nav>
+      </div>
+    </>
   );
 }

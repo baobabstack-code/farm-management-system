@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
+import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
@@ -40,22 +40,22 @@ interface Analytics {
 }
 
 export default function DashboardPage() {
-  const { data: session, status } = useSession();
+  const { user, isLoaded } = useUser();
   const router = useRouter();
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login");
+    if (!isLoaded) return;
+
+    if (!user) {
+      router.push("/sign-in");
       return;
     }
 
-    if (status === "authenticated") {
-      fetchAnalytics();
-    }
-  }, [status, router]);
+    fetchAnalytics();
+  }, [user, isLoaded, router]);
 
   const fetchAnalytics = async () => {
     try {
@@ -74,7 +74,7 @@ export default function DashboardPage() {
     }
   };
 
-  if (status === "loading" || loading) {
+  if (!isLoaded || loading) {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -95,8 +95,8 @@ export default function DashboardPage() {
               Farm Management Dashboard
             </h1>
             <p className="text-lg text-gray-600">
-              Welcome back, {session?.user?.username}! Here&apos;s your farm
-              overview.
+              Welcome back, {user?.firstName || user?.username}! Here&apos;s
+              your farm overview.
             </p>
           </div>
 

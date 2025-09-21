@@ -1,20 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { auth } from "@clerk/nextjs/server";
 import { CropService } from "@/lib/db";
 import { cropUpdateSchema } from "@/lib/validations/crop";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const { userId } = auth();
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const crop = await CropService.findById(params.id, session.user.id);
+    const { id } = await params;
+    const crop = await CropService.findById(id, userId);
 
     if (!crop) {
       return NextResponse.json(
@@ -47,19 +47,21 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const { userId } = auth();
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
     const validatedData = cropUpdateSchema.parse(body);
 
+    const { id } = await params;
+
     // Check if crop exists and belongs to user
-    const existingCrop = await CropService.findById(params.id, session.user.id);
+    const existingCrop = await CropService.findById(id, userId);
     if (!existingCrop) {
       return NextResponse.json(
         {
@@ -71,11 +73,7 @@ export async function PUT(
       );
     }
 
-    const updatedCrop = await CropService.update(
-      params.id,
-      session.user.id,
-      validatedData
-    );
+    const updatedCrop = await CropService.update(id, userId, validatedData);
 
     return NextResponse.json({
       success: true,
@@ -110,16 +108,18 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const { userId } = auth();
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const { id } = await params;
+
     // Check if crop exists and belongs to user
-    const existingCrop = await CropService.findById(params.id, session.user.id);
+    const existingCrop = await CropService.findById(id, userId);
     if (!existingCrop) {
       return NextResponse.json(
         {
@@ -131,7 +131,7 @@ export async function DELETE(
       );
     }
 
-    await CropService.delete(params.id, session.user.id);
+    await CropService.delete(id, userId);
 
     return NextResponse.json({
       success: true,

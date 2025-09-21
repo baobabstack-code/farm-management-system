@@ -1,24 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { auth } from "@clerk/nextjs/server";
 import { TaskService } from "@/lib/db";
 import { taskCompleteSchema } from "@/lib/validations/task";
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const { userId } = auth();
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
     const validatedData = taskCompleteSchema.parse(body);
+    const { id } = await params;
 
     // Check if task exists and belongs to user
-    const existingTask = await TaskService.findById(params.id, session.user.id);
+    const existingTask = await TaskService.findById(id, userId);
     if (!existingTask) {
       return NextResponse.json(
         {
@@ -31,8 +31,8 @@ export async function PATCH(
     }
 
     const completedTask = await TaskService.markComplete(
-      params.id,
-      session.user.id,
+      id,
+      userId,
       new Date(validatedData.completedAt)
     );
 

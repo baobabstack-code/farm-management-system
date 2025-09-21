@@ -1,50 +1,30 @@
-import { withAuth } from "next-auth/middleware";
-import { NextResponse } from "next/server";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-export default withAuth(
-  function middleware(req) {
-    // Add any additional middleware logic here
-    return NextResponse.next();
-  },
-  {
-    callbacks: {
-      authorized: ({ token, req }) => {
-        // Check if user is trying to access protected routes
-        const { pathname } = req.nextUrl;
+const isProtectedRoute = createRouteMatcher([
+  "/dashboard(.*)",
+  "/crops(.*)",
+  "/tasks(.*)",
+  "/activities(.*)",
+  "/reports(.*)",
+  "/profile(.*)",
+  "/api/analytics(.*)",
+  "/api/crops(.*)",
+  "/api/tasks(.*)",
+  "/api/irrigation(.*)",
+  "/api/fertilizer(.*)",
+  "/api/pest-disease(.*)",
+  "/api/harvest(.*)",
+]);
 
-        // Allow access to auth pages without token
-        if (pathname.startsWith("/login") || pathname.startsWith("/register")) {
-          return true;
-        }
-
-        // Require token for protected routes
-        if (
-          pathname.startsWith("/dashboard") ||
-          pathname.startsWith("/crops") ||
-          pathname.startsWith("/tasks") ||
-          pathname.startsWith("/activities") ||
-          pathname.startsWith("/reports") ||
-          pathname.startsWith("/profile")
-        ) {
-          return !!token;
-        }
-
-        // Allow access to public routes
-        return true;
-      },
-    },
+export default clerkMiddleware(async (auth, req) => {
+  if (isProtectedRoute(req)) {
+    await auth.protect();
   }
-);
+});
 
 export const config = {
   matcher: [
-    "/dashboard/:path*",
-    "/crops/:path*",
-    "/tasks/:path*",
-    "/activities/:path*",
-    "/reports/:path*",
-    "/profile/:path*",
-    "/login",
-    "/register",
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    "/(api|trpc)(.*)",
   ],
 };

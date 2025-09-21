@@ -1,4 +1,3 @@
-export { UserService } from "./user";
-export { CropService } from "./crop";
-export { TaskService } from "./task";
-export { ActivityService } from "./activity";
+export * from "./services/crop-service";
+export * from "./services/task-service";
+export * from "./services/activity-service";

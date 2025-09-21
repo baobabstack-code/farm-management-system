@@ -1,12 +1,12 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 export default async function ProfilePage() {
-  const session = await getServerSession(authOptions);
+  const { userId } = auth();
+  const user = await currentUser();
 
-  if (!session) {
-    redirect("/login");
+  if (!userId) {
+    redirect("/sign-in");
   }
 
   return (
@@ -21,10 +21,19 @@ export default async function ProfilePage() {
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
+                  Name
+                </label>
+                <div className="mt-1 text-sm text-gray-900">
+                  {user?.firstName} {user?.lastName}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
                   Username
                 </label>
                 <div className="mt-1 text-sm text-gray-900">
-                  {session.user.username}
+                  {user?.username || "Not set"}
                 </div>
               </div>
 
@@ -33,7 +42,7 @@ export default async function ProfilePage() {
                   Email
                 </label>
                 <div className="mt-1 text-sm text-gray-900">
-                  {session.user.email}
+                  {user?.primaryEmailAddress?.emailAddress}
                 </div>
               </div>
 
@@ -41,9 +50,7 @@ export default async function ProfilePage() {
                 <label className="block text-sm font-medium text-gray-700">
                   User ID
                 </label>
-                <div className="mt-1 text-sm text-gray-900">
-                  {session.user.id}
-                </div>
+                <div className="mt-1 text-sm text-gray-900">{userId}</div>
               </div>
             </div>
 

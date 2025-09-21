@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { auth } from "@clerk/nextjs/server";
 import { TaskService } from "@/lib/db";
 import { taskCreateSchema } from "@/lib/validations/task";
 import { TaskStatus, TaskPriority, TaskCategory } from "@prisma/client";
@@ -15,8 +14,8 @@ interface TaskFilters {
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const { userId } = auth();
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -34,7 +33,7 @@ export async function GET(request: NextRequest) {
     if (cropId) filters.cropId = cropId;
     if (overdue) filters.overdue = true;
 
-    const tasks = await TaskService.findAllByUser(session.user.id, filters);
+    const tasks = await TaskService.findAllByUser(userId, filters);
 
     return NextResponse.json({
       success: true,
@@ -56,8 +55,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const { userId } = auth();
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -65,7 +64,7 @@ export async function POST(request: NextRequest) {
     const validatedData = taskCreateSchema.parse(body);
 
     const task = await TaskService.create({
-      userId: session.user.id,
+      userId: userId,
       title: validatedData.title,
       description: validatedData.description,
       dueDate: new Date(validatedData.dueDate),

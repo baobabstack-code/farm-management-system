@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { auth } from "@clerk/nextjs/server";
 import { ActivityService, CropService, TaskService } from "@/lib/db";
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const { userId } = auth();
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -19,17 +18,17 @@ export async function GET(request: NextRequest) {
 
     // Get basic counts
     const [crops, taskStats] = await Promise.all([
-      CropService.findAllByUser(session.user.id),
-      TaskService.getTaskStats(session.user.id),
+      CropService.findAllByUser(userId),
+      TaskService.getTaskStats(userId),
     ]);
 
     // Get activity statistics
     const [waterStats, fertilizerStats, yieldStats, pestStats] =
       await Promise.all([
-        ActivityService.getWaterUsageStats(session.user.id, start, end),
-        ActivityService.getFertilizerUsageStats(session.user.id, start, end),
-        ActivityService.getYieldStats(session.user.id, start, end),
-        ActivityService.getPestDiseaseStats(session.user.id, start, end),
+        ActivityService.getWaterUsageStats(userId, start, end),
+        ActivityService.getFertilizerUsageStats(userId, start, end),
+        ActivityService.getYieldStats(userId, start, end),
+        ActivityService.getPestDiseaseStats(userId, start, end),
       ]);
 
     const analytics = {

@@ -79,15 +79,15 @@ model Task {
 
 // Irrigation logging model
 model IrrigationLog {
-  id          String   @id @default(cuid())
+  id          String           @id @default(cuid())
   userId      String
   cropId      String
   date        DateTime
-  duration    Int      // in minutes
-  waterAmount Float    // in liters
-  method      String?
+  duration    Int              // in minutes
+  waterAmount Float            // in liters
+  method      IrrigationMethod @default(SPRINKLER)
   notes       String?
-  createdAt   DateTime @default(now())
+  createdAt   DateTime         @default(now())
 
   // Relations
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -98,15 +98,15 @@ model IrrigationLog {
 
 // Fertilizer application logging model
 model FertilizerLog {
-  id                String   @id @default(cuid())
+  id                String            @id @default(cuid())
   userId            String
   cropId            String
   date              DateTime
   fertilizerType    String
   amount            Float
-  applicationMethod String
+  applicationMethod ApplicationMethod @default(BROADCAST)
   notes             String?
-  createdAt         DateTime @default(now())
+  createdAt         DateTime          @default(now())
 
   // Relations
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -117,17 +117,17 @@ model FertilizerLog {
 
 // Pest and disease tracking model
 model PestDiseaseLog {
-  id           String              @id @default(cuid())
+  id           String          @id @default(cuid())
   userId       String
   cropId       String
   date         DateTime
   type         PestDiseaseType
   name         String
-  severity     SeverityLevel
+  severity     Severity
   affectedArea Float
-  treatment    String
+  treatment    String?
   notes        String?
-  createdAt    DateTime            @default(now())
+  createdAt    DateTime        @default(now())
 
   // Relations
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -138,15 +138,15 @@ model PestDiseaseLog {
 
 // Harvest tracking model
 model HarvestLog {
-  id           String   @id @default(cuid())
+  id           String       @id @default(cuid())
   userId       String
   cropId       String
   harvestDate  DateTime
   quantity     Float
   unit         String
-  qualityGrade String
+  qualityGrade QualityGrade @default(GOOD)
   notes        String?
-  createdAt    DateTime @default(now())
+  createdAt    DateTime     @default(now())
 
   // Relations
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -193,9 +193,29 @@ enum PestDiseaseType {
   DISEASE
 }
 
-enum SeverityLevel {
+enum Severity {
   LOW
   MEDIUM
   HIGH
-  CRITICAL
+}
+
+enum IrrigationMethod {
+  SPRINKLER
+  DRIP
+  FLOOD
+  MANUAL
+}
+
+enum ApplicationMethod {
+  BROADCAST
+  BAND
+  FOLIAR
+  FERTIGATION
+}
+
+enum QualityGrade {
+  EXCELLENT
+  GOOD
+  FAIR
+  POOR
 }

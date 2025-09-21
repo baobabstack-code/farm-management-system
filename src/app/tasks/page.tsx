@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
+import { useUser } from "@clerk/nextjs";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Task, TaskStatus, TaskPriority, TaskCategory, Crop } from "@/types";
 
 export default function TasksPage() {
-  const { data: session, status } = useSession();
+  const { user, isLoaded } = useUser();
   const router = useRouter();
   const searchParams = useSearchParams();
   const cropFilter = searchParams.get("crop");
@@ -36,16 +36,18 @@ export default function TasksPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login");
+    if (!isLoaded) return;
+
+    if (!user) {
+      router.push("/sign-in");
       return;
     }
 
-    if (status === "authenticated") {
+    if (user) {
       fetchTasks();
       fetchCrops();
     }
-  }, [status, router, filters]);
+  }, [user, isLoaded, router, filters]);
 
   const fetchTasks = async () => {
     try {
@@ -130,12 +132,13 @@ export default function TasksPage() {
 
   const handleCompleteTask = async (taskId: string) => {
     try {
-      const response = await fetch(`/api/tasks/${taskId}/complete`, {
+      const response = await fetch(`/api/tasks/${taskId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          action: "complete",
           completedAt: new Date().toISOString(),
         }),
       });
@@ -222,7 +225,7 @@ export default function TasksPage() {
     return diffDays;
   };
 
-  if (status === "loading" || loading) {
+  if (!isLoaded || loading) {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">

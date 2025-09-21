@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
+import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,7 +10,7 @@ import { Crop, PestDiseaseType, SeverityLevel } from "@/types";
 type ActivityType = "irrigation" | "fertilizer" | "pest-disease" | "harvest";
 
 export default function ActivitiesPage() {
-  const { data: session, status } = useSession();
+  const { user, isLoaded } = useUser();
   const router = useRouter();
   const [crops, setCrops] = useState<Crop[]>([]);
   const [loading, setLoading] = useState(true);
@@ -58,15 +58,17 @@ export default function ActivitiesPage() {
   });
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login");
+    if (!isLoaded) return;
+
+    if (!user) {
+      router.push("/sign-in");
       return;
     }
 
-    if (status === "authenticated") {
+    if (user) {
       fetchCrops();
     }
-  }, [status, router]);
+  }, [user, isLoaded, router]);
 
   const fetchCrops = async () => {
     try {
@@ -257,7 +259,7 @@ export default function ActivitiesPage() {
     }
   };
 
-  if (status === "loading" || loading) {
+  if (!isLoaded || loading) {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -624,12 +626,14 @@ export default function ActivitiesPage() {
                     </label>
                     <select
                       value={pestDiseaseForm.type}
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        const value = e.target
+                          .value as keyof typeof PestDiseaseType;
                         setPestDiseaseForm({
                           ...pestDiseaseForm,
-                          type: e.target.value as PestDiseaseType,
-                        })
-                      }
+                          type: PestDiseaseType[value],
+                        });
+                      }}
                       required
                       className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     >
@@ -665,12 +669,14 @@ export default function ActivitiesPage() {
                     </label>
                     <select
                       value={pestDiseaseForm.severity}
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        const value = e.target
+                          .value as keyof typeof SeverityLevel;
                         setPestDiseaseForm({
                           ...pestDiseaseForm,
-                          severity: e.target.value as SeverityLevel,
-                        })
-                      }
+                          severity: SeverityLevel[value],
+                        });
+                      }}
                       required
                       className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     >
