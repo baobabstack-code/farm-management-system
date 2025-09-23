@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { TaskService } from "@/lib/db";
-import { taskUpdateSchema, taskCompleteSchema } from "@/lib/validations/task";
+import { taskUpdateSchema } from "@/lib/validations/task";
 
 export async function GET(
   request: NextRequest,

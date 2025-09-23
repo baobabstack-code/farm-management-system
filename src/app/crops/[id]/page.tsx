@@ -61,7 +61,7 @@ export default function CropDetailPage() {
       } else {
         setError("Failed to fetch crop details");
       }
-    } catch (error) {
+    } catch {
       setError("Error fetching crop details");
     } finally {
       setLoading(false);
@@ -116,7 +116,7 @@ export default function CropDetailPage() {
       } else {
         setError(data.error || "Failed to update crop");
       }
-    } catch (error) {
+    } catch {
       setError("Error updating crop");
     } finally {
       setFormLoading(false);

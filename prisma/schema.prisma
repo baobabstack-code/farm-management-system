@@ -10,25 +10,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// User model for authentication
-model User {
-  id        String   @id @default(cuid())
-  username  String   @unique
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relations
-  crops           Crop[]
-  tasks           Task[]
-  irrigationLogs  IrrigationLog[]
-  fertilizerLogs  FertilizerLog[]
-  pestDiseaseLogs PestDiseaseLog[]
-  harvestLogs     HarvestLog[]
-
-  @@map("users")
-}
+// Note: We're using Clerk for authentication, so no User model needed
 
 // Crop model for managing different crops
 model Crop {
@@ -44,8 +26,7 @@ model Crop {
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 
-  // Relations
-  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Relations - userId is managed by Clerk
   tasks           Task[]
   irrigationLogs  IrrigationLog[]
   fertilizerLogs  FertilizerLog[]
@@ -70,8 +51,7 @@ model Task {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
-  // Relations
-  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Relations - userId is managed by Clerk
   crop Crop? @relation(fields: [cropId], references: [id], onDelete: SetNull)
 
   @@map("tasks")
@@ -89,8 +69,7 @@ model IrrigationLog {
   notes       String?
   createdAt   DateTime         @default(now())
 
-  // Relations
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Relations - userId is managed by Clerk
   crop Crop @relation(fields: [cropId], references: [id], onDelete: Cascade)
 
   @@map("irrigation_logs")
@@ -108,8 +87,7 @@ model FertilizerLog {
   notes             String?
   createdAt         DateTime          @default(now())
 
-  // Relations
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Relations - userId is managed by Clerk
   crop Crop @relation(fields: [cropId], references: [id], onDelete: Cascade)
 
   @@map("fertilizer_logs")
@@ -129,8 +107,7 @@ model PestDiseaseLog {
   notes        String?
   createdAt    DateTime        @default(now())
 
-  // Relations
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Relations - userId is managed by Clerk
   crop Crop @relation(fields: [cropId], references: [id], onDelete: Cascade)
 
   @@map("pest_disease_logs")
@@ -148,8 +125,7 @@ model HarvestLog {
   notes        String?
   createdAt    DateTime     @default(now())
 
-  // Relations
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Relations - userId is managed by Clerk
   crop Crop @relation(fields: [cropId], references: [id], onDelete: Cascade)
 
   @@map("harvest_logs")

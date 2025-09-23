@@ -16,15 +16,6 @@ export class TaskService {
     return (await prisma.task.findFirst({
       where: { id, userId },
       include: {
-        user: {
-          select: {
-            id: true,
-            username: true,
-            email: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-        },
         crop: true,
       },
     })) as TaskWithRelations | null;

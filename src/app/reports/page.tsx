@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -61,7 +61,7 @@ export default function ReportsPage() {
     }
   }, [user, isLoaded, router, dateRange]);
 
-  const fetchReportData = async () => {
+  const fetchReportData = useCallback(async () => {
     try {
       const params = new URLSearchParams();
       if (dateRange.startDate) params.append("startDate", dateRange.startDate);
@@ -80,7 +80,7 @@ export default function ReportsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [dateRange]);
 
   const exportToCSV = () => {
     if (!reportData) return;
@@ -129,6 +129,26 @@ export default function ReportsPage() {
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
             <div className="text-center">Loading...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!reportData) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+          <div className="px-4 py-6 sm:px-0">
+            <div className="text-center">
+              {error ? (
+                <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+                  {error}
+                </div>
+              ) : (
+                "Loading report data..."
+              )}
+            </div>
           </div>
         </div>
       </div>

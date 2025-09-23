@@ -1,5 +1,4 @@
 import {
-  User as PrismaUser,
   Crop as PrismaCrop,
   Task as PrismaTask,
   IrrigationLog as PrismaIrrigationLog,
@@ -17,16 +16,7 @@ import {
   QualityGrade,
 } from "@prisma/client";
 
-// User types
-export interface User extends Omit<PrismaUser, "password"> {
-  id: string;
-  username: string;
-  email: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export type UserWithPassword = PrismaUser;
+// Note: User management is handled by Clerk
 
 // Crop types
 export interface Crop extends PrismaCrop {
@@ -44,7 +34,6 @@ export interface Crop extends PrismaCrop {
 }
 
 export interface CropWithRelations extends Crop {
-  user: User;
   tasks: Task[];
   irrigationLogs: IrrigationLog[];
   fertilizerLogs: FertilizerLog[];
@@ -69,7 +58,6 @@ export interface Task extends PrismaTask {
 }
 
 export interface TaskWithRelations extends Task {
-  user: User;
   crop: Crop | null;
 }
 
@@ -87,7 +75,6 @@ export interface IrrigationLog extends PrismaIrrigationLog {
 }
 
 export interface IrrigationLogWithRelations extends IrrigationLog {
-  user: User;
   crop: Crop;
 }
 
@@ -104,7 +91,6 @@ export interface FertilizerLog extends PrismaFertilizerLog {
 }
 
 export interface FertilizerLogWithRelations extends FertilizerLog {
-  user: User;
   crop: Crop;
 }
 
@@ -123,7 +109,6 @@ export interface PestDiseaseLog extends PrismaPestDiseaseLog {
 }
 
 export interface PestDiseaseLogWithRelations extends PestDiseaseLog {
-  user: User;
   crop: Crop;
 }
 
@@ -140,7 +125,6 @@ export interface HarvestLog extends PrismaHarvestLog {
 }
 
 export interface HarvestLogWithRelations extends HarvestLog {
-  user: User;
   crop: Crop;
 }
 

@@ -9,7 +9,7 @@ export const taskCreateSchema = z.object({
   }),
   priority: z.nativeEnum(TaskPriority),
   category: z.nativeEnum(TaskCategory),
-  cropId: z.string().uuid("Invalid crop ID").optional(),
+  cropId: z.string().cuid("Invalid crop ID").optional(),
 });
 
 export const taskUpdateSchema = z.object({
@@ -28,7 +28,7 @@ export const taskUpdateSchema = z.object({
   priority: z.nativeEnum(TaskPriority).optional(),
   category: z.nativeEnum(TaskCategory).optional(),
   status: z.nativeEnum(TaskStatus).optional(),
-  cropId: z.string().uuid("Invalid crop ID").optional(),
+  cropId: z.string().cuid("Invalid crop ID").optional(),
 });
 
 export const taskCompleteSchema = z.object({

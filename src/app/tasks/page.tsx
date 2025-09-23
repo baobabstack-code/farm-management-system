@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -56,7 +56,7 @@ function TasksPageContent() {
     }
   }, [user, isLoaded, router, filters]);
 
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     try {
       const params = new URLSearchParams();
       if (filters.status) params.append("status", filters.status);
@@ -73,12 +73,12 @@ function TasksPageContent() {
       } else {
         setError("Failed to fetch tasks");
       }
-    } catch (error) {
+    } catch {
       setError("Error fetching tasks");
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
 
   const fetchCrops = async () => {
     try {
@@ -130,7 +130,7 @@ function TasksPageContent() {
       } else {
         setError(data.error || "Failed to create task");
       }
-    } catch (error) {
+    } catch {
       setError("Error creating task");
     } finally {
       setFormLoading(false);
@@ -167,7 +167,7 @@ function TasksPageContent() {
       } else {
         setError(data.error || "Failed to complete task");
       }
-    } catch (error) {
+    } catch {
       setError("Error completing task");
     }
   };
@@ -189,7 +189,7 @@ function TasksPageContent() {
       } else {
         setError(data.error || "Failed to delete task");
       }
-    } catch (error) {
+    } catch {
       setError("Error deleting task");
     }
   };

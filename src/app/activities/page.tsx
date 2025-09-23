@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Crop, PestDiseaseType, Severity } from "@/types";
@@ -85,6 +86,7 @@ export default function ActivitiesPage() {
       const data = await response.json();
 
       if (data.success) {
+        console.log("Fetched crops:", data.data);
         setCrops(data.data);
       } else {
         setError("Failed to fetch crops");
@@ -102,18 +104,50 @@ export default function ActivitiesPage() {
     setError("");
     setSuccess("");
 
+    // Validate form before submission
+    if (!irrigationForm.cropId) {
+      setError("Please select a crop");
+      setFormLoading(false);
+      return;
+    }
+
+    if (!irrigationForm.date) {
+      setError("Please select a date");
+      setFormLoading(false);
+      return;
+    }
+
+    if (!irrigationForm.duration || isNaN(parseInt(irrigationForm.duration))) {
+      setError("Please enter a valid duration");
+      setFormLoading(false);
+      return;
+    }
+
+    if (
+      !irrigationForm.waterAmount ||
+      isNaN(parseFloat(irrigationForm.waterAmount))
+    ) {
+      setError("Please enter a valid water amount");
+      setFormLoading(false);
+      return;
+    }
+
     try {
+      const requestData = {
+        cropId: irrigationForm.cropId,
+        date: irrigationForm.date,
+        duration: parseInt(irrigationForm.duration),
+        waterAmount: parseFloat(irrigationForm.waterAmount),
+        method: irrigationForm.method || "SPRINKLER", // Default to SPRINKLER if not selected
+        notes: irrigationForm.notes || undefined,
+      };
+
+      console.log("Submitting irrigation data:", requestData);
+
       const response = await fetch("/api/irrigation", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          cropId: irrigationForm.cropId,
-          date: irrigationForm.date,
-          duration: parseInt(irrigationForm.duration),
-          waterAmount: parseFloat(irrigationForm.waterAmount),
-          method: irrigationForm.method || undefined,
-          notes: irrigationForm.notes || undefined,
-        }),
+        body: JSON.stringify(requestData),
       });
 
       const data = await response.json();
@@ -143,6 +177,19 @@ export default function ActivitiesPage() {
     setFormLoading(true);
     setError("");
     setSuccess("");
+
+    // Validate form before submission
+    if (!fertilizerForm.cropId) {
+      setError("Please select a crop");
+      setFormLoading(false);
+      return;
+    }
+
+    if (!fertilizerForm.applicationMethod) {
+      setError("Please select an application method");
+      setFormLoading(false);
+      return;
+    }
 
     try {
       const response = await fetch("/api/fertilizer", {
@@ -185,6 +232,13 @@ export default function ActivitiesPage() {
     setFormLoading(true);
     setError("");
     setSuccess("");
+
+    // Validate form before submission
+    if (!pestDiseaseForm.cropId) {
+      setError("Please select a crop");
+      setFormLoading(false);
+      return;
+    }
 
     try {
       const response = await fetch("/api/pest-disease", {
@@ -232,6 +286,19 @@ export default function ActivitiesPage() {
     setError("");
     setSuccess("");
 
+    // Validate form before submission
+    if (!harvestForm.cropId) {
+      setError("Please select a crop");
+      setFormLoading(false);
+      return;
+    }
+
+    if (!harvestForm.qualityGrade) {
+      setError("Please select a quality grade");
+      setFormLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch("/api/harvest", {
         method: "POST",
@@ -274,6 +341,32 @@ export default function ActivitiesPage() {
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
             <div className="text-center">Loading...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show message if no crops are available
+  if (crops.length === 0) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+          <div className="px-4 py-6 sm:px-0">
+            <div className="text-center">
+              <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                Farm Activities
+              </h1>
+              <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded">
+                <p className="font-medium">No crops available</p>
+                <p className="text-sm mt-1">
+                  You need to create crops first before logging activities.{" "}
+                  <Link href="/crops" className="underline font-medium">
+                    Go to Crops Management
+                  </Link>
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -415,8 +508,7 @@ export default function ActivitiesPage() {
                     <label className="block text-sm font-medium text-gray-700">
                       Method
                     </label>
-                    <Input
-                      type="text"
+                    <select
                       value={irrigationForm.method}
                       onChange={(e) =>
                         setIrrigationForm({
@@ -424,8 +516,14 @@ export default function ActivitiesPage() {
                           method: e.target.value,
                         })
                       }
-                      placeholder="e.g., Drip, Sprinkler"
-                    />
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="">Select Method</option>
+                      <option value="SPRINKLER">Sprinkler</option>
+                      <option value="DRIP">Drip</option>
+                      <option value="FLOOD">Flood</option>
+                      <option value="MANUAL">Manual</option>
+                    </select>
                   </div>
                 </div>
 
@@ -542,8 +640,7 @@ export default function ActivitiesPage() {
                     <label className="block text-sm font-medium text-gray-700">
                       Application Method *
                     </label>
-                    <Input
-                      type="text"
+                    <select
                       value={fertilizerForm.applicationMethod}
                       onChange={(e) =>
                         setFertilizerForm({
@@ -552,8 +649,14 @@ export default function ActivitiesPage() {
                         })
                       }
                       required
-                      placeholder="e.g., Broadcast, Side-dress"
-                    />
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="">Select Method</option>
+                      <option value="BROADCAST">Broadcast</option>
+                      <option value="BAND">Band</option>
+                      <option value="FOLIAR">Foliar</option>
+                      <option value="FERTIGATION">Fertigation</option>
+                    </select>
                   </div>
                 </div>
 
@@ -841,8 +944,7 @@ export default function ActivitiesPage() {
                     <label className="block text-sm font-medium text-gray-700">
                       Quality Grade *
                     </label>
-                    <Input
-                      type="text"
+                    <select
                       value={harvestForm.qualityGrade}
                       onChange={(e) =>
                         setHarvestForm({
@@ -851,8 +953,14 @@ export default function ActivitiesPage() {
                         })
                       }
                       required
-                      placeholder="e.g., A, B, Premium"
-                    />
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="">Select Grade</option>
+                      <option value="EXCELLENT">Excellent</option>
+                      <option value="GOOD">Good</option>
+                      <option value="FAIR">Fair</option>
+                      <option value="POOR">Poor</option>
+                    </select>
                   </div>
                 </div>
 

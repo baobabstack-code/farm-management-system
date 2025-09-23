@@ -8,7 +8,10 @@ import {
 } from "@prisma/client";
 
 export const irrigationLogCreateSchema = z.object({
-  cropId: z.string().uuid("Invalid crop ID"),
+  cropId: z
+    .string()
+    .min(1, "Crop selection is required")
+    .cuid("Invalid crop ID"),
   date: z.string().refine((date) => !isNaN(Date.parse(date)), {
     message: "Invalid date",
   }),
@@ -19,7 +22,10 @@ export const irrigationLogCreateSchema = z.object({
 });
 
 export const fertilizerLogCreateSchema = z.object({
-  cropId: z.string().uuid("Invalid crop ID"),
+  cropId: z
+    .string()
+    .min(1, "Crop selection is required")
+    .cuid("Invalid crop ID"),
   date: z.string().refine((date) => !isNaN(Date.parse(date)), {
     message: "Invalid date",
   }),
@@ -33,7 +39,10 @@ export const fertilizerLogCreateSchema = z.object({
 });
 
 export const harvestLogCreateSchema = z.object({
-  cropId: z.string().uuid("Invalid crop ID"),
+  cropId: z
+    .string()
+    .min(1, "Crop selection is required")
+    .cuid("Invalid crop ID"),
   harvestDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
     message: "Invalid harvest date",
   }),
@@ -44,7 +53,10 @@ export const harvestLogCreateSchema = z.object({
 });
 
 export const pestDiseaseLogCreateSchema = z.object({
-  cropId: z.string().uuid("Invalid crop ID"),
+  cropId: z
+    .string()
+    .min(1, "Crop selection is required")
+    .cuid("Invalid crop ID"),
   date: z.string().refine((date) => !isNaN(Date.parse(date)), {
     message: "Invalid date",
   }),

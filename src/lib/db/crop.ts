@@ -16,15 +16,6 @@ export class CropService {
     return (await prisma.crop.findFirst({
       where: { id, userId },
       include: {
-        user: {
-          select: {
-            id: true,
-            username: true,
-            email: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-        },
         tasks: true,
         irrigationLogs: true,
         fertilizerLogs: true,

@@ -3,7 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { CropService } from "@/lib/db";
 import { cropCreateSchema } from "@/lib/validations/crop";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const { userId } = await auth();
     if (!userId) {

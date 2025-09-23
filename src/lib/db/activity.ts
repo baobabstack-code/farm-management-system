@@ -46,15 +46,6 @@ export class ActivityService {
     return (await prisma.irrigationLog.findMany({
       where,
       include: {
-        user: {
-          select: {
-            id: true,
-            username: true,
-            email: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-        },
         crop: true,
       },
       orderBy: { date: "desc" },
@@ -89,15 +80,6 @@ export class ActivityService {
     return (await prisma.fertilizerLog.findMany({
       where,
       include: {
-        user: {
-          select: {
-            id: true,
-            username: true,
-            email: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-        },
         crop: true,
       },
       orderBy: { date: "desc" },
@@ -143,15 +125,6 @@ export class ActivityService {
     return (await prisma.pestDiseaseLog.findMany({
       where,
       include: {
-        user: {
-          select: {
-            id: true,
-            username: true,
-            email: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-        },
         crop: true,
       },
       orderBy: { date: "desc" },
@@ -186,15 +159,6 @@ export class ActivityService {
     return (await prisma.harvestLog.findMany({
       where,
       include: {
-        user: {
-          select: {
-            id: true,
-            username: true,
-            email: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-        },
         crop: true,
       },
       orderBy: { harvestDate: "desc" },

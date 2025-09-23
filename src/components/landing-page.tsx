@@ -379,9 +379,9 @@ export default function LandingPage() {
                 Smart Crop Monitoring
               </h3>
               <p className="text-gray-600 mb-6">
-                Track your crops' health, growth stages, and harvest readiness
-                with our intelligent monitoring system. Get real-time insights
-                and recommendations to maximize your yield.
+                Track your crops&apos; health, growth stages, and harvest
+                readiness with our intelligent monitoring system. Get real-time
+                insights and recommendations to maximize your yield.
               </p>
             </div>
           </div>
