@@ -75,7 +75,7 @@ export default function ReportsPage() {
       } else {
         setError("Failed to fetch report data");
       }
-    } catch (error) {
+    } catch {
       setError("Error fetching report data");
     } finally {
       setLoading(false);
@@ -349,29 +349,31 @@ export default function ReportsPage() {
                         {reportData.fertilizer.applicationCount}
                       </span>
                     </div>
-                    {Object.entries(reportData.fertilizer.typeBreakdown)
-                      .length > 0 && (
-                      <div>
-                        <h4 className="text-sm font-medium text-gray-700 mb-2">
-                          Fertilizer Types Used:
-                        </h4>
-                        {Object.entries(
-                          reportData.fertilizer.typeBreakdown
-                        ).map(([type, amount]) => (
-                          <div
-                            key={type}
-                            className="flex justify-between items-center"
-                          >
-                            <span className="text-xs text-gray-600">
-                              {type}
-                            </span>
-                            <span className="text-xs font-medium">
-                              {amount} kg
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                    {reportData.fertilizer.typeBreakdown &&
+                      Object.entries(reportData.fertilizer.typeBreakdown)
+                        .length > 0 && (
+                        <div>
+                          <h4 className="text-sm font-medium text-gray-700 mb-2">
+                            Fertilizer Types Used:
+                          </h4>
+                          {reportData.fertilizer.typeBreakdown &&
+                            Object.entries(
+                              reportData.fertilizer.typeBreakdown
+                            ).map(([type, amount]) => (
+                              <div
+                                key={type}
+                                className="flex justify-between items-center"
+                              >
+                                <span className="text-xs text-gray-600">
+                                  {type}
+                                </span>
+                                <span className="text-xs font-medium">
+                                  {amount} kg
+                                </span>
+                              </div>
+                            ))}
+                        </div>
+                      )}
                   </div>
                 </div>
 
@@ -395,29 +397,31 @@ export default function ReportsPage() {
                         {reportData.yield.harvestCount}
                       </span>
                     </div>
-                    {Object.entries(reportData.yield.cropBreakdown).length >
-                      0 && (
-                      <div>
-                        <h4 className="text-sm font-medium text-gray-700 mb-2">
-                          Yield by Crop:
-                        </h4>
-                        {Object.entries(reportData.yield.cropBreakdown).map(
-                          ([crop, yieldAmount]) => (
-                            <div
-                              key={crop}
-                              className="flex justify-between items-center"
-                            >
-                              <span className="text-xs text-gray-600">
-                                {crop}
-                              </span>
-                              <span className="text-xs font-medium">
-                                {yieldAmount} kg
-                              </span>
-                            </div>
-                          )
-                        )}
-                      </div>
-                    )}
+                    {reportData.yield.cropBreakdown &&
+                      Object.entries(reportData.yield.cropBreakdown).length >
+                        0 && (
+                        <div>
+                          <h4 className="text-sm font-medium text-gray-700 mb-2">
+                            Yield by Crop:
+                          </h4>
+                          {reportData.yield.cropBreakdown &&
+                            Object.entries(reportData.yield.cropBreakdown).map(
+                              ([crop, yieldAmount]) => (
+                                <div
+                                  key={crop}
+                                  className="flex justify-between items-center"
+                                >
+                                  <span className="text-xs text-gray-600">
+                                    {crop}
+                                  </span>
+                                  <span className="text-xs font-medium">
+                                    {yieldAmount} kg
+                                  </span>
+                                </div>
+                              )
+                            )}
+                        </div>
+                      )}
                   </div>
                 </div>
 
@@ -449,27 +453,31 @@ export default function ReportsPage() {
                         {reportData.pestDisease.diseaseCount}
                       </span>
                     </div>
-                    {Object.entries(reportData.pestDisease.severityBreakdown)
-                      .length > 0 && (
-                      <div>
-                        <h4 className="text-sm font-medium text-gray-700 mb-2">
-                          Severity Breakdown:
-                        </h4>
-                        {Object.entries(
-                          reportData.pestDisease.severityBreakdown
-                        ).map(([severity, count]) => (
-                          <div
-                            key={severity}
-                            className="flex justify-between items-center"
-                          >
-                            <span className="text-xs text-gray-600">
-                              {severity}
-                            </span>
-                            <span className="text-xs font-medium">{count}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                    {reportData.pestDisease.severityBreakdown &&
+                      Object.entries(reportData.pestDisease.severityBreakdown)
+                        .length > 0 && (
+                        <div>
+                          <h4 className="text-sm font-medium text-gray-700 mb-2">
+                            Severity Breakdown:
+                          </h4>
+                          {reportData.pestDisease.severityBreakdown &&
+                            Object.entries(
+                              reportData.pestDisease.severityBreakdown
+                            ).map(([severity, count]) => (
+                              <div
+                                key={severity}
+                                className="flex justify-between items-center"
+                              >
+                                <span className="text-xs text-gray-600">
+                                  {severity}
+                                </span>
+                                <span className="text-xs font-medium">
+                                  {count}
+                                </span>
+                              </div>
+                            ))}
+                        </div>
+                      )}
                   </div>
                 </div>
               </div>

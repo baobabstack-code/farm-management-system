@@ -1,13 +1,11 @@
 import {
-  PrismaClient,
   PestDiseaseType,
   IrrigationMethod,
   ApplicationMethod,
   QualityGrade,
   Severity,
 } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../connection";
 
 export interface IrrigationLogCreateData {
   userId: string;

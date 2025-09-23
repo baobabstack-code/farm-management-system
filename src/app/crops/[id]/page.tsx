@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter, useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,15 @@ export default function CropDetailPage() {
   const [crop, setCrop] = useState<Crop | null>(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    name: string;
+    variety: string;
+    plantingDate: string;
+    expectedHarvestDate: string;
+    actualHarvestDate: string;
+    status: CropStatus;
+    area: string;
+  }>({
     name: "",
     variety: "",
     plantingDate: "",
@@ -28,20 +36,7 @@ export default function CropDetailPage() {
   const [formLoading, setFormLoading] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    if (!isLoaded) return;
-
-    if (!user) {
-      router.push("/sign-in");
-      return;
-    }
-
-    if (user && cropId) {
-      fetchCrop();
-    }
-  }, [user, isLoaded, router, cropId, fetchCrop]);
-
-  const fetchCrop = async () => {
+  const fetchCrop = useCallback(async () => {
     try {
       const response = await fetch(`/api/crops/${cropId}`);
       const data = await response.json();
@@ -71,7 +66,20 @@ export default function CropDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [cropId]);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    if (!user) {
+      router.push("/sign-in");
+      return;
+    }
+
+    if (user && cropId) {
+      fetchCrop();
+    }
+  }, [user, isLoaded, router, cropId, fetchCrop]);
 
   const handleUpdateCrop = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -243,7 +251,7 @@ export default function CropDetailPage() {
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          status: e.target.value as CropStatus,
+                          status: e.target.value as unknown as CropStatus,
                         })
                       }
                       className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"

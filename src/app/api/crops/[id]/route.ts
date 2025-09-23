@@ -8,7 +8,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -50,7 +50,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -73,7 +73,17 @@ export async function PUT(
       );
     }
 
-    const updatedCrop = await CropService.update(id, userId, validatedData);
+    const updateData: any = { ...validatedData };
+    if (validatedData.plantingDate) {
+      updateData.plantingDate = new Date(validatedData.plantingDate);
+    }
+    if (validatedData.expectedHarvestDate) {
+      updateData.expectedHarvestDate = new Date(
+        validatedData.expectedHarvestDate
+      );
+    }
+
+    const updatedCrop = await CropService.update(id, userId, updateData);
 
     return NextResponse.json({
       success: true,
@@ -111,7 +121,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

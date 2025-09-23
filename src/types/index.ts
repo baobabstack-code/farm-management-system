@@ -11,7 +11,10 @@ import {
   TaskCategory,
   TaskStatus,
   PestDiseaseType,
-  SeverityLevel,
+  Severity,
+  IrrigationMethod,
+  ApplicationMethod,
+  QualityGrade,
 } from "@prisma/client";
 
 // User types
@@ -78,7 +81,7 @@ export interface IrrigationLog extends PrismaIrrigationLog {
   date: Date;
   duration: number;
   waterAmount: number;
-  method: string | null;
+  method: IrrigationMethod;
   notes: string | null;
   createdAt: Date;
 }
@@ -95,7 +98,7 @@ export interface FertilizerLog extends PrismaFertilizerLog {
   date: Date;
   fertilizerType: string;
   amount: number;
-  applicationMethod: string;
+  applicationMethod: ApplicationMethod;
   notes: string | null;
   createdAt: Date;
 }
@@ -112,7 +115,7 @@ export interface PestDiseaseLog extends PrismaPestDiseaseLog {
   date: Date;
   type: PestDiseaseType;
   name: string;
-  severity: SeverityLevel;
+  severity: Severity;
   affectedArea: number;
   treatment: string;
   notes: string | null;
@@ -131,7 +134,7 @@ export interface HarvestLog extends PrismaHarvestLog {
   harvestDate: Date;
   quantity: number;
   unit: string;
-  qualityGrade: string;
+  qualityGrade: QualityGrade;
   notes: string | null;
   createdAt: Date;
 }
@@ -206,5 +209,8 @@ export {
   TaskCategory,
   TaskStatus,
   PestDiseaseType,
-  SeverityLevel,
+  Severity,
+  IrrigationMethod,
+  ApplicationMethod,
+  QualityGrade,
 };

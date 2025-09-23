@@ -67,7 +67,7 @@ export default function DashboardPage() {
       } else {
         setError("Failed to fetch analytics");
       }
-    } catch (error) {
+    } catch (_error) {
       setError("Error fetching analytics");
     } finally {
       setLoading(false);

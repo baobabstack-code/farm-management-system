@@ -1,11 +1,5 @@
-import {
-  PrismaClient,
-  TaskStatus,
-  TaskPriority,
-  TaskCategory,
-} from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { TaskStatus, TaskPriority, TaskCategory } from "@prisma/client";
+import { prisma } from "../connection";
 
 export interface TaskCreateData {
   userId: string;

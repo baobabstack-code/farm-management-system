@@ -1,6 +1,5 @@
-import { PrismaClient, CropStatus } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { CropStatus } from "@prisma/client";
+import { prisma } from "../connection";
 
 export interface CropCreateData {
   userId: string;

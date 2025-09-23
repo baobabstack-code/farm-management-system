@@ -5,7 +5,7 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Crop, PestDiseaseType, SeverityLevel } from "@/types";
+import { Crop, PestDiseaseType, Severity } from "@/types";
 
 type ActivityType = "irrigation" | "fertilizer" | "pest-disease" | "harvest";
 
@@ -37,12 +37,21 @@ export default function ActivitiesPage() {
     notes: "",
   });
 
-  const [pestDiseaseForm, setPestDiseaseForm] = useState({
+  const [pestDiseaseForm, setPestDiseaseForm] = useState<{
+    cropId: string;
+    date: string;
+    type: PestDiseaseType;
+    name: string;
+    severity: Severity;
+    affectedArea: string;
+    treatment: string;
+    notes: string;
+  }>({
     cropId: "",
     date: "",
     type: PestDiseaseType.PEST,
     name: "",
-    severity: SeverityLevel.LOW,
+    severity: Severity.LOW,
     affectedArea: "",
     treatment: "",
     notes: "",
@@ -80,7 +89,7 @@ export default function ActivitiesPage() {
       } else {
         setError("Failed to fetch crops");
       }
-    } catch (error) {
+    } catch {
       setError("Error fetching crops");
     } finally {
       setLoading(false);
@@ -122,7 +131,7 @@ export default function ActivitiesPage() {
       } else {
         setError(data.error || "Failed to create irrigation log");
       }
-    } catch (error) {
+    } catch {
       setError("Error creating irrigation log");
     } finally {
       setFormLoading(false);
@@ -164,7 +173,7 @@ export default function ActivitiesPage() {
       } else {
         setError(data.error || "Failed to create fertilizer log");
       }
-    } catch (error) {
+    } catch {
       setError("Error creating fertilizer log");
     } finally {
       setFormLoading(false);
@@ -202,7 +211,7 @@ export default function ActivitiesPage() {
           date: "",
           type: PestDiseaseType.PEST,
           name: "",
-          severity: SeverityLevel.LOW,
+          severity: Severity.LOW,
           affectedArea: "",
           treatment: "",
           notes: "",
@@ -210,7 +219,7 @@ export default function ActivitiesPage() {
       } else {
         setError(data.error || "Failed to create pest/disease log");
       }
-    } catch (error) {
+    } catch {
       setError("Error creating pest/disease log");
     } finally {
       setFormLoading(false);
@@ -252,7 +261,7 @@ export default function ActivitiesPage() {
       } else {
         setError(data.error || "Failed to create harvest log");
       }
-    } catch (error) {
+    } catch {
       setError("Error creating harvest log");
     } finally {
       setFormLoading(false);
@@ -627,11 +636,10 @@ export default function ActivitiesPage() {
                     <select
                       value={pestDiseaseForm.type}
                       onChange={(e) => {
-                        const value = e.target
-                          .value as keyof typeof PestDiseaseType;
+                        const value = e.target.value as PestDiseaseType;
                         setPestDiseaseForm({
                           ...pestDiseaseForm,
-                          type: PestDiseaseType[value],
+                          type: value,
                         });
                       }}
                       required
@@ -670,17 +678,16 @@ export default function ActivitiesPage() {
                     <select
                       value={pestDiseaseForm.severity}
                       onChange={(e) => {
-                        const value = e.target
-                          .value as keyof typeof SeverityLevel;
+                        const value = e.target.value as keyof typeof Severity;
                         setPestDiseaseForm({
                           ...pestDiseaseForm,
-                          severity: SeverityLevel[value],
+                          severity: Severity[value],
                         });
                       }}
                       required
                       className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     >
-                      {Object.values(SeverityLevel).map((severity) => (
+                      {Object.values(Severity).map((severity) => (
                         <option key={severity} value={severity}>
                           {severity}
                         </option>

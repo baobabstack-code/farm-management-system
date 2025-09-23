@@ -9,7 +9,13 @@ import {
   PestDiseaseLogWithRelations,
   HarvestLogWithRelations,
 } from "@/types";
-import { PestDiseaseType, SeverityLevel } from "@prisma/client";
+import {
+  PestDiseaseType,
+  Severity,
+  IrrigationMethod,
+  ApplicationMethod,
+  QualityGrade,
+} from "@prisma/client";
 
 export class ActivityService {
   // Irrigation Log Methods
@@ -19,7 +25,7 @@ export class ActivityService {
     date: Date;
     duration: number;
     waterAmount: number;
-    method?: string;
+    method?: IrrigationMethod;
     notes?: string;
   }): Promise<IrrigationLog> {
     return await prisma.irrigationLog.create({
@@ -62,7 +68,7 @@ export class ActivityService {
     date: Date;
     fertilizerType: string;
     amount: number;
-    applicationMethod: string;
+    applicationMethod: ApplicationMethod;
     notes?: string;
   }): Promise<FertilizerLog> {
     return await prisma.fertilizerLog.create({
@@ -105,17 +111,22 @@ export class ActivityService {
     date: Date;
     type: PestDiseaseType;
     name: string;
-    severity: SeverityLevel;
+    severity: Severity;
     affectedArea: number;
     treatment: string;
     notes?: string;
   }): Promise<PestDiseaseLog> {
-    return await prisma.pestDiseaseLog.create({
+    const created = await prisma.pestDiseaseLog.create({
       data: {
         ...data,
         date: new Date(data.date),
       },
     });
+    // Normalize nullable Prisma fields to match our app types
+    return {
+      ...created,
+      treatment: created.treatment ?? "",
+    } as PestDiseaseLog;
   }
 
   static async getPestDiseaseLogs(
@@ -154,7 +165,7 @@ export class ActivityService {
     harvestDate: Date;
     quantity: number;
     unit: string;
-    qualityGrade: string;
+    qualityGrade: QualityGrade;
     notes?: string;
   }): Promise<HarvestLog> {
     return await prisma.harvestLog.create({

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
-import Navigation from "@/components/navigation";
 import LayoutContent from "@/components/layout-content";
 
 export const metadata: Metadata = {

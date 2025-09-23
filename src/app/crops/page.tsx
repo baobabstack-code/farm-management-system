@@ -24,7 +24,7 @@ export default function CropsPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!isLoaded) return <div>Loading...</div>;
+    if (!isLoaded) return;
 
     if (!user) {
       router.push("/sign-in");
@@ -46,7 +46,7 @@ export default function CropsPage() {
       } else {
         setError("Failed to fetch crops");
       }
-    } catch (error) {
+    } catch {
       setError("Error fetching crops");
     } finally {
       setLoading(false);
@@ -88,7 +88,7 @@ export default function CropsPage() {
       } else {
         setError(data.error || "Failed to create crop");
       }
-    } catch (error) {
+    } catch {
       setError("Error creating crop");
     } finally {
       setFormLoading(false);
@@ -112,7 +112,7 @@ export default function CropsPage() {
       } else {
         setError(data.error || "Failed to delete crop");
       }
-    } catch (error) {
+    } catch {
       setError("Error deleting crop");
     }
   };
