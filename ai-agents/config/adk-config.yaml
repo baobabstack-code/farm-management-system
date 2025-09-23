@@ -1,0 +1,113 @@
+# Google AI ADK Configuration for Farm Management System
+apiVersion: adk/v1
+kind: AgentConfig
+
+metadata:
+  name: farm-management-agents
+  version: "1.0.0"
+  description: "AI agents for intelligent farm management assistance"
+
+# Global configuration
+global:
+  project_id: ${GOOGLE_CLOUD_PROJECT_ID}
+  location: ${VERTEX_AI_LOCATION}
+
+  # Model configuration
+  default_model:
+    provider: "vertex"
+    model: "gemini-1.5-pro"
+    temperature: 0.7
+    max_tokens: 2048
+
+  # Logging and monitoring
+  logging:
+    level: "INFO"
+    enable_tracing: true
+
+  # Security
+  authentication:
+    type: "service_account"
+    key_file: ${GOOGLE_APPLICATION_CREDENTIALS}
+
+# Agent definitions
+agents:
+  - name: "analytics-agent"
+    type: "llm"
+    description: "Provides farm analytics and insights"
+    model:
+      provider: "vertex"
+      model: "gemini-1.5-pro"
+      temperature: 0.3 # Lower temperature for more consistent analytics
+    tools:
+      - "farm-data-tool"
+      - "weather-data-tool"
+    config:
+      max_iterations: 5
+      enable_streaming: false
+
+  - name: "crop-planning-agent"
+    type: "llm"
+    description: "Assists with crop planning and recommendations"
+    model:
+      provider: "vertex"
+      model: "gemini-1.5-pro"
+      temperature: 0.5
+    tools:
+      - "farm-data-tool"
+      - "weather-data-tool"
+      - "market-data-tool"
+    config:
+      max_iterations: 10
+      enable_streaming: true
+
+# Tool definitions
+tools:
+  - name: "farm-data-tool"
+    type: "http"
+    description: "Access farm data via bridge API"
+    config:
+      base_url: ${FARM_API_BASE_URL}
+      auth:
+        type: "bearer"
+        token: ${AI_BRIDGE_API_KEY}
+      endpoints:
+        crops: "/api/ai-bridge/crops"
+        financial: "/api/ai-bridge/financial"
+        activities: "/api/ai-bridge/activities"
+
+  - name: "weather-data-tool"
+    type: "http"
+    description: "Access weather and climate data"
+    config:
+      base_url: "https://api.openweathermap.org/data/2.5"
+      auth:
+        type: "api_key"
+        key: ${WEATHER_API_KEY}
+
+  - name: "market-data-tool"
+    type: "http"
+    description: "Access agricultural market data"
+    config:
+      base_url: "https://api.example-market-data.com"
+      auth:
+        type: "api_key"
+        key: ${MARKET_API_KEY}
+
+# Evaluation configuration
+evaluation:
+  enabled: true
+  test_cases_path: "./tests/test_cases.yaml"
+  metrics:
+    - "accuracy"
+    - "relevance"
+    - "safety"
+
+# Deployment configuration
+deployment:
+  environment: "development"
+  scaling:
+    min_instances: 1
+    max_instances: 5
+  monitoring:
+    enable_metrics: true
+    enable_logging: true

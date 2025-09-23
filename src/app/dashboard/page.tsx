@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import AIInsightsCard from "@/components/ai/AIInsightsCard";
 
 interface DashboardStats {
   totalCrops: number;
@@ -108,6 +109,9 @@ export default function DashboardPage() {
 
           {analytics && (
             <>
+              {/* AI Insights */}
+              <AIInsightsCard />
+
               {/* Key Metrics */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <div className="bg-white overflow-hidden shadow rounded-lg">
