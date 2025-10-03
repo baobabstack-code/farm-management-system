@@ -3,6 +3,7 @@
 import { useUser } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 import Navigation from "./navigation";
+import AIChatAssistant from "./ai/AIChatAssistant";
 
 interface LayoutContentProps {
   children: React.ReactNode;
@@ -24,6 +25,7 @@ export default function LayoutContent({ children }: LayoutContentProps) {
       <div className="flex h-screen bg-gray-50">
         <Navigation />
         <main className="flex-1 lg:ml-64 overflow-auto">{children}</main>
+        <AIChatAssistant />
       </div>
     );
   }

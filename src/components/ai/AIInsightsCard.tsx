@@ -8,6 +8,57 @@ interface AIInsight {
   description: string;
   confidence: number;
   actionable: boolean;
+  priority?: string;
+  category?: string;
+}
+
+function getPriorityColor(priority: string): string {
+  switch (priority) {
+    case "High":
+      return "bg-red-100 text-red-800";
+    case "Medium":
+      return "bg-yellow-100 text-yellow-800";
+    case "Low":
+      return "bg-green-100 text-green-800";
+    default:
+      return "bg-gray-100 text-gray-800";
+  }
+}
+
+function getPriorityBorderColor(priority?: string): string {
+  switch (priority) {
+    case "High":
+      return "border-red-200";
+    case "Medium":
+      return "border-yellow-200";
+    case "Low":
+      return "border-green-200";
+    default:
+      return "border-blue-100";
+  }
+}
+
+function getCategoryIcon(category: string): string {
+  switch (category) {
+    case "harvest":
+      return "🌾";
+    case "planning":
+      return "📋";
+    case "monitoring":
+      return "👁️";
+    case "management":
+      return "📊";
+    case "irrigation":
+      return "💧";
+    case "fertilizer":
+      return "🌱";
+    case "financial":
+      return "💰";
+    case "optimization":
+      return "⚡";
+    default:
+      return "📈";
+  }
 }
 
 export default function AIInsightsCard() {
@@ -76,17 +127,35 @@ export default function AIInsightsCard() {
           {insights.map((insight, index) => (
             <div
               key={index}
-              className="bg-white rounded-md p-3 border border-blue-100"
+              className={`bg-white rounded-md p-3 border ${getPriorityBorderColor(insight.priority)}`}
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <h4 className="font-medium text-gray-900 mb-1">
-                    {insight.title}
-                  </h4>
-                  <p className="text-sm text-gray-600">{insight.description}</p>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="font-medium text-gray-900">
+                      {insight.title}
+                    </h4>
+                    {insight.priority && (
+                      <span
+                        className={`text-xs px-2 py-1 rounded-full ${getPriorityColor(insight.priority)}`}
+                      >
+                        {insight.priority}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-gray-600 mb-2">
+                    {insight.description}
+                  </p>
+                  {insight.category && (
+                    <div className="flex items-center gap-1">
+                      <span className="text-xs text-gray-400">
+                        {getCategoryIcon(insight.category)} {insight.category}
+                      </span>
+                    </div>
+                  )}
                 </div>
-                <div className="ml-3 flex flex-col items-end">
-                  <div className="text-xs text-gray-500 mb-1">
+                <div className="ml-3 flex flex-col items-end gap-1">
+                  <div className="text-xs text-gray-500">
                     {Math.round(insight.confidence * 100)}% confidence
                   </div>
                   {insight.actionable && (

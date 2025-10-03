@@ -6,6 +6,7 @@ export interface FeatureFlags {
   aiPestDetection: boolean;
   aiIrrigationOptimization: boolean;
   aiChatAssistant: boolean;
+  aiAdkChat: boolean;
 }
 
 // Default flags - start with everything disabled for safety
@@ -16,6 +17,7 @@ const DEFAULT_FLAGS: FeatureFlags = {
   aiPestDetection: false,
   aiIrrigationOptimization: false,
   aiChatAssistant: false,
+  aiAdkChat: false,
 };
 
 // Get feature flags based on environment and user preferences
@@ -30,20 +32,41 @@ export function getFeatureFlags(): FeatureFlags {
       aiPestDetection: process.env.ENABLE_AI_PEST_DETECTION === "true",
       aiIrrigationOptimization: process.env.ENABLE_AI_IRRIGATION === "true",
       aiChatAssistant: process.env.ENABLE_AI_CHAT_ASSISTANT === "true",
+      aiAdkChat: process.env.ENABLE_AI_ADK_CHAT === "true",
     };
   }
 
-  // Client-side: could use localStorage for user-specific flags
+  // Client-side: use environment variables that were passed from server
+  // Next.js automatically exposes NEXT_PUBLIC_ prefixed variables to the client
+  // For now, let's enable AI analytics by default on client-side for development
   const stored = localStorage.getItem("featureFlags");
   if (stored) {
     try {
       return { ...DEFAULT_FLAGS, ...JSON.parse(stored) };
     } catch {
-      return DEFAULT_FLAGS;
+      // Fallback to enabled state for development
+      return {
+        aiAnalytics: true,
+        aiCropRecommendations: true,
+        aiFinancialInsights: true,
+        aiPestDetection: false,
+        aiIrrigationOptimization: false,
+        aiChatAssistant: true,
+        aiAdkChat: false,
+      };
     }
   }
 
-  return DEFAULT_FLAGS;
+  // Default to enabled for development
+  return {
+    aiAnalytics: true,
+    aiCropRecommendations: true,
+    aiFinancialInsights: true,
+    aiPestDetection: false,
+    aiIrrigationOptimization: false,
+    aiChatAssistant: true,
+    aiAdkChat: false,
+  };
 }
 
 // Hook for React components to check if a feature is enabled

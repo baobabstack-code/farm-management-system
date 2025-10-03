@@ -5,6 +5,9 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import AIInsightsCard from "@/components/ai/AIInsightsCard";
+import WeatherInsightsCard from "@/components/ai/WeatherInsightsCard";
+import CropRecommendationsCard from "@/components/ai/CropRecommendationsCard";
+import FinancialInsightsCard from "@/components/ai/FinancialInsightsCard";
 
 interface DashboardStats {
   totalCrops: number;
@@ -110,7 +113,20 @@ export default function DashboardPage() {
           {analytics && (
             <>
               {/* AI Insights */}
-              <AIInsightsCard />
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
+                <AIInsightsCard />
+                <WeatherInsightsCard />
+              </div>
+
+              {/* Crop Recommendations */}
+              <div className="mb-8">
+                <CropRecommendationsCard />
+              </div>
+
+              {/* Financial Insights */}
+              <div className="mb-8">
+                <FinancialInsightsCard />
+              </div>
 
               {/* Key Metrics */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
