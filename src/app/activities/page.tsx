@@ -374,13 +374,19 @@ export default function ActivitiesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold text-gray-900">
-              Activity Logging
-            </h1>
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
+      <div className="content-container py-8">
+        <div className="mb-8">
+          <div className="flex items-center mb-6">
+            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mr-4 shadow-lg">
+              <span className="text-white text-2xl">📋</span>
+            </div>
+            <div>
+              <h1 className="text-display text-gray-900">Activity Logging</h1>
+              <p className="text-gray-600 mt-1">
+                Record and track all your farming activities
+              </p>
+            </div>
           </div>
 
           {error && (
@@ -396,34 +402,59 @@ export default function ActivitiesPage() {
           )}
 
           {/* Tab Navigation */}
-          <div className="mb-6">
-            <nav className="flex space-x-8">
-              {[
-                { key: "irrigation", label: "Irrigation" },
-                { key: "fertilizer", label: "Fertilizer" },
-                { key: "pest-disease", label: "Pest & Disease" },
-                { key: "harvest", label: "Harvest" },
-              ].map((tab) => (
-                <button
-                  key={tab.key}
-                  onClick={() => setActiveTab(tab.key as ActivityType)}
-                  className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                    activeTab === tab.key
-                      ? "border-blue-500 text-blue-600"
-                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </nav>
+          <div className="mb-8">
+            <div className="card-enhanced p-2">
+              <nav className="flex space-x-2">
+                {[
+                  {
+                    key: "irrigation",
+                    label: "💧 Irrigation",
+                    color: "from-blue-500 to-cyan-600",
+                  },
+                  {
+                    key: "fertilizer",
+                    label: "🌿 Fertilizer",
+                    color: "from-green-500 to-emerald-600",
+                  },
+                  {
+                    key: "pest-disease",
+                    label: "🐛 Pest & Disease",
+                    color: "from-red-500 to-pink-600",
+                  },
+                  {
+                    key: "harvest",
+                    label: "🌾 Harvest",
+                    color: "from-yellow-500 to-orange-600",
+                  },
+                ].map((tab) => (
+                  <button
+                    key={tab.key}
+                    onClick={() => setActiveTab(tab.key as ActivityType)}
+                    className={`flex-1 py-3 px-4 rounded-lg font-medium text-sm transition-all duration-200 ${
+                      activeTab === tab.key
+                        ? `bg-gradient-to-r ${tab.color} text-white shadow-md transform scale-105`
+                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </nav>
+            </div>
           </div>
 
-          <div className="bg-white shadow rounded-lg p-6">
+          <div className="card-enhanced p-8 fade-in">
             {/* Irrigation Form */}
             {activeTab === "irrigation" && (
-              <form onSubmit={handleIrrigationSubmit} className="space-y-4">
-                <h2 className="text-xl font-semibold mb-4">Log Irrigation</h2>
+              <form onSubmit={handleIrrigationSubmit} className="space-y-6">
+                <div className="flex items-center mb-6">
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-cyan-600 rounded-lg flex items-center justify-center mr-3">
+                    <span className="text-white text-lg">💧</span>
+                  </div>
+                  <h2 className="text-heading text-gray-900">
+                    Log Irrigation Activity
+                  </h2>
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -544,18 +575,28 @@ export default function ActivitiesPage() {
                   />
                 </div>
 
-                <Button type="submit" disabled={formLoading}>
-                  {formLoading ? "Logging..." : "Log Irrigation"}
-                </Button>
+                <button
+                  type="submit"
+                  disabled={formLoading}
+                  className="btn-enhanced bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 shadow-lg hover:shadow-xl disabled:opacity-50"
+                >
+                  <span className="mr-2">💧</span>
+                  {formLoading ? "Logging..." : "Log Irrigation Activity"}
+                </button>
               </form>
             )}
 
             {/* Fertilizer Form */}
             {activeTab === "fertilizer" && (
-              <form onSubmit={handleFertilizerSubmit} className="space-y-4">
-                <h2 className="text-xl font-semibold mb-4">
-                  Log Fertilizer Application
-                </h2>
+              <form onSubmit={handleFertilizerSubmit} className="space-y-6">
+                <div className="flex items-center mb-6">
+                  <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-emerald-600 rounded-lg flex items-center justify-center mr-3">
+                    <span className="text-white text-lg">🌿</span>
+                  </div>
+                  <h2 className="text-heading text-gray-900">
+                    Log Fertilizer Application
+                  </h2>
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -677,9 +718,14 @@ export default function ActivitiesPage() {
                   />
                 </div>
 
-                <Button type="submit" disabled={formLoading}>
-                  {formLoading ? "Logging..." : "Log Fertilizer"}
-                </Button>
+                <button
+                  type="submit"
+                  disabled={formLoading}
+                  className="btn-enhanced bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 shadow-lg hover:shadow-xl disabled:opacity-50"
+                >
+                  <span className="mr-2">🌿</span>
+                  {formLoading ? "Logging..." : "Log Fertilizer Application"}
+                </button>
               </form>
             )}
 

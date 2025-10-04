@@ -50,7 +50,7 @@ export default function LandingPage() {
                 <Link href="/sign-up">
                   <Button
                     size="lg"
-                    className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 text-lg"
+                    className="btn-enhanced bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 px-8 py-4 text-lg shadow-lg hover:shadow-xl"
                   >
                     Start Free Trial
                   </Button>
@@ -59,7 +59,7 @@ export default function LandingPage() {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="px-8 py-4 text-lg border-green-600 text-green-600 hover:bg-green-50"
+                    className="btn-enhanced px-8 py-4 text-lg border-green-600 text-green-600 hover:bg-green-50 focus:ring-green-500"
                   >
                     Sign In
                   </Button>

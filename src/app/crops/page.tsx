@@ -157,19 +157,28 @@ export default function CropsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold text-gray-900">
-              Crop Management
-            </h1>
-            <Button
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
+      <div className="content-container py-8">
+        <div className="mb-8">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <div className="flex items-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mr-4 shadow-lg">
+                <span className="text-white text-2xl">🌱</span>
+              </div>
+              <div>
+                <h1 className="text-display text-gray-900">Crop Management</h1>
+                <p className="text-gray-600 mt-1">
+                  Monitor and manage your crops from planting to harvest
+                </p>
+              </div>
+            </div>
+            <button
               onClick={() => setShowCreateForm(true)}
-              className="bg-green-600 hover:bg-green-700"
+              className="btn-enhanced bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 shadow-lg hover:shadow-xl"
             >
+              <span className="mr-2">➕</span>
               Add New Crop
-            </Button>
+            </button>
           </div>
 
           {error && (
@@ -179,8 +188,13 @@ export default function CropsPage() {
           )}
 
           {showCreateForm && (
-            <div className="mb-6 bg-white shadow rounded-lg p-6">
-              <h2 className="text-xl font-semibold mb-4">Add New Crop</h2>
+            <div className="mb-8 card-enhanced p-6 fade-in">
+              <div className="flex items-center mb-6">
+                <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center mr-3">
+                  <span className="text-white text-sm">🌱</span>
+                </div>
+                <h2 className="text-heading text-gray-900">Add New Crop</h2>
+              </div>
               <form onSubmit={handleCreateCrop} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -257,110 +271,132 @@ export default function CropsPage() {
                     />
                   </div>
                 </div>
-                <div className="flex space-x-4">
-                  <Button
+                <div className="flex space-x-3">
+                  <button
                     type="submit"
                     disabled={formLoading}
-                    className="bg-green-600 hover:bg-green-700"
+                    className="btn-enhanced bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 shadow-sm hover:shadow disabled:opacity-50"
                   >
                     {formLoading ? "Creating..." : "Create Crop"}
-                  </Button>
-                  <Button
+                  </button>
+                  <button
                     type="button"
                     onClick={() => setShowCreateForm(false)}
-                    className="bg-gray-600 hover:bg-gray-700"
+                    className="btn-enhanced bg-gray-500 text-white hover:bg-gray-600 focus:ring-gray-500 shadow-sm hover:shadow"
                   >
                     Cancel
-                  </Button>
+                  </button>
                 </div>
               </form>
             </div>
           )}
 
-          <div className="bg-white shadow rounded-lg">
-            {crops.length === 0 ? (
-              <div className="p-6 text-center text-gray-500">
-                No crops found. Add your first crop to get started!
+          {crops.length === 0 ? (
+            <div className="card-enhanced p-12 text-center">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-3xl">🌱</span>
               </div>
-            ) : (
-              <div className="overflow-hidden">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Crop
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Planting Date
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Days to Harvest
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Area
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {crops.map((crop) => (
-                      <tr key={crop.id}>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div>
-                            <div className="text-sm font-medium text-gray-900">
-                              {crop.name}
-                            </div>
-                            {crop.variety && (
-                              <div className="text-sm text-gray-500">
-                                {crop.variety}
-                              </div>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span
-                            className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
-                              crop.status
-                            )}`}
-                          >
-                            {crop.status}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                No crops found
+              </h3>
+              <p className="text-gray-600">
+                Add your first crop to get started with farm management!
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {crops.map((crop, index) => {
+                const daysToHarvest = getDaysToHarvest(
+                  crop.expectedHarvestDate
+                );
+                return (
+                  <div
+                    key={crop.id}
+                    className={`card-enhanced p-6 stagger-item fade-in hover:scale-105 transition-transform duration-200 cursor-pointer`}
+                    onClick={() => router.push(`/crops/${crop.id}`)}
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-600 rounded-xl flex items-center justify-center">
+                          <span className="text-white text-xl">🌱</span>
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900">
+                            {crop.name}
+                          </h3>
+                          {crop.variety && (
+                            <p className="text-sm text-gray-600">
+                              {crop.variety}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <span
+                        className={`inline-flex px-3 py-1 text-xs font-medium rounded-full ${getStatusColor(crop.status)}`}
+                      >
+                        {crop.status}
+                      </span>
+                    </div>
+
+                    <div className="space-y-3 mb-6">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Planted</span>
+                        <span className="text-sm font-medium text-gray-900">
                           {new Date(crop.plantingDate).toLocaleDateString()}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {getDaysToHarvest(crop.expectedHarvestDate)} days
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {crop.area ? `${crop.area} m²` : "N/A"}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <button
-                            onClick={() => router.push(`/crops/${crop.id}`)}
-                            className="text-blue-600 hover:text-blue-900 mr-4"
-                          >
-                            View
-                          </button>
-                          <button
-                            onClick={() => handleDeleteCrop(crop.id)}
-                            className="text-red-600 hover:text-red-900"
-                          >
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">
+                          Harvest in
+                        </span>
+                        <span
+                          className={`text-sm font-medium ${
+                            daysToHarvest <= 7
+                              ? "text-orange-600"
+                              : daysToHarvest <= 30
+                                ? "text-yellow-600"
+                                : "text-green-600"
+                          }`}
+                        >
+                          {daysToHarvest} days
+                        </span>
+                      </div>
+                      {crop.area && (
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-600">Area</span>
+                          <span className="text-sm font-medium text-gray-900">
+                            {crop.area} m²
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(`/crops/${crop.id}`);
+                        }}
+                        className="flex-1 btn-enhanced bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 text-sm py-2"
+                      >
+                        <span className="mr-1">👁️</span>
+                        View Details
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteCrop(crop.id);
+                        }}
+                        className="btn-enhanced bg-red-500 text-white hover:bg-red-600 focus:ring-red-500 text-sm py-2 px-3"
+                      >
+                        <span>🗑️</span>
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
     </div>

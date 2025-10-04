@@ -24,7 +24,9 @@ export default function LayoutContent({ children }: LayoutContentProps) {
     return (
       <div className="flex h-screen bg-gray-50">
         <Navigation />
-        <main className="flex-1 lg:ml-64 overflow-auto">{children}</main>
+        <main className="flex-1 overflow-auto lg:pt-0 pt-16">
+          <div className="min-h-full">{children}</div>
+        </main>
         <AIChatAssistant />
       </div>
     );

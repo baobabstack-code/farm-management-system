@@ -57,3 +57,120 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Enhanced layout and visual improvements */
+@layer utilities {
+  .layout-fix {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  /* Improved grid layouts */
+  .grid-enhanced {
+    display: grid;
+    gap: 1.25rem;
+    width: 100%;
+  }
+
+  .grid-enhanced-lg {
+    gap: 1.5rem;
+  }
+
+  /* Enhanced card styling */
+  .card-enhanced {
+    @apply bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200;
+  }
+
+  .card-enhanced:hover {
+    @apply border-gray-200 transform translate-y-[-1px];
+  }
+
+  /* Improved content containers */
+  .content-container {
+    width: 100%;
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .content-container {
+      padding: 0 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .content-container {
+      padding: 0 2rem;
+    }
+  }
+
+  /* Enhanced button styling */
+  .btn-enhanced {
+    @apply inline-flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200;
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+
+  .btn-primary {
+    @apply bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500;
+    @apply shadow-sm hover:shadow;
+  }
+
+  /* Enhanced metric cards */
+  .metric-card {
+    @apply bg-white rounded-xl p-6 shadow-sm border border-gray-100;
+    @apply hover:shadow-md hover:border-gray-200 transition-all duration-200;
+  }
+
+  /* Better typography scale */
+  .text-display {
+    @apply text-3xl font-bold tracking-tight;
+  }
+
+  .text-heading {
+    @apply text-xl font-semibold;
+  }
+
+  .text-subheading {
+    @apply text-lg font-medium;
+  }
+
+  /* Smooth scrolling and animations */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Fade in animation for page content */
+  .fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Stagger animation for grid items */
+  .stagger-item:nth-child(1) {
+    animation-delay: 0.1s;
+  }
+  .stagger-item:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  .stagger-item:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+  .stagger-item:nth-child(4) {
+    animation-delay: 0.4s;
+  }
+  .stagger-item:nth-child(5) {
+    animation-delay: 0.5s;
+  }
+}

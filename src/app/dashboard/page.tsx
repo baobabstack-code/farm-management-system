@@ -1,13 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import AIInsightsCard from "@/components/ai/AIInsightsCard";
-import WeatherInsightsCard from "@/components/ai/WeatherInsightsCard";
-import CropRecommendationsCard from "@/components/ai/CropRecommendationsCard";
-import FinancialInsightsCard from "@/components/ai/FinancialInsightsCard";
 
 interface DashboardStats {
   totalCrops: number;
@@ -91,232 +87,220 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">
-              Farm Management Dashboard
-            </h1>
-            <p className="text-lg text-gray-600">
-              Welcome back, {user?.firstName || user?.username}! Here&apos;s
-              your farm overview.
-            </p>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="content-container py-8">
+        <div className="mb-8">
+          <h1 className="text-display text-gray-900 mb-2">
+            Farm Management Dashboard
+          </h1>
+          <p className="text-lg text-gray-600 max-w-2xl">
+            Welcome back, {user?.firstName || user?.username}! Here's your
+            comprehensive farm overview and key insights.
+          </p>
+        </div>
+
+        {error && (
+          <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+            {error}
           </div>
+        )}
 
-          {error && (
-            <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-              {error}
+        {analytics && (
+          <React.Fragment>
+            {/* Key Metrics */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
+              <div className="metric-card group">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center shadow-sm">
+                      <span className="text-white text-lg">🌱</span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">
+                        Total Crops
+                      </p>
+                      <p className="text-2xl font-bold text-gray-900">
+                        {analytics.dashboard.totalCrops}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="metric-card group">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center shadow-sm">
+                      <span className="text-white text-lg">📋</span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">
+                        Active Tasks
+                      </p>
+                      <p className="text-2xl font-bold text-gray-900">
+                        {analytics.dashboard.activeTasks}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="metric-card group">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-amber-600 rounded-xl flex items-center justify-center shadow-sm">
+                      <span className="text-white text-lg">⚠️</span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">
+                        Overdue Tasks
+                      </p>
+                      <p className="text-2xl font-bold text-gray-900">
+                        {analytics.dashboard.overdueTasks}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="metric-card group">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl flex items-center justify-center shadow-sm">
+                      <span className="text-white text-lg">🌾</span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">
+                        Total Yield
+                      </p>
+                      <p className="text-2xl font-bold text-gray-900">
+                        {analytics.dashboard.totalYield.toFixed(1)} kg
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-          )}
 
-          {analytics && (
-            <>
-              {/* AI Insights */}
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
-                <AIInsightsCard />
-                <WeatherInsightsCard />
-              </div>
-
-              {/* Crop Recommendations */}
-              <div className="mb-8">
-                <CropRecommendationsCard />
-              </div>
-
-              {/* Financial Insights */}
-              <div className="mb-8">
-                <FinancialInsightsCard />
-              </div>
-
-              {/* Key Metrics */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div className="bg-white overflow-hidden shadow rounded-lg">
-                  <div className="p-5">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                          <span className="text-white font-bold">🌱</span>
-                        </div>
-                      </div>
-                      <div className="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt className="text-sm font-medium text-gray-500 truncate">
-                            Total Crops
-                          </dt>
-                          <dd className="text-lg font-medium text-gray-900">
-                            {analytics.dashboard.totalCrops}
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
+            {/* Activity Summary */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+              <div className="card-enhanced p-6">
+                <div className="flex items-center mb-4">
+                  <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center mr-3">
+                    <span className="text-white text-sm">💧</span>
                   </div>
+                  <h3 className="text-heading text-gray-900">Resource Usage</h3>
                 </div>
-
-                <div className="bg-white overflow-hidden shadow rounded-lg">
-                  <div className="p-5">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                          <span className="text-white font-bold">📋</span>
-                        </div>
-                      </div>
-                      <div className="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt className="text-sm font-medium text-gray-500 truncate">
-                            Active Tasks
-                          </dt>
-                          <dd className="text-lg font-medium text-gray-900">
-                            {analytics.dashboard.activeTasks}
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Water Usage</span>
+                    <span className="text-sm font-medium">
+                      {analytics.water.totalWater.toFixed(1)} L
+                    </span>
                   </div>
-                </div>
-
-                <div className="bg-white overflow-hidden shadow rounded-lg">
-                  <div className="p-5">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
-                          <span className="text-white font-bold">⚠️</span>
-                        </div>
-                      </div>
-                      <div className="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt className="text-sm font-medium text-gray-500 truncate">
-                            Overdue Tasks
-                          </dt>
-                          <dd className="text-lg font-medium text-gray-900">
-                            {analytics.dashboard.overdueTasks}
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">
+                      Irrigation Sessions
+                    </span>
+                    <span className="text-sm font-medium">
+                      {analytics.water.sessionCount}
+                    </span>
                   </div>
-                </div>
-
-                <div className="bg-white overflow-hidden shadow rounded-lg">
-                  <div className="p-5">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
-                          <span className="text-white font-bold">🌾</span>
-                        </div>
-                      </div>
-                      <div className="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt className="text-sm font-medium text-gray-500 truncate">
-                            Total Yield
-                          </dt>
-                          <dd className="text-lg font-medium text-gray-900">
-                            {analytics.dashboard.totalYield.toFixed(1)} kg
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">
+                      Fertilizer Applications
+                    </span>
+                    <span className="text-sm font-medium">
+                      {analytics.fertilizer.applicationCount}
+                    </span>
                   </div>
                 </div>
               </div>
 
-              {/* Activity Summary */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                <div className="bg-white shadow rounded-lg p-6">
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">
-                    Resource Usage
-                  </h3>
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Water Usage</span>
-                      <span className="text-sm font-medium">
-                        {analytics.water.totalWater.toFixed(1)} L
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">
-                        Irrigation Sessions
-                      </span>
-                      <span className="text-sm font-medium">
-                        {analytics.water.sessionCount}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">
-                        Fertilizer Applications
-                      </span>
-                      <span className="text-sm font-medium">
-                        {analytics.fertilizer.applicationCount}
-                      </span>
-                    </div>
+              <div className="card-enhanced p-6">
+                <div className="flex items-center mb-4">
+                  <div className="w-8 h-8 bg-gradient-to-br from-red-400 to-red-600 rounded-lg flex items-center justify-center mr-3">
+                    <span className="text-white text-sm">🌡️</span>
                   </div>
-                </div>
-
-                <div className="bg-white shadow rounded-lg p-6">
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  <h3 className="text-heading text-gray-900">
                     Health & Issues
                   </h3>
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">
-                        Total Incidents
-                      </span>
-                      <span className="text-sm font-medium">
-                        {analytics.pestDisease.totalIncidents}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Pest Issues</span>
-                      <span className="text-sm font-medium">
-                        {analytics.pestDisease.pestCount}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">
-                        Disease Issues
-                      </span>
-                      <span className="text-sm font-medium">
-                        {analytics.pestDisease.diseaseCount}
-                      </span>
-                    </div>
+                </div>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">
+                      Total Incidents
+                    </span>
+                    <span className="text-sm font-medium">
+                      {analytics.pestDisease.totalIncidents}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Pest Issues</span>
+                    <span className="text-sm font-medium">
+                      {analytics.pestDisease.pestCount}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">
+                      Disease Issues
+                    </span>
+                    <span className="text-sm font-medium">
+                      {analytics.pestDisease.diseaseCount}
+                    </span>
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* Quick Actions */}
-              <div className="bg-white shadow rounded-lg p-6">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">
-                  Quick Actions
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <Button
-                    onClick={() => router.push("/crops")}
-                    className="bg-green-600 hover:bg-green-700"
-                  >
-                    Manage Crops
-                  </Button>
-                  <Button
-                    onClick={() => router.push("/tasks")}
-                    className="bg-blue-600 hover:bg-blue-700"
-                  >
-                    View Tasks
-                  </Button>
-                  <Button
-                    onClick={() => router.push("/activities")}
-                    className="bg-purple-600 hover:bg-purple-700"
-                  >
-                    Log Activity
-                  </Button>
-                  <Button
-                    onClick={() => router.push("/reports")}
-                    className="bg-orange-600 hover:bg-orange-700"
-                  >
-                    View Reports
-                  </Button>
+            {/* Quick Actions */}
+            <div className="card-enhanced p-6">
+              <div className="flex items-center mb-6">
+                <div className="w-8 h-8 bg-gradient-to-br from-indigo-400 to-indigo-600 rounded-lg flex items-center justify-center mr-3">
+                  <span className="text-white text-sm">⚡</span>
                 </div>
+                <h3 className="text-heading text-gray-900">Quick Actions</h3>
               </div>
-            </>
-          )}
-        </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                <button
+                  onClick={() => router.push("/ai-companion")}
+                  className="btn-enhanced btn-primary group"
+                >
+                  <span className="mr-2">🤖</span>
+                  AI Companion
+                </button>
+                <button
+                  onClick={() => router.push("/crops")}
+                  className="btn-enhanced bg-emerald-600 text-white hover:bg-emerald-700 focus:ring-emerald-500 shadow-sm hover:shadow"
+                >
+                  <span className="mr-2">🌱</span>
+                  Manage Crops
+                </button>
+                <button
+                  onClick={() => router.push("/tasks")}
+                  className="btn-enhanced bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 shadow-sm hover:shadow"
+                >
+                  <span className="mr-2">✅</span>
+                  View Tasks
+                </button>
+                <button
+                  onClick={() => router.push("/activities")}
+                  className="btn-enhanced bg-purple-600 text-white hover:bg-purple-700 focus:ring-purple-500 shadow-sm hover:shadow"
+                >
+                  <span className="mr-2">📋</span>
+                  Log Activity
+                </button>
+                <button
+                  onClick={() => router.push("/reports")}
+                  className="btn-enhanced bg-orange-600 text-white hover:bg-orange-700 focus:ring-orange-500 shadow-sm hover:shadow"
+                >
+                  <span className="mr-2">📈</span>
+                  View Reports
+                </button>
+              </div>
+            </div>
+          </React.Fragment>
+        )}
       </div>
     </div>
   );

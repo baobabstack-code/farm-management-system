@@ -246,19 +246,30 @@ function TasksPageContent() {
 
   return (
     <Suspense fallback={<div className="min-h-screen p-8">Loading...</div>}>
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          <div className="px-4 py-6 sm:px-0">
-            <div className="flex justify-between items-center mb-6">
-              <h1 className="text-3xl font-bold text-gray-900">
-                Task Management
-              </h1>
-              <Button
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
+        <div className="content-container py-8">
+          <div className="mb-8">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+              <div className="flex items-center">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mr-4 shadow-lg">
+                  <span className="text-white text-2xl">✅</span>
+                </div>
+                <div>
+                  <h1 className="text-display text-gray-900">
+                    Task Management
+                  </h1>
+                  <p className="text-gray-600 mt-1">
+                    Organize and track your farming tasks and activities
+                  </p>
+                </div>
+              </div>
+              <button
                 onClick={() => setShowCreateForm(true)}
-                className="bg-blue-600 hover:bg-blue-700"
+                className="btn-enhanced bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 shadow-lg hover:shadow-xl"
               >
+                <span className="mr-2">➕</span>
                 Add New Task
-              </Button>
+              </button>
             </div>
 
             {error && (
@@ -268,8 +279,13 @@ function TasksPageContent() {
             )}
 
             {/* Filters */}
-            <div className="mb-6 bg-white shadow rounded-lg p-4">
-              <h2 className="text-lg font-medium mb-4">Filters</h2>
+            <div className="mb-8 card-enhanced p-6">
+              <div className="flex items-center mb-6">
+                <div className="w-8 h-8 bg-gradient-to-br from-gray-400 to-gray-600 rounded-lg flex items-center justify-center mr-3">
+                  <span className="text-white text-sm">🔍</span>
+                </div>
+                <h2 className="text-heading text-gray-900">Filters</h2>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
@@ -371,8 +387,13 @@ function TasksPageContent() {
 
             {/* Create Task Form */}
             {showCreateForm && (
-              <div className="mb-6 bg-white shadow rounded-lg p-6">
-                <h2 className="text-xl font-semibold mb-4">Add New Task</h2>
+              <div className="mb-8 card-enhanced p-6 fade-in">
+                <div className="flex items-center mb-6">
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center mr-3">
+                    <span className="text-white text-sm">✅</span>
+                  </div>
+                  <h2 className="text-heading text-gray-900">Add New Task</h2>
+                </div>
                 <form onSubmit={handleCreateTask} className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -487,116 +508,169 @@ function TasksPageContent() {
                     />
                   </div>
 
-                  <div className="flex space-x-4">
-                    <Button type="submit" disabled={formLoading}>
+                  <div className="flex space-x-3">
+                    <button
+                      type="submit"
+                      disabled={formLoading}
+                      className="btn-enhanced bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 shadow-sm hover:shadow disabled:opacity-50"
+                    >
                       {formLoading ? "Creating..." : "Create Task"}
-                    </Button>
-                    <Button
+                    </button>
+                    <button
                       type="button"
                       onClick={() => setShowCreateForm(false)}
-                      className="bg-gray-600 hover:bg-gray-700"
+                      className="btn-enhanced bg-gray-500 text-white hover:bg-gray-600 focus:ring-gray-500 shadow-sm hover:shadow"
                     >
                       Cancel
-                    </Button>
+                    </button>
                   </div>
                 </form>
               </div>
             )}
 
             {/* Tasks List */}
-            <div className="bg-white shadow rounded-lg overflow-hidden">
-              {tasks.length === 0 ? (
-                <div className="p-6 text-center text-gray-500">
-                  No tasks found. Create your first task to get started!
+            {tasks.length === 0 ? (
+              <div className="card-enhanced p-12 text-center">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-3xl">✅</span>
                 </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Task
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Priority
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Status
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Due Date
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Actions
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {tasks.map((task) => (
-                        <tr
-                          key={task.id}
-                          className={
-                            isOverdue(task.dueDate, task.status)
-                              ? "bg-red-50"
-                              : ""
-                          }
-                        >
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm font-medium text-gray-900">
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  No tasks found
+                </h3>
+                <p className="text-gray-600">
+                  Create your first task to start managing your farm activities!
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {tasks.map((task, index) => {
+                  const daysUntilDue = getDaysUntilDue(task.dueDate);
+                  const overdue = isOverdue(task.dueDate, task.status);
+                  const associatedCrop = task.cropId
+                    ? crops.find((c) => c.id === task.cropId)
+                    : null;
+
+                  return (
+                    <div
+                      key={task.id}
+                      className={`card-enhanced p-6 stagger-item fade-in ${
+                        overdue
+                          ? "ring-2 ring-red-200 bg-red-50"
+                          : "hover:scale-105"
+                      } transition-all duration-200`}
+                    >
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center space-x-3">
+                          <div
+                            className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                              task.priority === TaskPriority.HIGH
+                                ? "bg-gradient-to-br from-red-400 to-red-600"
+                                : task.priority === TaskPriority.MEDIUM
+                                  ? "bg-gradient-to-br from-yellow-400 to-yellow-600"
+                                  : "bg-gradient-to-br from-green-400 to-green-600"
+                            }`}
+                          >
+                            <span className="text-white text-lg">
+                              {task.category === TaskCategory.IRRIGATION
+                                ? "💧"
+                                : task.category === TaskCategory.FERTILIZATION
+                                  ? "🌿"
+                                  : task.category === TaskCategory.PEST_CONTROL
+                                    ? "🐛"
+                                    : task.category === TaskCategory.HARVESTING
+                                      ? "🌾"
+                                      : task.category === TaskCategory.PLANTING
+                                        ? "🌱"
+                                        : "🔧"}
+                            </span>
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-1">
                               {task.title}
-                            </div>
+                            </h3>
                             {task.description && (
-                              <div className="text-sm text-gray-500">
+                              <p className="text-sm text-gray-600 line-clamp-2">
                                 {task.description}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-3 mb-4">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-600">
+                            Priority
+                          </span>
+                          <span
+                            className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getPriorityColor(task.priority)}`}
+                          >
+                            {task.priority}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-600">Status</span>
+                          <span
+                            className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(task.status)}`}
+                          >
+                            {task.status.replace("_", " ")}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-600">
+                            Due Date
+                          </span>
+                          <div className="text-right">
+                            <span className="text-sm font-medium text-gray-900">
+                              {new Date(task.dueDate).toLocaleDateString()}
+                            </span>
+                            {overdue ? (
+                              <div className="text-xs text-red-600 font-medium">
+                                Overdue by {Math.abs(daysUntilDue)} days
+                              </div>
+                            ) : daysUntilDue <= 3 ? (
+                              <div className="text-xs text-orange-600 font-medium">
+                                Due in {daysUntilDue} days
+                              </div>
+                            ) : (
+                              <div className="text-xs text-gray-500">
+                                Due in {daysUntilDue} days
                               </div>
                             )}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span
-                              className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getPriorityColor(task.priority)}`}
-                            >
-                              {task.priority}
+                          </div>
+                        </div>
+                        {associatedCrop && (
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-gray-600">Crop</span>
+                            <span className="text-sm font-medium text-green-600">
+                              {associatedCrop.name}
                             </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span
-                              className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(task.status)}`}
-                            >
-                              {task.status.replace("_", " ")}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {new Date(task.dueDate).toLocaleDateString()}
-                            {isOverdue(task.dueDate, task.status) && (
-                              <div className="text-red-600 text-xs">
-                                Overdue by{" "}
-                                {Math.abs(getDaysUntilDue(task.dueDate))} days
-                              </div>
-                            )}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                            {task.status !== TaskStatus.COMPLETED && (
-                              <Button
-                                onClick={() => handleCompleteTask(task.id)}
-                                className="bg-green-600 hover:bg-green-700 text-xs px-2 py-1"
-                              >
-                                Complete
-                              </Button>
-                            )}
-                            <Button
-                              onClick={() => handleDeleteTask(task.id)}
-                              className="bg-red-600 hover:bg-red-700 text-xs px-2 py-1"
-                            >
-                              Delete
-                            </Button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex space-x-2">
+                        {task.status !== TaskStatus.COMPLETED && (
+                          <button
+                            onClick={() => handleCompleteTask(task.id)}
+                            className="flex-1 btn-enhanced bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 text-sm py-2"
+                          >
+                            <span className="mr-1">✓</span>
+                            Complete
+                          </button>
+                        )}
+                        <button
+                          onClick={() => handleDeleteTask(task.id)}
+                          className="btn-enhanced bg-red-500 text-white hover:bg-red-600 focus:ring-red-500 text-sm py-2 px-3"
+                        >
+                          <span>🗑️</span>
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
       </div>
