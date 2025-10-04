@@ -88,12 +88,12 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="content-container py-8">
-        <div className="mb-8">
-          <h1 className="text-display text-gray-900 mb-2">
+      <div className="content-container py-4 sm:py-6 lg:py-8">
+        <div className="mb-6 lg:mb-8">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 mb-2">
             Farm Management Dashboard
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl">
+          <p className="text-base sm:text-lg text-gray-600 max-w-2xl">
             Welcome back, {user?.firstName || user?.username}! Here's your
             comprehensive farm overview and key insights.
           </p>
@@ -108,8 +108,8 @@ export default function DashboardPage() {
         {analytics && (
           <React.Fragment>
             {/* Key Metrics */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
-              <div className="metric-card group">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6 lg:mb-8">
+              <div className="metric-card group cursor-pointer">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center shadow-sm">
@@ -127,7 +127,7 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              <div className="metric-card group">
+              <div className="metric-card group cursor-pointer">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center shadow-sm">
@@ -145,7 +145,7 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              <div className="metric-card group">
+              <div className="metric-card group cursor-pointer">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-amber-600 rounded-xl flex items-center justify-center shadow-sm">
@@ -163,7 +163,7 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              <div className="metric-card group">
+              <div className="metric-card group cursor-pointer">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl flex items-center justify-center shadow-sm">
@@ -183,8 +183,8 @@ export default function DashboardPage() {
             </div>
 
             {/* Activity Summary */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              <div className="card-enhanced p-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6 lg:mb-8">
+              <div className="card-enhanced p-4 sm:p-6">
                 <div className="flex items-center mb-4">
                   <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center mr-3">
                     <span className="text-white text-sm">💧</span>
@@ -217,7 +217,7 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              <div className="card-enhanced p-6">
+              <div className="card-enhanced p-4 sm:p-6">
                 <div className="flex items-center mb-4">
                   <div className="w-8 h-8 bg-gradient-to-br from-red-400 to-red-600 rounded-lg flex items-center justify-center mr-3">
                     <span className="text-white text-sm">🌡️</span>
@@ -254,14 +254,14 @@ export default function DashboardPage() {
             </div>
 
             {/* Quick Actions */}
-            <div className="card-enhanced p-6">
+            <div className="card-enhanced p-4 sm:p-6">
               <div className="flex items-center mb-6">
                 <div className="w-8 h-8 bg-gradient-to-br from-indigo-400 to-indigo-600 rounded-lg flex items-center justify-center mr-3">
                   <span className="text-white text-sm">⚡</span>
                 </div>
                 <h3 className="text-heading text-gray-900">Quick Actions</h3>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
                 <button
                   onClick={() => router.push("/ai-companion")}
                   className="btn-enhanced btn-primary group"

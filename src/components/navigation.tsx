@@ -33,7 +33,7 @@ export default function Navigation() {
       <div className="lg:hidden fixed top-4 left-4 z-50">
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="bg-white p-2 rounded-md shadow-lg border border-gray-200 hover:bg-gray-50"
+          className="bg-white p-3 rounded-lg shadow-lg border border-gray-200 hover:bg-gray-50 active:bg-gray-100 transition-colors touch-manipulation"
         >
           <svg
             className="h-6 w-6 text-gray-600"
@@ -105,11 +105,11 @@ export default function Navigation() {
                 href={item.href}
                 onClick={() => setIsSidebarOpen(false)}
                 className={`
-                  flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors
+                  flex items-center space-x-3 px-4 py-4 rounded-lg text-base font-medium transition-colors touch-manipulation
                   ${
                     pathname === item.href
                       ? "bg-green-100 text-green-800 border-r-4 border-green-500"
-                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 active:bg-gray-200"
                   }
                 `}
               >
@@ -142,7 +142,7 @@ export default function Navigation() {
             </div>
             <button
               onClick={handleSignOut}
-              className="w-full flex items-center space-x-2 px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              className="w-full flex items-center space-x-2 px-4 py-3 text-base text-gray-600 hover:bg-gray-100 active:bg-gray-200 rounded-lg transition-colors touch-manipulation"
             >
               <span>🚪</span>
               <span>Sign out</span>

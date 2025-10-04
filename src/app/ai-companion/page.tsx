@@ -35,15 +35,19 @@ export default function AICompanionPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-50">
-      <div className="content-container py-8">
-        <div className="mb-8">
-          <div className="flex items-center mb-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center mr-4 shadow-lg">
-              <span className="text-white text-2xl">🤖</span>
+      <div className="content-container py-4 sm:py-6 lg:py-8 mobile-header-spacing">
+        <div className="mb-6 lg:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center mb-4 gap-4">
+            <div className="flex items-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center mr-4 shadow-lg">
+                <span className="text-white text-2xl">🤖</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-gray-900">
+                AI Farm Companion
+              </h1>
             </div>
-            <h1 className="text-display text-gray-900">AI Farm Companion</h1>
           </div>
-          <p className="text-lg text-gray-600 max-w-3xl">
+          <p className="text-base sm:text-lg text-gray-600 max-w-3xl">
             Harness the power of artificial intelligence to get intelligent
             insights, personalized recommendations, and accurate forecasts that
             optimize your farm operations and maximize productivity.
@@ -51,30 +55,30 @@ export default function AICompanionPage() {
         </div>
 
         {/* AI Insights Grid */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 mb-6 lg:mb-8">
           <AIInsightsCard />
           <WeatherInsightsCard />
         </div>
 
         {/* Crop Recommendations */}
-        <div className="mb-8">
+        <div className="mb-6 lg:mb-8">
           <CropRecommendationsCard />
         </div>
 
         {/* Financial Insights */}
-        <div className="mb-8">
+        <div className="mb-6 lg:mb-8">
           <FinancialInsightsCard />
         </div>
 
         {/* Navigation Actions */}
-        <div className="card-enhanced p-6">
+        <div className="card-mobile">
           <div className="flex items-center mb-6">
             <div className="w-8 h-8 bg-gradient-to-br from-slate-400 to-slate-600 rounded-lg flex items-center justify-center mr-3">
               <span className="text-white text-sm">🧧</span>
             </div>
             <h3 className="text-heading text-gray-900">Quick Navigation</h3>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             <button
               onClick={() => router.push("/dashboard")}
               className="btn-enhanced btn-primary group"

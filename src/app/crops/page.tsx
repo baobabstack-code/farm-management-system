@@ -158,9 +158,9 @@ export default function CropsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
-      <div className="content-container py-8">
-        <div className="mb-8">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+      <div className="content-container py-4 sm:py-6 lg:py-8 mobile-header-spacing">
+        <div className="mb-6 lg:mb-8">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6">
             <div className="flex items-center">
               <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mr-4 shadow-lg">
                 <span className="text-white text-2xl">🌱</span>
@@ -188,15 +188,15 @@ export default function CropsPage() {
           )}
 
           {showCreateForm && (
-            <div className="mb-8 card-enhanced p-6 fade-in">
+            <div className="mb-6 lg:mb-8 card-mobile fade-in">
               <div className="flex items-center mb-6">
                 <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center mr-3">
                   <span className="text-white text-sm">🌱</span>
                 </div>
                 <h2 className="text-heading text-gray-900">Add New Crop</h2>
               </div>
-              <form onSubmit={handleCreateCrop} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <form onSubmit={handleCreateCrop} className="form-mobile">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
                       Crop Name *
@@ -271,7 +271,7 @@ export default function CropsPage() {
                     />
                   </div>
                 </div>
-                <div className="flex space-x-3">
+                <div className="flex flex-col sm:flex-row gap-3 sm:space-x-3">
                   <button
                     type="submit"
                     disabled={formLoading}
@@ -304,7 +304,7 @@ export default function CropsPage() {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid-mobile-adaptive">
               {crops.map((crop, index) => {
                 const daysToHarvest = getDaysToHarvest(
                   crop.expectedHarvestDate
@@ -312,7 +312,7 @@ export default function CropsPage() {
                 return (
                   <div
                     key={crop.id}
-                    className={`card-enhanced p-6 stagger-item fade-in hover:scale-105 transition-transform duration-200 cursor-pointer`}
+                    className={`card-mobile stagger-item fade-in hover:scale-105 transition-transform duration-200 cursor-pointer touch-target`}
                     onClick={() => router.push(`/crops/${crop.id}`)}
                   >
                     <div className="flex items-start justify-between mb-4">

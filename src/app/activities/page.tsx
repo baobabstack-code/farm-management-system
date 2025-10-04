@@ -375,15 +375,17 @@ export default function ActivitiesPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
-      <div className="content-container py-8">
-        <div className="mb-8">
-          <div className="flex items-center mb-6">
+      <div className="content-container py-4 sm:py-6 lg:py-8 mobile-header-spacing">
+        <div className="mb-6 lg:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center mb-4 sm:mb-6 gap-4">
             <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mr-4 shadow-lg">
               <span className="text-white text-2xl">📋</span>
             </div>
             <div>
-              <h1 className="text-display text-gray-900">Activity Logging</h1>
-              <p className="text-gray-600 mt-1">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-gray-900">
+                Activity Logging
+              </h1>
+              <p className="text-base sm:text-lg text-gray-600 mt-1">
                 Record and track all your farming activities
               </p>
             </div>
@@ -402,9 +404,9 @@ export default function ActivitiesPage() {
           )}
 
           {/* Tab Navigation */}
-          <div className="mb-8">
-            <div className="card-enhanced p-2">
-              <nav className="flex space-x-2">
+          <div className="mb-6 lg:mb-8">
+            <div className="card-mobile overflow-x-auto">
+              <nav className="flex space-x-1 sm:space-x-2 min-w-max">
                 {[
                   {
                     key: "irrigation",
@@ -430,7 +432,7 @@ export default function ActivitiesPage() {
                   <button
                     key={tab.key}
                     onClick={() => setActiveTab(tab.key as ActivityType)}
-                    className={`flex-1 py-3 px-4 rounded-lg font-medium text-sm transition-all duration-200 ${
+                    className={`flex-1 py-3 px-2 sm:px-4 rounded-lg font-medium text-xs sm:text-sm whitespace-nowrap transition-all duration-200 ${
                       activeTab === tab.key
                         ? `bg-gradient-to-r ${tab.color} text-white shadow-md transform scale-105`
                         : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
@@ -443,10 +445,10 @@ export default function ActivitiesPage() {
             </div>
           </div>
 
-          <div className="card-enhanced p-8 fade-in">
+          <div className="card-mobile fade-in">
             {/* Irrigation Form */}
             {activeTab === "irrigation" && (
-              <form onSubmit={handleIrrigationSubmit} className="space-y-6">
+              <form onSubmit={handleIrrigationSubmit} className="form-mobile">
                 <div className="flex items-center mb-6">
                   <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-cyan-600 rounded-lg flex items-center justify-center mr-3">
                     <span className="text-white text-lg">💧</span>
@@ -456,7 +458,7 @@ export default function ActivitiesPage() {
                   </h2>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
                       Crop *
@@ -470,7 +472,7 @@ export default function ActivitiesPage() {
                         })
                       }
                       required
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      className="input-mobile"
                     >
                       <option value="">Select Crop</option>
                       {crops.map((crop) => (
@@ -547,7 +549,7 @@ export default function ActivitiesPage() {
                           method: e.target.value,
                         })
                       }
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      className="input-mobile"
                     >
                       <option value="">Select Method</option>
                       <option value="SPRINKLER">Sprinkler</option>
@@ -571,7 +573,7 @@ export default function ActivitiesPage() {
                       })
                     }
                     rows={3}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    className="input-mobile"
                   />
                 </div>
 

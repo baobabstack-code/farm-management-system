@@ -247,9 +247,9 @@ function TasksPageContent() {
   return (
     <Suspense fallback={<div className="min-h-screen p-8">Loading...</div>}>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
-        <div className="content-container py-8">
-          <div className="mb-8">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div className="content-container py-4 sm:py-6 lg:py-8 mobile-header-spacing">
+          <div className="mb-6 lg:mb-8">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6">
               <div className="flex items-center">
                 <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mr-4 shadow-lg">
                   <span className="text-white text-2xl">✅</span>
@@ -279,14 +279,14 @@ function TasksPageContent() {
             )}
 
             {/* Filters */}
-            <div className="mb-8 card-enhanced p-6">
+            <div className="mb-6 lg:mb-8 card-mobile">
               <div className="flex items-center mb-6">
                 <div className="w-8 h-8 bg-gradient-to-br from-gray-400 to-gray-600 rounded-lg flex items-center justify-center mr-3">
                   <span className="text-white text-sm">🔍</span>
                 </div>
                 <h2 className="text-heading text-gray-900">Filters</h2>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
                     Status
@@ -296,7 +296,7 @@ function TasksPageContent() {
                     onChange={(e) =>
                       setFilters({ ...filters, status: e.target.value })
                     }
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    className="input-mobile"
                   >
                     <option value="">All Statuses</option>
                     {Object.values(TaskStatus).map((status) => (
@@ -316,7 +316,7 @@ function TasksPageContent() {
                     onChange={(e) =>
                       setFilters({ ...filters, priority: e.target.value })
                     }
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    className="input-mobile"
                   >
                     <option value="">All Priorities</option>
                     {Object.values(TaskPriority).map((priority) => (
@@ -336,7 +336,7 @@ function TasksPageContent() {
                     onChange={(e) =>
                       setFilters({ ...filters, category: e.target.value })
                     }
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    className="input-mobile"
                   >
                     <option value="">All Categories</option>
                     {Object.values(TaskCategory).map((category) => (
@@ -356,7 +356,7 @@ function TasksPageContent() {
                     onChange={(e) =>
                       setFilters({ ...filters, cropId: e.target.value })
                     }
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    className="input-mobile"
                   >
                     <option value="">All Crops</option>
                     {crops.map((crop) => (
@@ -367,7 +367,7 @@ function TasksPageContent() {
                   </select>
                 </div>
 
-                <div className="flex items-end">
+                <div className="flex items-end sm:col-span-2 lg:col-span-1">
                   <label className="flex items-center">
                     <input
                       type="checkbox"
