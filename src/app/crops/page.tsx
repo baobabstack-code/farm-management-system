@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Crop, CropStatus } from "@/types";
 
@@ -305,7 +304,7 @@ export default function CropsPage() {
             </div>
           ) : (
             <div className="grid-mobile-adaptive">
-              {crops.map((crop, index) => {
+              {crops.map((crop) => {
                 const daysToHarvest = getDaysToHarvest(
                   crop.expectedHarvestDate
                 );
