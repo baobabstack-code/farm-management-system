@@ -119,19 +119,19 @@ export default function CropsPage() {
   const getStatusColor = (status: CropStatus) => {
     switch (status) {
       case CropStatus.PLANTED:
-        return "bg-blue-100 text-blue-800";
+        return "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200";
       case CropStatus.GROWING:
-        return "bg-green-100 text-green-800";
+        return "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200";
       case CropStatus.FLOWERING:
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200";
       case CropStatus.FRUITING:
-        return "bg-orange-100 text-orange-800";
+        return "bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-200";
       case CropStatus.HARVESTED:
-        return "bg-purple-100 text-purple-800";
+        return "bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200";
       case CropStatus.COMPLETED:
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 dark:bg-gray-700/30 text-gray-800 dark:text-gray-200";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 dark:bg-gray-700/30 text-gray-800 dark:text-gray-200";
     }
   };
 
@@ -145,10 +145,12 @@ export default function CropsPage() {
 
   if (!isLoaded || loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
-            <div className="text-center">Loading...</div>
+            <div className="text-center text-gray-900 dark:text-gray-100">
+              Loading...
+            </div>
           </div>
         </div>
       </div>
@@ -156,7 +158,7 @@ export default function CropsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 dark:from-slate-900 dark:to-green-900/20">
       <div className="content-container py-4 sm:py-6 lg:py-8 mobile-header-spacing">
         <div className="mb-6 lg:mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6">
@@ -165,8 +167,10 @@ export default function CropsPage() {
                 <span className="text-white text-2xl">🌱</span>
               </div>
               <div>
-                <h1 className="text-display text-gray-900">Crop Management</h1>
-                <p className="text-gray-600 mt-1">
+                <h1 className="text-display text-gray-900 dark:text-gray-100">
+                  Crop Management
+                </h1>
+                <p className="text-gray-600 dark:text-gray-300 mt-1">
                   Monitor and manage your crops from planting to harvest
                 </p>
               </div>
@@ -181,7 +185,7 @@ export default function CropsPage() {
           </div>
 
           {error && (
-            <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+            <div className="mb-4 p-4 bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-400 rounded">
               {error}
             </div>
           )}
@@ -192,12 +196,14 @@ export default function CropsPage() {
                 <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center mr-3">
                   <span className="text-white text-sm">🌱</span>
                 </div>
-                <h2 className="text-heading text-gray-900">Add New Crop</h2>
+                <h2 className="text-heading text-gray-900 dark:text-gray-100">
+                  Add New Crop
+                </h2>
               </div>
               <form onSubmit={handleCreateCrop} className="form-mobile">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Crop Name *
                     </label>
                     <Input
@@ -211,7 +217,7 @@ export default function CropsPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Variety
                     </label>
                     <Input
@@ -224,7 +230,7 @@ export default function CropsPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Planting Date *
                     </label>
                     <Input
@@ -240,7 +246,7 @@ export default function CropsPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Expected Harvest Date *
                     </label>
                     <Input
@@ -256,7 +262,7 @@ export default function CropsPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Area (square meters)
                     </label>
                     <Input

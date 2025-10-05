@@ -337,10 +337,12 @@ export default function ActivitiesPage() {
 
   if (!isLoaded || loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
-            <div className="text-center">Loading...</div>
+            <div className="text-center text-gray-900 dark:text-gray-100">
+              Loading...
+            </div>
           </div>
         </div>
       </div>
@@ -350,18 +352,21 @@ export default function ActivitiesPage() {
   // Show message if no crops are available
   if (crops.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
             <div className="text-center">
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">
                 Farm Activities
               </h1>
-              <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded">
+              <div className="bg-yellow-100 dark:bg-yellow-900/20 border border-yellow-400 dark:border-yellow-700 text-yellow-700 dark:text-yellow-400 px-4 py-3 rounded">
                 <p className="font-medium">No crops available</p>
                 <p className="text-sm mt-1">
                   You need to create crops first before logging activities.{" "}
-                  <Link href="/crops" className="underline font-medium">
+                  <Link
+                    href="/crops"
+                    className="underline font-medium hover:text-yellow-800 dark:hover:text-yellow-300"
+                  >
                     Go to Crops Management
                   </Link>
                 </p>
@@ -374,7 +379,7 @@ export default function ActivitiesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 dark:from-slate-900 dark:to-purple-900/20">
       <div className="content-container py-4 sm:py-6 lg:py-8 mobile-header-spacing">
         <div className="mb-6 lg:mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center mb-4 sm:mb-6 gap-4">
@@ -382,23 +387,23 @@ export default function ActivitiesPage() {
               <span className="text-white text-2xl">📋</span>
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-gray-900">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
                 Activity Logging
               </h1>
-              <p className="text-base sm:text-lg text-gray-600 mt-1">
+              <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 mt-1">
                 Record and track all your farming activities
               </p>
             </div>
           </div>
 
           {error && (
-            <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+            <div className="mb-4 p-4 bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-400 rounded">
               {error}
             </div>
           )}
 
           {success && (
-            <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+            <div className="mb-4 p-4 bg-green-100 dark:bg-green-900/20 border border-green-400 dark:border-green-700 text-green-700 dark:text-green-400 rounded">
               {success}
             </div>
           )}
@@ -435,7 +440,7 @@ export default function ActivitiesPage() {
                     className={`flex-1 py-3 px-2 sm:px-4 rounded-lg font-medium text-xs sm:text-sm whitespace-nowrap transition-all duration-200 ${
                       activeTab === tab.key
                         ? `bg-gradient-to-r ${tab.color} text-white shadow-md transform scale-105`
-                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                        : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-slate-700"
                     }`}
                   >
                     {tab.label}
@@ -453,14 +458,14 @@ export default function ActivitiesPage() {
                   <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-cyan-600 rounded-lg flex items-center justify-center mr-3">
                     <span className="text-white text-lg">💧</span>
                   </div>
-                  <h2 className="text-heading text-gray-900">
+                  <h2 className="text-heading text-gray-900 dark:text-gray-100">
                     Log Irrigation Activity
                   </h2>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Crop *
                     </label>
                     <select
@@ -484,7 +489,7 @@ export default function ActivitiesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Date *
                     </label>
                     <Input
@@ -501,7 +506,7 @@ export default function ActivitiesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Duration (minutes) *
                     </label>
                     <Input
@@ -519,7 +524,7 @@ export default function ActivitiesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Water Amount (liters) *
                     </label>
                     <Input
@@ -538,7 +543,7 @@ export default function ActivitiesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Method
                     </label>
                     <select
@@ -561,7 +566,7 @@ export default function ActivitiesPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Notes
                   </label>
                   <textarea
@@ -595,14 +600,14 @@ export default function ActivitiesPage() {
                   <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-emerald-600 rounded-lg flex items-center justify-center mr-3">
                     <span className="text-white text-lg">🌿</span>
                   </div>
-                  <h2 className="text-heading text-gray-900">
+                  <h2 className="text-heading text-gray-900 dark:text-gray-100">
                     Log Fertilizer Application
                   </h2>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Crop *
                     </label>
                     <select
@@ -614,7 +619,7 @@ export default function ActivitiesPage() {
                         })
                       }
                       required
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100"
                     >
                       <option value="">Select Crop</option>
                       {crops.map((crop) => (
@@ -626,7 +631,7 @@ export default function ActivitiesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Date *
                     </label>
                     <Input
@@ -643,7 +648,7 @@ export default function ActivitiesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Fertilizer Type *
                     </label>
                     <Input
@@ -661,7 +666,7 @@ export default function ActivitiesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Amount (kg) *
                     </label>
                     <Input
@@ -680,7 +685,7 @@ export default function ActivitiesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Application Method *
                     </label>
                     <select
@@ -692,7 +697,7 @@ export default function ActivitiesPage() {
                         })
                       }
                       required
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100"
                     >
                       <option value="">Select Method</option>
                       <option value="BROADCAST">Broadcast</option>
@@ -704,7 +709,7 @@ export default function ActivitiesPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Notes
                   </label>
                   <textarea
@@ -716,7 +721,7 @@ export default function ActivitiesPage() {
                       })
                     }
                     rows={3}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100"
                   />
                 </div>
 
@@ -734,13 +739,13 @@ export default function ActivitiesPage() {
             {/* Pest/Disease Form */}
             {activeTab === "pest-disease" && (
               <form onSubmit={handlePestDiseaseSubmit} className="space-y-4">
-                <h2 className="text-xl font-semibold mb-4">
+                <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
                   Log Pest/Disease Issue
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Crop *
                     </label>
                     <select
@@ -752,7 +757,7 @@ export default function ActivitiesPage() {
                         })
                       }
                       required
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100"
                     >
                       <option value="">Select Crop</option>
                       {crops.map((crop) => (
@@ -764,7 +769,7 @@ export default function ActivitiesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Date *
                     </label>
                     <Input
@@ -781,7 +786,7 @@ export default function ActivitiesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Type *
                     </label>
                     <select
@@ -794,7 +799,7 @@ export default function ActivitiesPage() {
                         });
                       }}
                       required
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100"
                     >
                       {Object.values(PestDiseaseType).map((type) => (
                         <option key={type} value={type}>
@@ -805,7 +810,7 @@ export default function ActivitiesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Name *
                     </label>
                     <Input
@@ -823,7 +828,7 @@ export default function ActivitiesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Severity *
                     </label>
                     <select
@@ -836,7 +841,7 @@ export default function ActivitiesPage() {
                         });
                       }}
                       required
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100"
                     >
                       {Object.values(Severity).map((severity) => (
                         <option key={severity} value={severity}>
@@ -847,7 +852,7 @@ export default function ActivitiesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Affected Area (m²) *
                     </label>
                     <Input
@@ -866,7 +871,7 @@ export default function ActivitiesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Treatment *
                     </label>
                     <Input
@@ -885,7 +890,7 @@ export default function ActivitiesPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Notes
                   </label>
                   <textarea
@@ -897,7 +902,7 @@ export default function ActivitiesPage() {
                       })
                     }
                     rows={3}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100"
                   />
                 </div>
 
@@ -910,11 +915,13 @@ export default function ActivitiesPage() {
             {/* Harvest Form */}
             {activeTab === "harvest" && (
               <form onSubmit={handleHarvestSubmit} className="space-y-4">
-                <h2 className="text-xl font-semibold mb-4">Log Harvest</h2>
+                <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+                  Log Harvest
+                </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Crop *
                     </label>
                     <select
@@ -926,7 +933,7 @@ export default function ActivitiesPage() {
                         })
                       }
                       required
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100"
                     >
                       <option value="">Select Crop</option>
                       {crops.map((crop) => (
@@ -938,7 +945,7 @@ export default function ActivitiesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Harvest Date *
                     </label>
                     <Input
@@ -955,7 +962,7 @@ export default function ActivitiesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Quantity *
                     </label>
                     <Input
@@ -974,7 +981,7 @@ export default function ActivitiesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Unit *
                     </label>
                     <Input
@@ -989,7 +996,7 @@ export default function ActivitiesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Quality Grade *
                     </label>
                     <select
@@ -1001,7 +1008,7 @@ export default function ActivitiesPage() {
                         })
                       }
                       required
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100"
                     >
                       <option value="">Select Grade</option>
                       <option value="EXCELLENT">Excellent</option>
@@ -1013,7 +1020,7 @@ export default function ActivitiesPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Notes
                   </label>
                   <textarea
@@ -1022,7 +1029,7 @@ export default function ActivitiesPage() {
                       setHarvestForm({ ...harvestForm, notes: e.target.value })
                     }
                     rows={3}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100"
                   />
                 </div>
 

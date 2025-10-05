@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback, Suspense } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Task, TaskStatus, TaskPriority, TaskCategory, Crop } from "@/types";
 
@@ -54,7 +53,7 @@ function TasksPageContent() {
       fetchTasks();
       fetchCrops();
     }
-  }, [user, isLoaded, router, filters]);
+  }, [user, isLoaded, router, filters, fetchTasks]);
 
   const fetchTasks = useCallback(async () => {
     try {
@@ -197,26 +196,26 @@ function TasksPageContent() {
   const getPriorityColor = (priority: TaskPriority) => {
     switch (priority) {
       case TaskPriority.HIGH:
-        return "bg-red-100 text-red-800";
+        return "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200";
       case TaskPriority.MEDIUM:
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200";
       case TaskPriority.LOW:
-        return "bg-green-100 text-green-800";
+        return "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 dark:bg-gray-700/30 text-gray-800 dark:text-gray-200";
     }
   };
 
   const getStatusColor = (status: TaskStatus) => {
     switch (status) {
       case TaskStatus.COMPLETED:
-        return "bg-green-100 text-green-800";
+        return "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200";
       case TaskStatus.IN_PROGRESS:
-        return "bg-blue-100 text-blue-800";
+        return "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200";
       case TaskStatus.CANCELLED:
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 dark:bg-gray-700/30 text-gray-800 dark:text-gray-200";
       default:
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200";
     }
   };
 
@@ -234,10 +233,12 @@ function TasksPageContent() {
 
   if (!isLoaded || loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
-            <div className="text-center">Loading...</div>
+            <div className="text-center text-gray-900 dark:text-gray-100">
+              Loading...
+            </div>
           </div>
         </div>
       </div>
@@ -245,8 +246,14 @@ function TasksPageContent() {
   }
 
   return (
-    <Suspense fallback={<div className="min-h-screen p-8">Loading...</div>}>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
+    <Suspense
+      fallback={
+        <div className="min-h-screen p-8 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-gray-100">
+          Loading...
+        </div>
+      }
+    >
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-900 dark:to-indigo-900/20">
         <div className="content-container py-4 sm:py-6 lg:py-8 mobile-header-spacing">
           <div className="mb-6 lg:mb-8">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6">
@@ -255,10 +262,10 @@ function TasksPageContent() {
                   <span className="text-white text-2xl">✅</span>
                 </div>
                 <div>
-                  <h1 className="text-display text-gray-900">
+                  <h1 className="text-display text-gray-900 dark:text-gray-100">
                     Task Management
                   </h1>
-                  <p className="text-gray-600 mt-1">
+                  <p className="text-gray-600 dark:text-gray-300 mt-1">
                     Organize and track your farming tasks and activities
                   </p>
                 </div>
@@ -273,7 +280,7 @@ function TasksPageContent() {
             </div>
 
             {error && (
-              <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+              <div className="mb-4 p-4 bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-400 rounded">
                 {error}
               </div>
             )}
@@ -284,11 +291,13 @@ function TasksPageContent() {
                 <div className="w-8 h-8 bg-gradient-to-br from-gray-400 to-gray-600 rounded-lg flex items-center justify-center mr-3">
                   <span className="text-white text-sm">🔍</span>
                 </div>
-                <h2 className="text-heading text-gray-900">Filters</h2>
+                <h2 className="text-heading text-gray-900 dark:text-gray-100">
+                  Filters
+                </h2>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Status
                   </label>
                   <select
@@ -308,7 +317,7 @@ function TasksPageContent() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Priority
                   </label>
                   <select
@@ -328,7 +337,7 @@ function TasksPageContent() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Category
                   </label>
                   <select
@@ -348,7 +357,7 @@ function TasksPageContent() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Crop
                   </label>
                   <select
@@ -377,7 +386,7 @@ function TasksPageContent() {
                       }
                       className="mr-2"
                     />
-                    <span className="text-sm font-medium text-gray-700">
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Overdue Only
                     </span>
                   </label>
@@ -392,12 +401,14 @@ function TasksPageContent() {
                   <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center mr-3">
                     <span className="text-white text-sm">✅</span>
                   </div>
-                  <h2 className="text-heading text-gray-900">Add New Task</h2>
+                  <h2 className="text-heading text-gray-900 dark:text-gray-100">
+                    Add New Task
+                  </h2>
                 </div>
                 <form onSubmit={handleCreateTask} className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                         Task Title *
                       </label>
                       <Input
@@ -412,7 +423,7 @@ function TasksPageContent() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                         Due Date *
                       </label>
                       <Input
@@ -426,7 +437,7 @@ function TasksPageContent() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                         Priority
                       </label>
                       <select
@@ -448,7 +459,7 @@ function TasksPageContent() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                         Category
                       </label>
                       <select
@@ -470,7 +481,7 @@ function TasksPageContent() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                         Associated Crop
                       </label>
                       <select
@@ -491,7 +502,7 @@ function TasksPageContent() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Description
                     </label>
                     <textarea
@@ -531,19 +542,19 @@ function TasksPageContent() {
             {/* Tasks List */}
             {tasks.length === 0 ? (
               <div className="card-enhanced p-12 text-center">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
                   <span className="text-3xl">✅</span>
                 </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
                   No tasks found
                 </h3>
-                <p className="text-gray-600">
+                <p className="text-gray-600 dark:text-gray-300">
                   Create your first task to start managing your farm activities!
                 </p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {tasks.map((task, index) => {
+                {tasks.map((task) => {
                   const daysUntilDue = getDaysUntilDue(task.dueDate);
                   const overdue = isOverdue(task.dueDate, task.status);
                   const associatedCrop = task.cropId
@@ -555,7 +566,7 @@ function TasksPageContent() {
                       key={task.id}
                       className={`card-enhanced p-6 stagger-item fade-in ${
                         overdue
-                          ? "ring-2 ring-red-200 bg-red-50"
+                          ? "ring-2 ring-red-200 dark:ring-red-800 bg-red-50 dark:bg-red-900/10"
                           : "hover:scale-105"
                       } transition-all duration-200`}
                     >
@@ -585,11 +596,11 @@ function TasksPageContent() {
                             </span>
                           </div>
                           <div className="flex-1">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
                               {task.title}
                             </h3>
                             {task.description && (
-                              <p className="text-sm text-gray-600 line-clamp-2">
+                              <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
                                 {task.description}
                               </p>
                             )}
@@ -599,7 +610,7 @@ function TasksPageContent() {
 
                       <div className="space-y-3 mb-4">
                         <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-600">
+                          <span className="text-sm text-gray-600 dark:text-gray-300">
                             Priority
                           </span>
                           <span
@@ -609,7 +620,9 @@ function TasksPageContent() {
                           </span>
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-600">Status</span>
+                          <span className="text-sm text-gray-600 dark:text-gray-300">
+                            Status
+                          </span>
                           <span
                             className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(task.status)}`}
                           >
@@ -617,23 +630,23 @@ function TasksPageContent() {
                           </span>
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-600">
+                          <span className="text-sm text-gray-600 dark:text-gray-300">
                             Due Date
                           </span>
                           <div className="text-right">
-                            <span className="text-sm font-medium text-gray-900">
+                            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                               {new Date(task.dueDate).toLocaleDateString()}
                             </span>
                             {overdue ? (
-                              <div className="text-xs text-red-600 font-medium">
+                              <div className="text-xs text-red-600 dark:text-red-400 font-medium">
                                 Overdue by {Math.abs(daysUntilDue)} days
                               </div>
                             ) : daysUntilDue <= 3 ? (
-                              <div className="text-xs text-orange-600 font-medium">
+                              <div className="text-xs text-orange-600 dark:text-orange-400 font-medium">
                                 Due in {daysUntilDue} days
                               </div>
                             ) : (
-                              <div className="text-xs text-gray-500">
+                              <div className="text-xs text-gray-500 dark:text-gray-400">
                                 Due in {daysUntilDue} days
                               </div>
                             )}
@@ -641,8 +654,10 @@ function TasksPageContent() {
                         </div>
                         {associatedCrop && (
                           <div className="flex justify-between items-center">
-                            <span className="text-sm text-gray-600">Crop</span>
-                            <span className="text-sm font-medium text-green-600">
+                            <span className="text-sm text-gray-600 dark:text-gray-300">
+                              Crop
+                            </span>
+                            <span className="text-sm font-medium text-green-600 dark:text-green-400">
                               {associatedCrop.name}
                             </span>
                           </div>
@@ -680,7 +695,13 @@ function TasksPageContent() {
 
 export default function TasksPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen p-8">Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen p-8 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-gray-100">
+          Loading...
+        </div>
+      }
+    >
       <TasksPageContent />
     </Suspense>
   );

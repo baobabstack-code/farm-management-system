@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { isFeatureEnabled } from "@/lib/feature-flags";
 import { FinancialAnalyticsService } from "@/lib/services/financial-analytics";
@@ -7,7 +7,7 @@ import { FinancialAnalyticsService } from "@/lib/services/financial-analytics";
  * Enhanced Financial Analytics API
  * Provides comprehensive financial insights with AI-powered analysis
  */
-export async function GET(request: NextRequest) {
+export async function POST() {
   try {
     // Check if financial insights feature is enabled
     if (!isFeatureEnabled("aiFinancialInsights")) {

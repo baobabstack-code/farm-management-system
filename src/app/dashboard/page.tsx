@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 
 interface DashboardStats {
   totalCrops: number;
@@ -76,10 +75,12 @@ export default function DashboardPage() {
 
   if (!isLoaded || loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
-            <div className="text-center">Loading...</div>
+            <div className="text-center text-gray-900 dark:text-gray-100">
+              Loading...
+            </div>
           </div>
         </div>
       </div>
@@ -87,20 +88,20 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-slate-900 dark:to-gray-800">
       <div className="content-container py-4 sm:py-6 lg:py-8">
         <div className="mb-6 lg:mb-8">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 mb-2">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100 mb-2">
             Farm Management Dashboard
           </h1>
-          <p className="text-base sm:text-lg text-gray-600 max-w-2xl">
-            Welcome back, {user?.firstName || user?.username}! Here's your
+          <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 max-w-2xl">
+            Welcome back, {user?.firstName || user?.username}! Here&apos;s your
             comprehensive farm overview and key insights.
           </p>
         </div>
 
         {error && (
-          <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+          <div className="mb-4 p-4 bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-400 rounded">
             {error}
           </div>
         )}

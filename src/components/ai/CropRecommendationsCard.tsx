@@ -55,8 +55,8 @@ export default function CropRecommendationsCard() {
           currentSeason: data.options.currentSeason,
         }));
       }
-    } catch (error) {
-      console.error("Failed to fetch options:", error);
+    } catch {
+      console.error("Failed to fetch options");
     }
   };
 
@@ -83,7 +83,7 @@ export default function CropRecommendationsCard() {
       } else {
         setError(data.error || "Failed to fetch recommendations");
       }
-    } catch (error) {
+    } catch {
       setError("Error fetching recommendations");
     } finally {
       setIsLoading(false);
@@ -109,7 +109,7 @@ export default function CropRecommendationsCard() {
       } else {
         setError(data.error || "Failed to fetch recommendations");
       }
-    } catch (error) {
+    } catch {
       setError("Error fetching recommendations");
     } finally {
       setIsLoading(false);
@@ -204,7 +204,13 @@ export default function CropRecommendationsCard() {
               <select
                 value={factors.experience}
                 onChange={(e) =>
-                  setFactors({ ...factors, experience: e.target.value as any })
+                  setFactors({
+                    ...factors,
+                    experience: e.target.value as
+                      | "beginner"
+                      | "intermediate"
+                      | "advanced",
+                  })
                 }
                 className="w-full text-xs border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >

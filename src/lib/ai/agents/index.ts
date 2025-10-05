@@ -1,5 +1,4 @@
-import type { NextRequest } from "next/server";
-import { createGoogleAIService, GoogleAIService } from "../google-ai-service";
+import { createGoogleAIService } from "../google-ai-service";
 import { weatherService } from "../../services/weather";
 
 export interface ADKChatContext {
@@ -107,7 +106,7 @@ export async function getChatResponseFromADK(
     // Fallback to simulation on any error
     try {
       return await simulateGoogleAICall(context);
-    } catch (fallbackErr) {
+    } catch {
       return {
         success: false,
         content: "",
@@ -148,7 +147,9 @@ async function simulateGoogleAICall(
   context: ADKChatContext
 ): Promise<ADKChatResult> {
   // Build context summary
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const cropSummary = summarizeCrops(context.crops);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const activitySummary = summarizeActivities(context.activities);
 
   // Generate contextual response

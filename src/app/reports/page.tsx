@@ -48,19 +48,6 @@ export default function ReportsPage() {
     endDate: "",
   });
 
-  useEffect(() => {
-    if (!isLoaded) return;
-
-    if (!user) {
-      router.push("/sign-in");
-      return;
-    }
-
-    if (user) {
-      fetchReportData();
-    }
-  }, [user, isLoaded, router, dateRange]);
-
   const fetchReportData = useCallback(async () => {
     try {
       const params = new URLSearchParams();
@@ -81,6 +68,19 @@ export default function ReportsPage() {
       setLoading(false);
     }
   }, [dateRange]);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    if (!user) {
+      router.push("/sign-in");
+      return;
+    }
+
+    if (user) {
+      fetchReportData();
+    }
+  }, [user, isLoaded, router, dateRange, fetchReportData]);
 
   const exportToCSV = () => {
     if (!reportData) return;
@@ -125,10 +125,12 @@ export default function ReportsPage() {
 
   if (!isLoaded || loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
-            <div className="text-center">Loading...</div>
+            <div className="text-center text-gray-900 dark:text-gray-100">
+              Loading...
+            </div>
           </div>
         </div>
       </div>
@@ -137,16 +139,18 @@ export default function ReportsPage() {
 
   if (!reportData) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
             <div className="text-center">
               {error ? (
-                <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+                <div className="p-4 bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-400 rounded">
                   {error}
                 </div>
               ) : (
-                "Loading report data..."
+                <span className="text-gray-900 dark:text-gray-100">
+                  Loading report data...
+                </span>
               )}
             </div>
           </div>
@@ -156,7 +160,7 @@ export default function ReportsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-yellow-50">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-yellow-50 dark:from-slate-900 dark:to-orange-900/20">
       <div className="content-container py-8">
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
@@ -165,10 +169,10 @@ export default function ReportsPage() {
                 <span className="text-white text-2xl">📈</span>
               </div>
               <div>
-                <h1 className="text-display text-gray-900">
+                <h1 className="text-display text-gray-900 dark:text-gray-100">
                   Farm Reports & Analytics
                 </h1>
-                <p className="text-gray-600 mt-1">
+                <p className="text-gray-600 dark:text-gray-300 mt-1">
                   Comprehensive insights into your farm performance
                 </p>
               </div>
@@ -184,7 +188,7 @@ export default function ReportsPage() {
           </div>
 
           {error && (
-            <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+            <div className="mb-4 p-4 bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-400 rounded">
               {error}
             </div>
           )}
@@ -195,11 +199,13 @@ export default function ReportsPage() {
               <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center mr-3">
                 <span className="text-white text-sm">📅</span>
               </div>
-              <h2 className="text-heading text-gray-900">Date Range Filter</h2>
+              <h2 className="text-heading text-gray-900 dark:text-gray-100">
+                Date Range Filter
+              </h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Start Date
                 </label>
                 <input
@@ -208,11 +214,11 @@ export default function ReportsPage() {
                   onChange={(e) =>
                     setDateRange({ ...dateRange, startDate: e.target.value })
                   }
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   End Date
                 </label>
                 <input
@@ -221,7 +227,7 @@ export default function ReportsPage() {
                   onChange={(e) =>
                     setDateRange({ ...dateRange, endDate: e.target.value })
                   }
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100"
                 />
               </div>
               <div className="flex items-end">
@@ -239,7 +245,7 @@ export default function ReportsPage() {
             <>
               {/* Summary Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div className="bg-white overflow-hidden shadow rounded-lg">
+                <div className="bg-white dark:bg-slate-800 overflow-hidden shadow rounded-lg">
                   <div className="p-5">
                     <div className="flex items-center">
                       <div className="flex-shrink-0">
@@ -249,10 +255,10 @@ export default function ReportsPage() {
                       </div>
                       <div className="ml-5 w-0 flex-1">
                         <dl>
-                          <dt className="text-sm font-medium text-gray-500 truncate">
+                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
                             Total Crops
                           </dt>
-                          <dd className="text-lg font-medium text-gray-900">
+                          <dd className="text-lg font-medium text-gray-900 dark:text-gray-100">
                             {reportData.dashboard.totalCrops}
                           </dd>
                         </dl>
@@ -261,7 +267,7 @@ export default function ReportsPage() {
                   </div>
                 </div>
 
-                <div className="bg-white overflow-hidden shadow rounded-lg">
+                <div className="bg-white dark:bg-slate-800 overflow-hidden shadow rounded-lg">
                   <div className="p-5">
                     <div className="flex items-center">
                       <div className="flex-shrink-0">
@@ -271,10 +277,10 @@ export default function ReportsPage() {
                       </div>
                       <div className="ml-5 w-0 flex-1">
                         <dl>
-                          <dt className="text-sm font-medium text-gray-500 truncate">
+                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
                             Active Tasks
                           </dt>
-                          <dd className="text-lg font-medium text-gray-900">
+                          <dd className="text-lg font-medium text-gray-900 dark:text-gray-100">
                             {reportData.dashboard.activeTasks}
                           </dd>
                         </dl>
@@ -283,7 +289,7 @@ export default function ReportsPage() {
                   </div>
                 </div>
 
-                <div className="bg-white overflow-hidden shadow rounded-lg">
+                <div className="bg-white dark:bg-slate-800 overflow-hidden shadow rounded-lg">
                   <div className="p-5">
                     <div className="flex items-center">
                       <div className="flex-shrink-0">
@@ -293,10 +299,10 @@ export default function ReportsPage() {
                       </div>
                       <div className="ml-5 w-0 flex-1">
                         <dl>
-                          <dt className="text-sm font-medium text-gray-500 truncate">
+                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
                             Total Yield
                           </dt>
-                          <dd className="text-lg font-medium text-gray-900">
+                          <dd className="text-lg font-medium text-gray-900 dark:text-gray-100">
                             {reportData.dashboard.totalYield.toFixed(1)} kg
                           </dd>
                         </dl>
@@ -305,7 +311,7 @@ export default function ReportsPage() {
                   </div>
                 </div>
 
-                <div className="bg-white overflow-hidden shadow rounded-lg">
+                <div className="bg-white dark:bg-slate-800 overflow-hidden shadow rounded-lg">
                   <div className="p-5">
                     <div className="flex items-center">
                       <div className="flex-shrink-0">
@@ -315,10 +321,10 @@ export default function ReportsPage() {
                       </div>
                       <div className="ml-5 w-0 flex-1">
                         <dl>
-                          <dt className="text-sm font-medium text-gray-500 truncate">
+                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
                             Water Usage
                           </dt>
-                          <dd className="text-lg font-medium text-gray-900">
+                          <dd className="text-lg font-medium text-gray-900 dark:text-gray-100">
                             {reportData.dashboard.waterUsage.toFixed(1)} L
                           </dd>
                         </dl>
@@ -331,32 +337,32 @@ export default function ReportsPage() {
               {/* Detailed Reports */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                 {/* Water Usage Report */}
-                <div className="bg-white shadow rounded-lg p-6">
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">
+                <div className="bg-white dark:bg-slate-800 shadow rounded-lg p-6">
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                     Water Usage Report
                   </h3>
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-gray-600 dark:text-gray-300">
                         Total Water Used
                       </span>
-                      <span className="text-sm font-medium">
+                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {reportData.water.totalWater.toFixed(1)} L
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-gray-600 dark:text-gray-300">
                         Irrigation Sessions
                       </span>
-                      <span className="text-sm font-medium">
+                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {reportData.water.sessionCount}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-gray-600 dark:text-gray-300">
                         Average per Session
                       </span>
-                      <span className="text-sm font-medium">
+                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {reportData.water.averagePerSession.toFixed(1)} L
                       </span>
                     </div>
@@ -364,24 +370,24 @@ export default function ReportsPage() {
                 </div>
 
                 {/* Fertilizer Report */}
-                <div className="bg-white shadow rounded-lg p-6">
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">
+                <div className="bg-white dark:bg-slate-800 shadow rounded-lg p-6">
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                     Fertilizer Usage Report
                   </h3>
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-gray-600 dark:text-gray-300">
                         Total Amount Used
                       </span>
-                      <span className="text-sm font-medium">
+                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {reportData.fertilizer.totalAmount.toFixed(1)} kg
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-gray-600 dark:text-gray-300">
                         Applications
                       </span>
-                      <span className="text-sm font-medium">
+                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {reportData.fertilizer.applicationCount}
                       </span>
                     </div>
@@ -389,7 +395,7 @@ export default function ReportsPage() {
                       Object.entries(reportData.fertilizer.typeBreakdown)
                         .length > 0 && (
                         <div>
-                          <h4 className="text-sm font-medium text-gray-700 mb-2">
+                          <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Fertilizer Types Used:
                           </h4>
                           {reportData.fertilizer.typeBreakdown &&
@@ -400,10 +406,10 @@ export default function ReportsPage() {
                                 key={type}
                                 className="flex justify-between items-center"
                               >
-                                <span className="text-xs text-gray-600">
+                                <span className="text-xs text-gray-600 dark:text-gray-300">
                                   {type}
                                 </span>
-                                <span className="text-xs font-medium">
+                                <span className="text-xs font-medium text-gray-900 dark:text-gray-100">
                                   {amount} kg
                                 </span>
                               </div>
@@ -414,22 +420,24 @@ export default function ReportsPage() {
                 </div>
 
                 {/* Harvest Report */}
-                <div className="bg-white shadow rounded-lg p-6">
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">
+                <div className="bg-white dark:bg-slate-800 shadow rounded-lg p-6">
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                     Harvest Report
                   </h3>
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Total Yield</span>
-                      <span className="text-sm font-medium">
+                      <span className="text-sm text-gray-600 dark:text-gray-300">
+                        Total Yield
+                      </span>
+                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {reportData.yield.totalYield.toFixed(1)} kg
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-gray-600 dark:text-gray-300">
                         Harvest Sessions
                       </span>
-                      <span className="text-sm font-medium">
+                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {reportData.yield.harvestCount}
                       </span>
                     </div>
@@ -437,7 +445,7 @@ export default function ReportsPage() {
                       Object.entries(reportData.yield.cropBreakdown).length >
                         0 && (
                         <div>
-                          <h4 className="text-sm font-medium text-gray-700 mb-2">
+                          <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Yield by Crop:
                           </h4>
                           {reportData.yield.cropBreakdown &&
@@ -447,10 +455,10 @@ export default function ReportsPage() {
                                   key={crop}
                                   className="flex justify-between items-center"
                                 >
-                                  <span className="text-xs text-gray-600">
+                                  <span className="text-xs text-gray-600 dark:text-gray-300">
                                     {crop}
                                   </span>
-                                  <span className="text-xs font-medium">
+                                  <span className="text-xs font-medium text-gray-900 dark:text-gray-100">
                                     {yieldAmount} kg
                                   </span>
                                 </div>
@@ -462,30 +470,32 @@ export default function ReportsPage() {
                 </div>
 
                 {/* Pest & Disease Report */}
-                <div className="bg-white shadow rounded-lg p-6">
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">
+                <div className="bg-white dark:bg-slate-800 shadow rounded-lg p-6">
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                     Pest & Disease Report
                   </h3>
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-gray-600 dark:text-gray-300">
                         Total Incidents
                       </span>
-                      <span className="text-sm font-medium">
+                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {reportData.pestDisease.totalIncidents}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Pest Issues</span>
-                      <span className="text-sm font-medium">
+                      <span className="text-sm text-gray-600 dark:text-gray-300">
+                        Pest Issues
+                      </span>
+                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {reportData.pestDisease.pestCount}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-gray-600 dark:text-gray-300">
                         Disease Issues
                       </span>
-                      <span className="text-sm font-medium">
+                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {reportData.pestDisease.diseaseCount}
                       </span>
                     </div>
@@ -493,7 +503,7 @@ export default function ReportsPage() {
                       Object.entries(reportData.pestDisease.severityBreakdown)
                         .length > 0 && (
                         <div>
-                          <h4 className="text-sm font-medium text-gray-700 mb-2">
+                          <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Severity Breakdown:
                           </h4>
                           {reportData.pestDisease.severityBreakdown &&
@@ -504,10 +514,10 @@ export default function ReportsPage() {
                                 key={severity}
                                 className="flex justify-between items-center"
                               >
-                                <span className="text-xs text-gray-600">
+                                <span className="text-xs text-gray-600 dark:text-gray-300">
                                   {severity}
                                 </span>
-                                <span className="text-xs font-medium">
+                                <span className="text-xs font-medium text-gray-900 dark:text-gray-100">
                                   {count}
                                 </span>
                               </div>
@@ -519,28 +529,34 @@ export default function ReportsPage() {
               </div>
 
               {/* Task Summary */}
-              <div className="bg-white shadow rounded-lg p-6">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">
+              <div className="bg-white dark:bg-slate-800 shadow rounded-lg p-6">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                   Task Summary
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600">
+                    <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                       {reportData.dashboard.activeTasks}
                     </div>
-                    <div className="text-sm text-gray-600">Active Tasks</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-300">
+                      Active Tasks
+                    </div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-red-600">
+                    <div className="text-2xl font-bold text-red-600 dark:text-red-400">
                       {reportData.dashboard.overdueTasks}
                     </div>
-                    <div className="text-sm text-gray-600">Overdue Tasks</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-300">
+                      Overdue Tasks
+                    </div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-green-600">
+                    <div className="text-2xl font-bold text-green-600 dark:text-green-400">
                       {reportData.dashboard.recentHarvests}
                     </div>
-                    <div className="text-sm text-gray-600">Recent Harvests</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-300">
+                      Recent Harvests
+                    </div>
                   </div>
                 </div>
               </div>

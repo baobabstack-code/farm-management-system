@@ -3,12 +3,7 @@
 import { useState, useEffect } from "react";
 import { useFeatureFlag } from "@/lib/feature-flags";
 import { Button } from "@/components/ui/button";
-import type {
-  FinancialInsights,
-  ROIAnalysis,
-  CostOptimization,
-  FinancialForecast,
-} from "@/lib/services/financial-analytics";
+import type { FinancialInsights } from "@/lib/services/financial-analytics";
 
 export default function FinancialInsightsCard() {
   const [isLoading, setIsLoading] = useState(false);
@@ -40,7 +35,7 @@ export default function FinancialInsightsCard() {
       } else {
         setError(data.error || "Failed to fetch financial insights");
       }
-    } catch (error) {
+    } catch {
       setError("Error fetching financial insights");
     } finally {
       setIsLoading(false);
@@ -129,7 +124,11 @@ export default function FinancialInsightsCard() {
         ].map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
+            onClick={() =>
+              setActiveTab(
+                tab.id as "overview" | "forecasts" | "roi" | "optimization"
+              )
+            }
             className={`flex items-center space-x-2 px-3 py-2 rounded-md text-xs font-medium transition-colors ${
               activeTab === tab.id
                 ? "bg-white text-blue-700 shadow-sm"

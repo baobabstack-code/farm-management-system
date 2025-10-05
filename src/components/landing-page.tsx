@@ -5,20 +5,20 @@ import { Button } from "@/components/ui/button";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-yellow-50">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-yellow-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       {/* Navigation */}
-      <nav className="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+      <nav className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <span className="text-2xl font-bold text-green-600">
+              <span className="text-2xl font-bold text-green-600 dark:text-green-400">
                 🌱 FarmFlow
               </span>
             </div>
             <div className="flex items-center space-x-4">
               <Link
                 href="/sign-in"
-                className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 Sign In
               </Link>
@@ -37,11 +37,13 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="text-center lg:text-left">
-              <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+              <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-gray-100 mb-6">
                 Grow Your Farm with{" "}
-                <span className="text-green-600">Smart Management</span>
+                <span className="text-green-600 dark:text-green-400">
+                  Smart Management
+                </span>
               </h1>
-              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+              <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
                 Transform your farming operations with our comprehensive
                 management system. Track crops, manage tasks, log activities,
                 and boost your productivity with data-driven insights.
@@ -59,7 +61,7 @@ export default function LandingPage() {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="btn-enhanced px-8 py-4 text-lg border-green-600 text-green-600 hover:bg-green-50 focus:ring-green-500"
+                    className="btn-enhanced px-8 py-4 text-lg border-green-600 dark:border-green-400 text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-slate-800 focus:ring-green-500"
                   >
                     Sign In
                   </Button>
@@ -70,29 +72,29 @@ export default function LandingPage() {
             {/* Hero Image */}
             <div className="relative">
               <div className="bg-gradient-to-r from-green-400 to-blue-500 rounded-3xl p-8 shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-300">
-                <div className="bg-white rounded-2xl p-6">
+                <div className="bg-white dark:bg-slate-800 rounded-2xl p-6">
                   <div className="text-6xl mb-4 text-center">👨‍🌾</div>
                   <div className="grid grid-cols-3 gap-4 mb-4">
-                    <div className="bg-green-100 rounded-lg p-3 text-center">
+                    <div className="bg-green-100 dark:bg-green-900/30 rounded-lg p-3 text-center">
                       <div className="text-2xl mb-1">🌽</div>
-                      <div className="text-xs text-green-700 font-medium">
+                      <div className="text-xs text-green-700 dark:text-green-300 font-medium">
                         Corn
                       </div>
                     </div>
-                    <div className="bg-red-100 rounded-lg p-3 text-center">
+                    <div className="bg-red-100 dark:bg-red-900/30 rounded-lg p-3 text-center">
                       <div className="text-2xl mb-1">🍅</div>
-                      <div className="text-xs text-red-700 font-medium">
+                      <div className="text-xs text-red-700 dark:text-red-300 font-medium">
                         Tomatoes
                       </div>
                     </div>
-                    <div className="bg-orange-100 rounded-lg p-3 text-center">
+                    <div className="bg-orange-100 dark:bg-orange-900/30 rounded-lg p-3 text-center">
                       <div className="text-2xl mb-1">🥕</div>
-                      <div className="text-xs text-orange-700 font-medium">
+                      <div className="text-xs text-orange-700 dark:text-orange-300 font-medium">
                         Carrots
                       </div>
                     </div>
                   </div>
-                  <div className="text-center text-sm text-gray-600 font-medium">
+                  <div className="text-center text-sm text-gray-600 dark:text-gray-300 font-medium">
                     Happy Farming! 😊
                   </div>
                 </div>
@@ -103,13 +105,13 @@ export default function LandingPage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-white dark:bg-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
               Everything You Need to Manage Your Farm
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
               From crop planning to harvest tracking, our platform provides all
               the tools modern farmers need to succeed.
             </p>
@@ -118,13 +120,13 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Feature 1 */}
             <div className="text-center group hover:scale-105 transition-transform duration-300">
-              <div className="bg-green-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 group-hover:bg-green-200 transition-colors">
+              <div className="bg-green-100 dark:bg-green-900/30 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 group-hover:bg-green-200 dark:group-hover:bg-green-800/40 transition-colors">
                 <span className="text-3xl">🌱</span>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
                 Crop Management
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-300">
                 Track your crops from planting to harvest with detailed growth
                 stages and status updates.
               </p>
@@ -132,13 +134,13 @@ export default function LandingPage() {
 
             {/* Feature 2 */}
             <div className="text-center group hover:scale-105 transition-transform duration-300">
-              <div className="bg-blue-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-200 transition-colors">
+              <div className="bg-blue-100 dark:bg-blue-900/30 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-200 dark:group-hover:bg-blue-800/40 transition-colors">
                 <span className="text-3xl">📋</span>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
                 Task Planning
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-300">
                 Organize daily and seasonal farming activities with
                 priority-based task management.
               </p>
@@ -146,13 +148,13 @@ export default function LandingPage() {
 
             {/* Feature 3 */}
             <div className="text-center group hover:scale-105 transition-transform duration-300">
-              <div className="bg-purple-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 group-hover:bg-purple-200 transition-colors">
+              <div className="bg-purple-100 dark:bg-purple-900/30 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 group-hover:bg-purple-200 dark:group-hover:bg-purple-800/40 transition-colors">
                 <span className="text-3xl">💧</span>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
                 Activity Logging
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-300">
                 Log irrigation, fertilization, pest control, and harvest
                 activities with detailed records.
               </p>
@@ -160,13 +162,13 @@ export default function LandingPage() {
 
             {/* Feature 4 */}
             <div className="text-center group hover:scale-105 transition-transform duration-300">
-              <div className="bg-yellow-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 group-hover:bg-yellow-200 transition-colors">
-                <span className="text-3xl">📊</span>
+              <div className="bg-yellow-100 dark:bg-yellow-900/30 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 group-hover:bg-yellow-200 dark:group-hover:bg-yellow-800/40 transition-colors">
+                <span className="text-3xl">📈</span>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
                 Analytics &amp; Reports
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-300">
                 Get insights into your farm&apos;s performance with
                 comprehensive analytics and reporting.
               </p>
@@ -190,15 +192,17 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Testimonial 1 */}
-            <div className="bg-white rounded-2xl p-8 shadow-xl transform hover:scale-105 transition-transform duration-300">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-xl transform hover:scale-105 transition-transform duration-300">
               <div className="text-center mb-6">
                 <div className="text-6xl mb-4">👨‍🌾</div>
-                <h4 className="text-xl font-semibold text-gray-900">
+                <h4 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                   John Martinez
                 </h4>
-                <p className="text-gray-600">Organic Vegetable Farm</p>
+                <p className="text-gray-600 dark:text-gray-300">
+                  Organic Vegetable Farm
+                </p>
               </div>
-              <p className="text-gray-700 italic">
+              <p className="text-gray-700 dark:text-gray-300 italic">
                 &quot;FarmFlow has revolutionized how I manage my 50-acre
                 vegetable farm. The task scheduling and crop tracking features
                 have increased my productivity by 40%!&quot;
@@ -209,15 +213,17 @@ export default function LandingPage() {
             </div>
 
             {/* Testimonial 2 */}
-            <div className="bg-white rounded-2xl p-8 shadow-xl transform hover:scale-105 transition-transform duration-300">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-xl transform hover:scale-105 transition-transform duration-300">
               <div className="text-center mb-6">
                 <div className="text-6xl mb-4">👩‍🌾</div>
-                <h4 className="text-xl font-semibold text-gray-900">
+                <h4 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                   Sarah Chen
                 </h4>
-                <p className="text-gray-600">Fruit Orchard Owner</p>
+                <p className="text-gray-600 dark:text-gray-300">
+                  Fruit Orchard Owner
+                </p>
               </div>
-              <p className="text-gray-700 italic">
+              <p className="text-gray-700 dark:text-gray-300 italic">
                 &quot;The analytics dashboard gives me incredible insights into
                 my orchard&apos;s performance. I can now make data-driven
                 decisions that have boosted my harvest quality!&quot;
@@ -228,15 +234,17 @@ export default function LandingPage() {
             </div>
 
             {/* Testimonial 3 */}
-            <div className="bg-white rounded-2xl p-8 shadow-xl transform hover:scale-105 transition-transform duration-300">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-xl transform hover:scale-105 transition-transform duration-300">
               <div className="text-center mb-6">
                 <div className="text-6xl mb-4">👨‍🌾</div>
-                <h4 className="text-xl font-semibold text-gray-900">
+                <h4 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                   Mike Thompson
                 </h4>
-                <p className="text-gray-600">Grain Farm Manager</p>
+                <p className="text-gray-600 dark:text-gray-300">
+                  Grain Farm Manager
+                </p>
               </div>
-              <p className="text-gray-700 italic">
+              <p className="text-gray-700 dark:text-gray-300 italic">
                 &quot;Managing multiple crops across 200 acres used to be
                 overwhelming. FarmFlow&apos;s comprehensive system keeps
                 everything organized and efficient!&quot;
@@ -250,13 +258,13 @@ export default function LandingPage() {
       </section>
 
       {/* Crop Showcase Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-gray-50 dark:bg-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
               Manage Any Type of Crop
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
               From vegetables to fruits, grains to herbs - our system adapts to
               your farming needs
             </p>
@@ -264,21 +272,53 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-6">
             {[
-              { emoji: "🌽", name: "Corn", color: "bg-yellow-100" },
-              { emoji: "🍅", name: "Tomatoes", color: "bg-red-100" },
-              { emoji: "🥕", name: "Carrots", color: "bg-orange-100" },
-              { emoji: "🥬", name: "Lettuce", color: "bg-green-100" },
-              { emoji: "🍓", name: "Strawberries", color: "bg-pink-100" },
-              { emoji: "🥔", name: "Potatoes", color: "bg-amber-100" },
-              { emoji: "🌶️", name: "Peppers", color: "bg-red-100" },
-              { emoji: "🥒", name: "Cucumbers", color: "bg-green-100" },
+              {
+                emoji: "🌽",
+                name: "Corn",
+                color: "bg-yellow-100 dark:bg-yellow-900/30",
+              },
+              {
+                emoji: "🍅",
+                name: "Tomatoes",
+                color: "bg-red-100 dark:bg-red-900/30",
+              },
+              {
+                emoji: "🥕",
+                name: "Carrots",
+                color: "bg-orange-100 dark:bg-orange-900/30",
+              },
+              {
+                emoji: "🥬",
+                name: "Lettuce",
+                color: "bg-green-100 dark:bg-green-900/30",
+              },
+              {
+                emoji: "🍓",
+                name: "Strawberries",
+                color: "bg-pink-100 dark:bg-pink-900/30",
+              },
+              {
+                emoji: "🥔",
+                name: "Potatoes",
+                color: "bg-amber-100 dark:bg-amber-900/30",
+              },
+              {
+                emoji: "🌶️",
+                name: "Peppers",
+                color: "bg-red-100 dark:bg-red-900/30",
+              },
+              {
+                emoji: "🥒",
+                name: "Cucumbers",
+                color: "bg-green-100 dark:bg-green-900/30",
+              },
             ].map((crop, index) => (
               <div
                 key={index}
                 className={`${crop.color} rounded-2xl p-6 text-center hover:scale-110 transition-transform duration-300 cursor-pointer`}
               >
                 <div className="text-4xl mb-2">{crop.emoji}</div>
-                <div className="text-sm font-medium text-gray-700">
+                <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   {crop.name}
                 </div>
               </div>
@@ -288,13 +328,13 @@ export default function LandingPage() {
       </section>
 
       {/* App Overview Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-white dark:bg-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
               How FarmFlow Works
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
               Simple, powerful tools designed specifically for modern farming
               operations
             </p>
@@ -302,43 +342,59 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-20">
             <div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
                 📱 Dashboard Overview
               </h3>
-              <p className="text-lg text-gray-600 mb-6">
+              <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">
                 Get a complete view of your farm operations at a glance. Monitor
                 crop health, track task completion, and view key performance
                 metrics all in one place.
               </p>
               <ul className="space-y-3">
-                <li className="flex items-center text-gray-700">
-                  <span className="text-green-500 mr-3">✓</span>
+                <li className="flex items-center text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500 dark:text-green-400 mr-3">
+                    ✓
+                  </span>
                   Real-time farm statistics and KPIs
                 </li>
-                <li className="flex items-center text-gray-700">
-                  <span className="text-green-500 mr-3">✓</span>
+                <li className="flex items-center text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500 dark:text-green-400 mr-3">
+                    ✓
+                  </span>
                   Weather integration and alerts
                 </li>
-                <li className="flex items-center text-gray-700">
-                  <span className="text-green-500 mr-3">✓</span>
+                <li className="flex items-center text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500 dark:text-green-400 mr-3">
+                    ✓
+                  </span>
                   Upcoming tasks and deadlines
                 </li>
               </ul>
             </div>
-            <div className="bg-gradient-to-br from-blue-100 to-green-100 rounded-2xl p-8">
-              <div className="bg-white rounded-xl p-6 shadow-lg">
+            <div className="bg-gradient-to-br from-blue-100 to-green-100 dark:from-blue-900/20 dark:to-green-900/20 rounded-2xl p-8">
+              <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
                 <div className="flex items-center justify-between mb-4">
-                  <h4 className="font-semibold">Farm Dashboard</h4>
-                  <span className="text-2xl">📊</span>
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-100">
+                    Farm Dashboard
+                  </h4>
+                  <span className="text-2xl">📈</span>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-green-50 p-3 rounded-lg">
-                    <div className="text-2xl font-bold text-green-600">12</div>
-                    <div className="text-sm text-gray-600">Active Crops</div>
+                  <div className="bg-green-50 dark:bg-green-900/30 p-3 rounded-lg">
+                    <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                      12
+                    </div>
+                    <div className="text-sm text-gray-600 dark:text-gray-300">
+                      Active Crops
+                    </div>
                   </div>
-                  <div className="bg-blue-50 p-3 rounded-lg">
-                    <div className="text-2xl font-bold text-blue-600">8</div>
-                    <div className="text-sm text-gray-600">Tasks Today</div>
+                  <div className="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-lg">
+                    <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                      8
+                    </div>
+                    <div className="text-sm text-gray-600 dark:text-gray-300">
+                      Tasks Today
+                    </div>
                   </div>
                 </div>
               </div>
@@ -346,28 +402,36 @@ export default function LandingPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="bg-gradient-to-br from-green-100 to-yellow-100 rounded-2xl p-8 order-2 lg:order-1">
-              <div className="bg-white rounded-xl p-6 shadow-lg">
+            <div className="bg-gradient-to-br from-green-100 to-yellow-100 dark:from-green-900/20 dark:to-yellow-900/20 rounded-2xl p-8 order-2 lg:order-1">
+              <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
                 <div className="flex items-center justify-between mb-4">
-                  <h4 className="font-semibold">Crop Management</h4>
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-100">
+                    Crop Management
+                  </h4>
                   <span className="text-2xl">🌱</span>
                 </div>
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                    <span className="text-sm">🍅 Tomatoes</span>
-                    <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">
+                  <div className="flex items-center justify-between p-2 bg-gray-50 dark:bg-slate-700 rounded">
+                    <span className="text-sm text-gray-900 dark:text-gray-100">
+                      🍅 Tomatoes
+                    </span>
+                    <span className="text-xs bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 px-2 py-1 rounded">
                       Healthy
                     </span>
                   </div>
-                  <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                    <span className="text-sm">🌽 Corn</span>
-                    <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded">
+                  <div className="flex items-center justify-between p-2 bg-gray-50 dark:bg-slate-700 rounded">
+                    <span className="text-sm text-gray-900 dark:text-gray-100">
+                      🌽 Corn
+                    </span>
+                    <span className="text-xs bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded">
                       Growing
                     </span>
                   </div>
-                  <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                    <span className="text-sm">🥕 Carrots</span>
-                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
+                  <div className="flex items-center justify-between p-2 bg-gray-50 dark:bg-slate-700 rounded">
+                    <span className="text-sm text-gray-900 dark:text-gray-100">
+                      🥕 Carrots
+                    </span>
+                    <span className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-1 rounded">
                       Planted
                     </span>
                   </div>
@@ -375,10 +439,10 @@ export default function LandingPage() {
               </div>
             </div>
             <div className="order-1 lg:order-2 text-center">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
                 Smart Crop Monitoring
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="text-gray-600 dark:text-gray-300 mb-6">
                 Track your crops&apos; health, growth stages, and harvest
                 readiness with our intelligent monitoring system. Get real-time
                 insights and recommendations to maximize your yield.

@@ -161,13 +161,13 @@ export default function WeatherInsightsCard() {
     if (aiAnalyticsEnabled && !location) {
       getUserLocation();
     }
-  }, [aiAnalyticsEnabled]);
+  }, [aiAnalyticsEnabled, location]);
 
   useEffect(() => {
     if (aiAnalyticsEnabled && location) {
       fetchWeatherInsights();
     }
-  }, [aiAnalyticsEnabled, location]);
+  }, [aiAnalyticsEnabled, location, fetchWeatherInsights]);
 
   // Only show if AI analytics is enabled
   if (!aiAnalyticsEnabled) {

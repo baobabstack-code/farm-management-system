@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { isFeatureEnabled } from "@/lib/feature-flags";
 import { AIDataBridge } from "@/lib/ai-bridge/data-access";
-import { weatherService } from "@/lib/services/weather";
 import { getChatResponseFromADK } from "@/lib/ai/agents";
 
 interface ChatMessage {
