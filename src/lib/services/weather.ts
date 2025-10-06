@@ -56,8 +56,8 @@ class WeatherService {
     longitude: number
   ): Promise<WeatherData | null> {
     if (!this.apiKey) {
-      console.warn("Weather API key not configured, using mock data");
-      return this.getMockCurrentWeather();
+      console.warn("Weather API key not configured");
+      return null;
     }
 
     try {
@@ -84,7 +84,7 @@ class WeatherService {
       };
     } catch (error) {
       console.error("Failed to fetch weather data:", error);
-      return this.getMockCurrentWeather();
+      return null;
     }
   }
 
@@ -96,8 +96,8 @@ class WeatherService {
     longitude: number
   ): Promise<WeatherForecast[]> {
     if (!this.apiKey) {
-      console.warn("Weather API key not configured, using mock data");
-      return this.getMockForecast();
+      console.warn("Weather API key not configured");
+      return [];
     }
 
     try {
@@ -117,7 +117,7 @@ class WeatherService {
       return dailyForecasts.slice(0, 5); // Next 5 days
     } catch (error) {
       console.error("Failed to fetch weather forecast:", error);
-      return this.getMockForecast();
+      return [];
     }
   }
 
@@ -133,19 +133,19 @@ class WeatherService {
       this.getWeatherForecast(latitude, longitude),
     ]);
 
-    const currentConditions = currentWeather || this.getMockCurrentWeather();
-    const forecastData =
-      forecast.length > 0 ? forecast : this.getMockForecast();
+    if (!currentWeather) {
+      throw new Error("Weather data is not available");
+    }
 
     const farmingRecommendations = this.generateFarmingRecommendations(
-      currentConditions,
-      forecastData
+      currentWeather,
+      forecast
     );
-    const alerts = this.generateWeatherAlerts(currentConditions, forecastData);
+    const alerts = this.generateWeatherAlerts(currentWeather, forecast);
 
     return {
-      currentConditions,
-      forecast: forecastData,
+      currentConditions: currentWeather,
+      forecast,
       farmingRecommendations,
       alerts,
     };
@@ -349,51 +349,6 @@ class WeatherService {
     if (month >= 5 && month <= 7) return "summer";
     if (month >= 8 && month <= 10) return "fall";
     return "winter";
-  }
-
-  /**
-   * Mock weather data for development/fallback
-   */
-  private getMockCurrentWeather(): WeatherData {
-    return {
-      temperature: 22 + Math.random() * 8, // 22-30°C
-      humidity: 60 + Math.random() * 20, // 60-80%
-      precipitation: Math.random() > 0.8 ? Math.random() * 5 : 0,
-      windSpeed: 5 + Math.random() * 10, // 5-15 km/h
-      pressure: 1010 + Math.random() * 20, // 1010-1030 hPa
-      uvIndex: 6 + Math.random() * 4, // 6-10
-      visibility: 8 + Math.random() * 2, // 8-10 km
-      condition: ["clear", "partly cloudy", "cloudy", "light rain"][
-        Math.floor(Math.random() * 4)
-      ],
-      timestamp: new Date().toISOString(),
-    };
-  }
-
-  /**
-   * Mock forecast data for development/fallback
-   */
-  private getMockForecast(): WeatherForecast[] {
-    const forecast: WeatherForecast[] = [];
-
-    for (let i = 1; i <= 5; i++) {
-      const date = new Date();
-      date.setDate(date.getDate() + i);
-
-      forecast.push({
-        date: date.toISOString().split("T")[0],
-        high: 20 + Math.random() * 12,
-        low: 8 + Math.random() * 10,
-        precipitation: Math.random() > 0.6 ? Math.random() * 10 : 0,
-        precipitationChance: Math.random() * 100,
-        humidity: 50 + Math.random() * 30,
-        condition: ["sunny", "partly cloudy", "cloudy", "rainy"][
-          Math.floor(Math.random() * 4)
-        ],
-      });
-    }
-
-    return forecast;
   }
 
   /**

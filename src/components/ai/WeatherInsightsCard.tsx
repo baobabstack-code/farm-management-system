@@ -116,13 +116,12 @@ export default function WeatherInsightsCard() {
         },
         (error) => {
           console.error("Error getting location:", error);
-          // Use default location (example: San Francisco)
-          setLocation({ latitude: 37.7749, longitude: -122.4194 });
+          setError("Location access required for weather insights");
         }
       );
     } else {
-      // Geolocation not supported, use default location
-      setLocation({ latitude: 37.7749, longitude: -122.4194 });
+      // Geolocation not supported
+      setError("Geolocation is not supported by your browser");
     }
   };
 
