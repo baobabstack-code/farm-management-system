@@ -5,6 +5,12 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Task, TaskStatus, TaskPriority, TaskCategory, Crop } from "@/types";
+import {
+  usePullToRefresh,
+  useIsMobile,
+  useMobileGestures,
+} from "@/hooks/useMobileGestures";
+import hapticFeedback from "@/utils/haptics";
 
 function TasksPageContent() {
   const { user, isLoaded } = useUser();
@@ -41,19 +47,7 @@ function TasksPageContent() {
   const [formLoading, setFormLoading] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    if (!isLoaded) return;
-
-    if (!user) {
-      router.push("/sign-in");
-      return;
-    }
-
-    if (user) {
-      fetchTasks();
-      fetchCrops();
-    }
-  }, [user, isLoaded, router, filters, fetchTasks]);
+  const isMobile = useIsMobile();
 
   const fetchTasks = useCallback(async () => {
     try {
@@ -78,6 +72,27 @@ function TasksPageContent() {
       setLoading(false);
     }
   }, [filters]);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    if (!user) {
+      router.push("/sign-in");
+      return;
+    }
+
+    if (user) {
+      fetchTasks();
+      fetchCrops();
+    }
+  }, [user, isLoaded, router, filters, fetchTasks]);
+
+  const pullToRefresh = usePullToRefresh<HTMLDivElement>({
+    onRefresh: async () => {
+      await Promise.all([fetchTasks(), fetchCrops()]);
+    },
+    threshold: 80,
+  });
 
   const fetchCrops = async () => {
     try {
@@ -253,7 +268,11 @@ function TasksPageContent() {
         </div>
       }
     >
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-900 dark:to-indigo-900/20">
+      <div
+        ref={isMobile ? pullToRefresh.elementRef : null}
+        className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-900 dark:to-indigo-900/20 overflow-auto"
+      >
+        {isMobile && pullToRefresh.refreshIndicator}
         <div className="content-container py-4 sm:py-6 lg:py-8 mobile-header-spacing">
           <div className="mb-6 lg:mb-8">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6">
@@ -405,7 +424,7 @@ function TasksPageContent() {
                     Add New Task
                   </h2>
                 </div>
-                <form onSubmit={handleCreateTask} className="space-y-4">
+                <form onSubmit={handleCreateTask} className="form-mobile">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -448,7 +467,7 @@ function TasksPageContent() {
                             priority: e.target.value as unknown as TaskPriority,
                           })
                         }
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        className="input-mobile"
                       >
                         {Object.values(TaskPriority).map((priority) => (
                           <option key={priority} value={priority}>
@@ -470,7 +489,7 @@ function TasksPageContent() {
                             category: e.target.value as TaskCategory,
                           })
                         }
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        className="input-mobile"
                       >
                         {Object.values(TaskCategory).map((category) => (
                           <option key={category} value={category}>
@@ -489,7 +508,7 @@ function TasksPageContent() {
                         onChange={(e) =>
                           setFormData({ ...formData, cropId: e.target.value })
                         }
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        className="input-mobile"
                       >
                         <option value="">No specific crop</option>
                         {crops.map((crop) => (
@@ -514,23 +533,23 @@ function TasksPageContent() {
                         })
                       }
                       rows={3}
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      className="input-mobile"
                       placeholder="Task description..."
                     />
                   </div>
 
-                  <div className="flex space-x-3">
+                  <div className="flex flex-col sm:flex-row gap-3 sm:space-x-3 sm:gap-0">
                     <button
                       type="submit"
                       disabled={formLoading}
-                      className="btn-enhanced bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 shadow-sm hover:shadow disabled:opacity-50"
+                      className="btn-enhanced bg-blue-600 text-white hover:bg-blue-700 dark:hover:bg-blue-600 focus:ring-blue-500 shadow-sm hover:shadow disabled:opacity-50 w-full sm:w-auto touch-target"
                     >
                       {formLoading ? "Creating..." : "Create Task"}
                     </button>
                     <button
                       type="button"
                       onClick={() => setShowCreateForm(false)}
-                      className="btn-enhanced bg-gray-500 text-white hover:bg-gray-600 focus:ring-gray-500 shadow-sm hover:shadow"
+                      className="btn-enhanced bg-gray-500 text-white hover:bg-gray-600 dark:hover:bg-gray-500 focus:ring-gray-500 shadow-sm hover:shadow w-full sm:w-auto touch-target"
                     >
                       Cancel
                     </button>
@@ -553,7 +572,7 @@ function TasksPageContent() {
                 </p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid-mobile-adaptive">
                 {tasks.map((task) => {
                   const daysUntilDue = getDaysUntilDue(task.dueDate);
                   const overdue = isOverdue(task.dueDate, task.status);
@@ -561,128 +580,167 @@ function TasksPageContent() {
                     ? crops.find((c) => c.id === task.cropId)
                     : null;
 
-                  return (
-                    <div
-                      key={task.id}
-                      className={`card-enhanced p-6 stagger-item fade-in ${
-                        overdue
-                          ? "ring-2 ring-red-200 dark:ring-red-800 bg-red-50 dark:bg-red-900/10"
-                          : "hover:scale-105"
-                      } transition-all duration-200`}
-                    >
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center space-x-3">
-                          <div
-                            className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                              task.priority === TaskPriority.HIGH
-                                ? "bg-gradient-to-br from-red-400 to-red-600"
-                                : task.priority === TaskPriority.MEDIUM
-                                  ? "bg-gradient-to-br from-yellow-400 to-yellow-600"
-                                  : "bg-gradient-to-br from-green-400 to-green-600"
-                            }`}
-                          >
-                            <span className="text-white text-lg">
-                              {task.category === TaskCategory.IRRIGATION
-                                ? "💧"
-                                : task.category === TaskCategory.FERTILIZATION
-                                  ? "🌿"
-                                  : task.category === TaskCategory.PEST_CONTROL
-                                    ? "🐛"
-                                    : task.category === TaskCategory.HARVESTING
-                                      ? "🌾"
-                                      : task.category === TaskCategory.PLANTING
-                                        ? "🌱"
-                                        : "🔧"}
-                            </span>
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
-                              {task.title}
-                            </h3>
-                            {task.description && (
-                              <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
-                                {task.description}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      </div>
+                  const TaskCard = () => {
+                    const swipeRef = useMobileGestures<HTMLDivElement>({
+                      onSwipeLeft: () => {
+                        if (task.status !== TaskStatus.COMPLETED && isMobile) {
+                          hapticFeedback.success();
+                          handleCompleteTask(task.id);
+                        }
+                      },
+                      onSwipeRight: () => {
+                        if (isMobile) {
+                          hapticFeedback.impact();
+                          handleDeleteTask(task.id);
+                        }
+                      },
+                      minDistance: 100,
+                    });
 
-                      <div className="space-y-3 mb-4">
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-600 dark:text-gray-300">
-                            Priority
-                          </span>
-                          <span
-                            className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getPriorityColor(task.priority)}`}
-                          >
-                            {task.priority}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-600 dark:text-gray-300">
-                            Status
-                          </span>
-                          <span
-                            className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(task.status)}`}
-                          >
-                            {task.status.replace("_", " ")}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-600 dark:text-gray-300">
-                            Due Date
-                          </span>
-                          <div className="text-right">
-                            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                              {new Date(task.dueDate).toLocaleDateString()}
-                            </span>
-                            {overdue ? (
-                              <div className="text-xs text-red-600 dark:text-red-400 font-medium">
-                                Overdue by {Math.abs(daysUntilDue)} days
-                              </div>
-                            ) : daysUntilDue <= 3 ? (
-                              <div className="text-xs text-orange-600 dark:text-orange-400 font-medium">
-                                Due in {daysUntilDue} days
-                              </div>
-                            ) : (
-                              <div className="text-xs text-gray-500 dark:text-gray-400">
-                                Due in {daysUntilDue} days
-                              </div>
-                            )}
+                    return (
+                      <div
+                        ref={swipeRef}
+                        key={task.id}
+                        className={`card-mobile stagger-item fade-in ${
+                          overdue
+                            ? "ring-2 ring-red-200 dark:ring-red-800 bg-red-50 dark:bg-red-900/10"
+                            : "hover:scale-105"
+                        } transition-all duration-200 ${isMobile ? "relative select-none" : ""}`}
+                      >
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex items-center space-x-3">
+                            <div
+                              className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                                task.priority === TaskPriority.HIGH
+                                  ? "bg-gradient-to-br from-red-400 to-red-600"
+                                  : task.priority === TaskPriority.MEDIUM
+                                    ? "bg-gradient-to-br from-yellow-400 to-yellow-600"
+                                    : "bg-gradient-to-br from-green-400 to-green-600"
+                              }`}
+                            >
+                              <span className="text-white text-lg">
+                                {task.category === TaskCategory.IRRIGATION
+                                  ? "💧"
+                                  : task.category === TaskCategory.FERTILIZATION
+                                    ? "🌿"
+                                    : task.category ===
+                                        TaskCategory.PEST_CONTROL
+                                      ? "🐛"
+                                      : task.category ===
+                                          TaskCategory.HARVESTING
+                                        ? "🌾"
+                                        : task.category ===
+                                            TaskCategory.PLANTING
+                                          ? "🌱"
+                                          : "🔧"}
+                              </span>
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1 truncate">
+                                {task.title}
+                              </h3>
+                              {task.description && (
+                                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
+                                  {task.description}
+                                </p>
+                              )}
+                            </div>
                           </div>
                         </div>
-                        {associatedCrop && (
-                          <div className="flex justify-between items-center">
-                            <span className="text-sm text-gray-600 dark:text-gray-300">
-                              Crop
+
+                        <div className="space-y-3 mb-4">
+                          <div className="flex justify-between items-center py-1">
+                            <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
+                              Priority
                             </span>
-                            <span className="text-sm font-medium text-green-600 dark:text-green-400">
-                              {associatedCrop.name}
+                            <span
+                              className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getPriorityColor(task.priority)}`}
+                            >
+                              {task.priority}
                             </span>
+                          </div>
+                          <div className="flex justify-between items-center py-1">
+                            <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
+                              Status
+                            </span>
+                            <span
+                              className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(task.status)}`}
+                            >
+                              {task.status.replace("_", " ")}
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center py-1">
+                            <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
+                              Due Date
+                            </span>
+                            <div className="text-right">
+                              <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">
+                                {new Date(task.dueDate).toLocaleDateString()}
+                              </span>
+                              {overdue ? (
+                                <div className="text-xs text-red-600 dark:text-red-400 font-medium">
+                                  Overdue by {Math.abs(daysUntilDue)} days
+                                </div>
+                              ) : daysUntilDue <= 3 ? (
+                                <div className="text-xs text-orange-600 dark:text-orange-400 font-medium">
+                                  Due in {daysUntilDue} days
+                                </div>
+                              ) : (
+                                <div className="text-xs text-gray-500 dark:text-gray-400">
+                                  Due in {daysUntilDue} days
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          {associatedCrop && (
+                            <div className="flex justify-between items-center py-1">
+                              <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
+                                Crop
+                              </span>
+                              <span className="text-xs sm:text-sm font-medium text-green-600 dark:text-green-400 truncate">
+                                {associatedCrop.name}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Mobile swipe hint */}
+                        {isMobile && (
+                          <div className="text-xs text-center text-gray-400 dark:text-gray-500 pb-2 border-t border-gray-200 dark:border-gray-600 mt-4 pt-2">
+                            ← Swipe right to delete • Swipe left to complete →
                           </div>
                         )}
-                      </div>
 
-                      <div className="flex space-x-2">
-                        {task.status !== TaskStatus.COMPLETED && (
+                        <div className="flex gap-2">
+                          {task.status !== TaskStatus.COMPLETED && (
+                            <button
+                              onClick={() => {
+                                hapticFeedback.tap();
+                                handleCompleteTask(task.id);
+                              }}
+                              className="flex-1 btn-enhanced bg-green-600 text-white hover:bg-green-700 dark:hover:bg-green-600 focus:ring-green-500 text-xs sm:text-sm py-2 touch-target"
+                            >
+                              <span className="mr-1 text-sm">✓</span>
+                              <span className="hidden sm:inline">Complete</span>
+                              <span className="sm:hidden">Done</span>
+                            </button>
+                          )}
                           <button
-                            onClick={() => handleCompleteTask(task.id)}
-                            className="flex-1 btn-enhanced bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 text-sm py-2"
+                            onClick={() => {
+                              hapticFeedback.tap();
+                              handleDeleteTask(task.id);
+                            }}
+                            className="btn-enhanced bg-red-500 text-white hover:bg-red-600 dark:hover:bg-red-500 focus:ring-red-500 text-sm py-2 px-3 touch-target"
+                            aria-label="Delete task"
                           >
-                            <span className="mr-1">✓</span>
-                            Complete
+                            <span className="text-sm">🗑️</span>
                           </button>
-                        )}
-                        <button
-                          onClick={() => handleDeleteTask(task.id)}
-                          className="btn-enhanced bg-red-500 text-white hover:bg-red-600 focus:ring-red-500 text-sm py-2 px-3"
-                        >
-                          <span>🗑️</span>
-                        </button>
+                        </div>
                       </div>
-                    </div>
-                  );
+                    );
+                  };
+
+                  return <TaskCard key={task.id} />;
                 })}
               </div>
             )}

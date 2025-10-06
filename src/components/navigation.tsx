@@ -33,10 +33,12 @@ export default function Navigation() {
       <div className="lg:hidden fixed top-4 left-4 z-50">
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="bg-white p-3 rounded-lg shadow-lg border border-gray-200 hover:bg-gray-50 active:bg-gray-100 transition-colors touch-manipulation"
+          className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 active:bg-gray-100 dark:active:bg-gray-600 transition-colors touch-manipulation"
+          aria-label="Open sidebar"
+          aria-expanded={isSidebarOpen}
         >
           <svg
-            className="h-6 w-6 text-gray-600"
+            className="h-6 w-6 text-gray-600 dark:text-gray-300"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -62,27 +64,33 @@ export default function Navigation() {
       {/* Sidebar */}
       <div
         className={`
-        fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-xl border-r border-gray-200 transform transition-transform duration-300 ease-in-out
+        fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-900 shadow-xl border-r border-gray-200 dark:border-gray-800 transform transition-transform duration-300 ease-in-out
         ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} 
         lg:translate-x-0 lg:static lg:inset-0
       `}
+        role="navigation"
+        aria-label="Main navigation"
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
             <Link href="/dashboard" className="flex items-center space-x-2">
               <span className="text-2xl">🌱</span>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">FarmFlow</h1>
-                <p className="text-sm text-gray-500">Farm Management</p>
+                <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+                  FarmFlow
+                </h1>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Farm Management
+                </p>
               </div>
             </Link>
             <button
               onClick={() => setIsSidebarOpen(false)}
-              className="lg:hidden p-1 rounded-md hover:bg-gray-100"
+              className="lg:hidden p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
             >
               <svg
-                className="h-5 w-5 text-gray-500"
+                className="h-5 w-5 text-gray-500 dark:text-gray-400"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -108,8 +116,8 @@ export default function Navigation() {
                   flex items-center space-x-3 px-4 py-4 rounded-lg text-base font-medium transition-colors touch-manipulation
                   ${
                     pathname === item.href
-                      ? "bg-green-100 text-green-800 border-r-4 border-green-500"
-                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 active:bg-gray-200"
+                      ? "bg-green-100 text-green-800 border-r-4 border-green-500 dark:bg-green-900/20 dark:text-green-300 dark:border-green-600"
+                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 active:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white dark:active:bg-gray-700"
                   }
                 `}
               >
@@ -120,10 +128,10 @@ export default function Navigation() {
           </nav>
 
           {/* User section */}
-          <div className="p-4 border-t border-gray-200">
+          <div className="p-4 border-t border-gray-200 dark:border-gray-800">
             <div className="flex items-center space-x-3 mb-4">
-              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                <span className="text-green-600 font-semibold text-lg">
+              <div className="w-10 h-10 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center">
+                <span className="text-green-600 dark:text-green-400 font-semibold text-lg">
                   {(
                     user.firstName?.[0] ||
                     user.username?.[0] ||
@@ -132,17 +140,17 @@ export default function Navigation() {
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
+                <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
                   {user.firstName || user.username || "User"}
                 </p>
-                <p className="text-xs text-gray-500 truncate">
+                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                   {user.primaryEmailAddress?.emailAddress}
                 </p>
               </div>
             </div>
             <button
               onClick={handleSignOut}
-              className="w-full flex items-center space-x-2 px-4 py-3 text-base text-gray-600 hover:bg-gray-100 active:bg-gray-200 rounded-lg transition-colors touch-manipulation"
+              className="w-full flex items-center space-x-2 px-4 py-3 text-base text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 active:bg-gray-200 dark:active:bg-gray-700 rounded-lg transition-colors touch-manipulation"
             >
               <span>🚪</span>
               <span>Sign out</span>

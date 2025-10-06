@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Crop, CropStatus } from "@/types";
+import { usePullToRefresh, useIsMobile } from "@/hooks/useMobileGestures";
 
 export default function CropsPage() {
   const { user, isLoaded } = useUser();
@@ -21,21 +22,9 @@ export default function CropsPage() {
   });
   const [formLoading, setFormLoading] = useState(false);
   const [error, setError] = useState("");
+  const isMobile = useIsMobile();
 
-  useEffect(() => {
-    if (!isLoaded) return;
-
-    if (!user) {
-      router.push("/sign-in");
-      return;
-    }
-
-    if (user) {
-      fetchCrops();
-    }
-  }, [user, isLoaded, router]);
-
-  const fetchCrops = async () => {
+  const fetchCrops = useCallback(async () => {
     try {
       const response = await fetch("/api/crops");
       const data = await response.json();
@@ -50,7 +39,25 @@ export default function CropsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    if (!user) {
+      router.push("/sign-in");
+      return;
+    }
+
+    if (user) {
+      fetchCrops();
+    }
+  }, [user, isLoaded, router, fetchCrops]);
+
+  const pullToRefresh = usePullToRefresh<HTMLDivElement>({
+    onRefresh: fetchCrops,
+    threshold: 80,
+  });
 
   const handleCreateCrop = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -158,7 +165,11 @@ export default function CropsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 dark:from-slate-900 dark:to-green-900/20">
+    <div
+      ref={isMobile ? pullToRefresh.elementRef : null}
+      className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 dark:from-slate-900 dark:to-green-900/20 overflow-auto"
+    >
+      {isMobile && pullToRefresh.refreshIndicator}
       <div className="content-container py-4 sm:py-6 lg:py-8 mobile-header-spacing">
         <div className="mb-6 lg:mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6">
@@ -297,14 +308,14 @@ export default function CropsPage() {
           )}
 
           {crops.length === 0 ? (
-            <div className="card-enhanced p-12 text-center">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">🌱</span>
+            <div className="card-enhanced p-8 sm:p-12 text-center">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl sm:text-3xl">🌱</span>
               </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
                 No crops found
               </h3>
-              <p className="text-gray-600">
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
                 Add your first crop to get started with farm management!
               </p>
             </div>
@@ -326,11 +337,11 @@ export default function CropsPage() {
                           <span className="text-white text-xl">🌱</span>
                         </div>
                         <div>
-                          <h3 className="text-lg font-semibold text-gray-900">
+                          <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 truncate">
                             {crop.name}
                           </h3>
                           {crop.variety && (
-                            <p className="text-sm text-gray-600">
+                            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">
                               {crop.variety}
                             </p>
                           )}
@@ -345,22 +356,24 @@ export default function CropsPage() {
 
                     <div className="space-y-3 mb-6">
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Planted</span>
-                        <span className="text-sm font-medium text-gray-900">
+                        <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                          Planted
+                        </span>
+                        <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">
                           {new Date(crop.plantingDate).toLocaleDateString()}
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">
+                        <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                           Harvest in
                         </span>
                         <span
-                          className={`text-sm font-medium ${
+                          className={`text-xs sm:text-sm font-medium ${
                             daysToHarvest <= 7
-                              ? "text-orange-600"
+                              ? "text-orange-600 dark:text-orange-400"
                               : daysToHarvest <= 30
-                                ? "text-yellow-600"
-                                : "text-green-600"
+                                ? "text-yellow-600 dark:text-yellow-400"
+                                : "text-green-600 dark:text-green-400"
                           }`}
                         >
                           {daysToHarvest} days
@@ -368,33 +381,37 @@ export default function CropsPage() {
                       </div>
                       {crop.area && (
                         <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-600">Area</span>
-                          <span className="text-sm font-medium text-gray-900">
+                          <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                            Area
+                          </span>
+                          <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">
                             {crop.area} m²
                           </span>
                         </div>
                       )}
                     </div>
 
-                    <div className="flex space-x-2">
+                    <div className="flex gap-2">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           router.push(`/crops/${crop.id}`);
                         }}
-                        className="flex-1 btn-enhanced bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 text-sm py-2"
+                        className="flex-1 btn-enhanced bg-blue-600 text-white hover:bg-blue-700 dark:hover:bg-blue-600 focus:ring-blue-500 text-xs sm:text-sm py-2 touch-target"
                       >
-                        <span className="mr-1">👁️</span>
-                        View Details
+                        <span className="mr-1 text-sm">👁️</span>
+                        <span className="hidden sm:inline">View Details</span>
+                        <span className="sm:hidden">View</span>
                       </button>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           handleDeleteCrop(crop.id);
                         }}
-                        className="btn-enhanced bg-red-500 text-white hover:bg-red-600 focus:ring-red-500 text-sm py-2 px-3"
+                        className="btn-enhanced bg-red-500 text-white hover:bg-red-600 dark:hover:bg-red-500 focus:ring-red-500 text-sm py-2 px-3 touch-target"
+                        aria-label="Delete crop"
                       >
-                        <span>🗑️</span>
+                        <span className="text-sm">🗑️</span>
                       </button>
                     </div>
                   </div>

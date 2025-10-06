@@ -161,8 +161,8 @@ export default function ReportsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-yellow-50 dark:from-slate-900 dark:to-orange-900/20">
-      <div className="content-container py-8">
-        <div className="mb-8">
+      <div className="content-container py-4 sm:py-6 lg:py-8 mobile-header-spacing">
+        <div className="mb-6 lg:mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <div className="flex items-center">
               <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-yellow-600 rounded-xl flex items-center justify-center mr-4 shadow-lg">
@@ -180,10 +180,10 @@ export default function ReportsPage() {
             <button
               onClick={exportToCSV}
               disabled={!reportData}
-              className="btn-enhanced bg-orange-600 text-white hover:bg-orange-700 focus:ring-orange-500 shadow-lg hover:shadow-xl disabled:opacity-50"
+              className="btn-enhanced bg-orange-600 text-white hover:bg-orange-700 dark:hover:bg-orange-600 focus:ring-orange-500 shadow-lg hover:shadow-xl disabled:opacity-50 w-full sm:w-auto touch-target"
             >
-              <span className="mr-2">📄</span>
-              Export to CSV
+              <span className="mr-2 text-base sm:text-lg">📄</span>
+              <span className="text-sm sm:text-base">Export to CSV</span>
             </button>
           </div>
 
@@ -214,7 +214,7 @@ export default function ReportsPage() {
                   onChange={(e) =>
                     setDateRange({ ...dateRange, startDate: e.target.value })
                   }
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100"
+                  className="input-mobile"
                 />
               </div>
               <div>
@@ -227,15 +227,15 @@ export default function ReportsPage() {
                   onChange={(e) =>
                     setDateRange({ ...dateRange, endDate: e.target.value })
                   }
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100"
+                  className="input-mobile"
                 />
               </div>
               <div className="flex items-end">
                 <Button
                   onClick={() => setDateRange({ startDate: "", endDate: "" })}
-                  className="bg-gray-600 hover:bg-gray-700"
+                  className="bg-gray-600 hover:bg-gray-700 dark:hover:bg-gray-600 w-full sm:w-auto touch-target"
                 >
-                  Clear Filters
+                  <span className="text-sm sm:text-base">Clear Filters</span>
                 </Button>
               </div>
             </div>
@@ -244,9 +244,9 @@ export default function ReportsPage() {
           {reportData && (
             <>
               {/* Summary Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div className="bg-white dark:bg-slate-800 overflow-hidden shadow rounded-lg">
-                  <div className="p-5">
+              <div className="grid-mobile-adaptive mb-6 lg:mb-8">
+                <div className="card-mobile">
+                  <div className="p-4 sm:p-5">
                     <div className="flex items-center">
                       <div className="flex-shrink-0">
                         <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
@@ -255,10 +255,10 @@ export default function ReportsPage() {
                       </div>
                       <div className="ml-5 w-0 flex-1">
                         <dl>
-                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                          <dt className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
                             Total Crops
                           </dt>
-                          <dd className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                          <dd className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100">
                             {reportData.dashboard.totalCrops}
                           </dd>
                         </dl>
@@ -267,8 +267,8 @@ export default function ReportsPage() {
                   </div>
                 </div>
 
-                <div className="bg-white dark:bg-slate-800 overflow-hidden shadow rounded-lg">
-                  <div className="p-5">
+                <div className="card-mobile">
+                  <div className="p-4 sm:p-5">
                     <div className="flex items-center">
                       <div className="flex-shrink-0">
                         <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
@@ -277,10 +277,10 @@ export default function ReportsPage() {
                       </div>
                       <div className="ml-5 w-0 flex-1">
                         <dl>
-                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                          <dt className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
                             Active Tasks
                           </dt>
-                          <dd className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                          <dd className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100">
                             {reportData.dashboard.activeTasks}
                           </dd>
                         </dl>
@@ -289,8 +289,8 @@ export default function ReportsPage() {
                   </div>
                 </div>
 
-                <div className="bg-white dark:bg-slate-800 overflow-hidden shadow rounded-lg">
-                  <div className="p-5">
+                <div className="card-mobile">
+                  <div className="p-4 sm:p-5">
                     <div className="flex items-center">
                       <div className="flex-shrink-0">
                         <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
@@ -299,10 +299,10 @@ export default function ReportsPage() {
                       </div>
                       <div className="ml-5 w-0 flex-1">
                         <dl>
-                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                          <dt className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
                             Total Yield
                           </dt>
-                          <dd className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                          <dd className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100">
                             {reportData.dashboard.totalYield.toFixed(1)} kg
                           </dd>
                         </dl>
@@ -311,8 +311,8 @@ export default function ReportsPage() {
                   </div>
                 </div>
 
-                <div className="bg-white dark:bg-slate-800 overflow-hidden shadow rounded-lg">
-                  <div className="p-5">
+                <div className="card-mobile">
+                  <div className="p-4 sm:p-5">
                     <div className="flex items-center">
                       <div className="flex-shrink-0">
                         <div className="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center">
@@ -321,10 +321,10 @@ export default function ReportsPage() {
                       </div>
                       <div className="ml-5 w-0 flex-1">
                         <dl>
-                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                          <dt className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
                             Water Usage
                           </dt>
-                          <dd className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                          <dd className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100">
                             {reportData.dashboard.waterUsage.toFixed(1)} L
                           </dd>
                         </dl>
@@ -335,34 +335,34 @@ export default function ReportsPage() {
               </div>
 
               {/* Detailed Reports */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6 lg:mb-8">
                 {/* Water Usage Report */}
-                <div className="bg-white dark:bg-slate-800 shadow rounded-lg p-6">
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+                <div className="card-mobile">
+                  <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                     Water Usage Report
                   </h3>
                   <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600 dark:text-gray-300">
+                    <div className="flex justify-between items-center py-1">
+                      <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
                         Total Water Used
                       </span>
-                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">
                         {reportData.water.totalWater.toFixed(1)} L
                       </span>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600 dark:text-gray-300">
+                    <div className="flex justify-between items-center py-1">
+                      <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
                         Irrigation Sessions
                       </span>
-                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">
                         {reportData.water.sessionCount}
                       </span>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600 dark:text-gray-300">
+                    <div className="flex justify-between items-center py-1">
+                      <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
                         Average per Session
                       </span>
-                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">
                         {reportData.water.averagePerSession.toFixed(1)} L
                       </span>
                     </div>
@@ -370,24 +370,24 @@ export default function ReportsPage() {
                 </div>
 
                 {/* Fertilizer Report */}
-                <div className="bg-white dark:bg-slate-800 shadow rounded-lg p-6">
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+                <div className="card-mobile">
+                  <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                     Fertilizer Usage Report
                   </h3>
                   <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600 dark:text-gray-300">
+                    <div className="flex justify-between items-center py-1">
+                      <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
                         Total Amount Used
                       </span>
-                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">
                         {reportData.fertilizer.totalAmount.toFixed(1)} kg
                       </span>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600 dark:text-gray-300">
+                    <div className="flex justify-between items-center py-1">
+                      <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
                         Applications
                       </span>
-                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">
                         {reportData.fertilizer.applicationCount}
                       </span>
                     </div>
@@ -529,32 +529,32 @@ export default function ReportsPage() {
               </div>
 
               {/* Task Summary */}
-              <div className="bg-white dark:bg-slate-800 shadow rounded-lg p-6">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+              <div className="card-mobile">
+                <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                   Task Summary
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                    <div className="text-xl sm:text-2xl font-bold text-blue-600 dark:text-blue-400">
                       {reportData.dashboard.activeTasks}
                     </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-300">
+                    <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
                       Active Tasks
                     </div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-red-600 dark:text-red-400">
+                    <div className="text-xl sm:text-2xl font-bold text-red-600 dark:text-red-400">
                       {reportData.dashboard.overdueTasks}
                     </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-300">
+                    <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
                       Overdue Tasks
                     </div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                    <div className="text-xl sm:text-2xl font-bold text-green-600 dark:text-green-400">
                       {reportData.dashboard.recentHarvests}
                     </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-300">
+                    <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
                       Recent Harvests
                     </div>
                   </div>

@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import { usePullToRefresh, useIsMobile } from "@/hooks/useMobileGestures";
 
 interface DashboardStats {
   totalCrops: number;
@@ -56,7 +57,7 @@ export default function DashboardPage() {
     fetchAnalytics();
   }, [user, isLoaded, router]);
 
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
     try {
       const response = await fetch("/api/analytics");
       const data = await response.json();
@@ -71,7 +72,13 @@ export default function DashboardPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  const isMobile = useIsMobile();
+  const pullToRefresh = usePullToRefresh<HTMLDivElement>({
+    onRefresh: fetchAnalytics,
+    threshold: 80,
+  });
 
   if (!isLoaded || loading) {
     return (
@@ -88,7 +95,11 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-slate-900 dark:to-gray-800">
+    <div
+      ref={isMobile ? pullToRefresh.elementRef : null}
+      className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-slate-900 dark:to-gray-800 overflow-auto"
+    >
+      {isMobile && pullToRefresh.refreshIndicator}
       <div className="content-container py-4 sm:py-6 lg:py-8">
         <div className="mb-6 lg:mb-8">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100 mb-2">
@@ -117,10 +128,10 @@ export default function DashboardPage() {
                       <span className="text-white text-lg">🌱</span>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-600">
+                      <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
                         Total Crops
                       </p>
-                      <p className="text-2xl font-bold text-gray-900">
+                      <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
                         {analytics.dashboard.totalCrops}
                       </p>
                     </div>
@@ -135,10 +146,10 @@ export default function DashboardPage() {
                       <span className="text-white text-lg">📋</span>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-600">
+                      <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
                         Active Tasks
                       </p>
-                      <p className="text-2xl font-bold text-gray-900">
+                      <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
                         {analytics.dashboard.activeTasks}
                       </p>
                     </div>
@@ -153,10 +164,10 @@ export default function DashboardPage() {
                       <span className="text-white text-lg">⚠️</span>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-600">
+                      <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
                         Overdue Tasks
                       </p>
-                      <p className="text-2xl font-bold text-gray-900">
+                      <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
                         {analytics.dashboard.overdueTasks}
                       </p>
                     </div>
@@ -171,10 +182,10 @@ export default function DashboardPage() {
                       <span className="text-white text-lg">🌾</span>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-600">
+                      <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
                         Total Yield
                       </p>
-                      <p className="text-2xl font-bold text-gray-900">
+                      <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
                         {analytics.dashboard.totalYield.toFixed(1)} kg
                       </p>
                     </div>
@@ -190,28 +201,32 @@ export default function DashboardPage() {
                   <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center mr-3">
                     <span className="text-white text-sm">💧</span>
                   </div>
-                  <h3 className="text-heading text-gray-900">Resource Usage</h3>
+                  <h3 className="text-heading text-gray-900 dark:text-gray-100">
+                    Resource Usage
+                  </h3>
                 </div>
                 <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Water Usage</span>
-                    <span className="text-sm font-medium">
+                  <div className="flex justify-between items-center py-1">
+                    <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                      Water Usage
+                    </span>
+                    <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">
                       {analytics.water.totalWater.toFixed(1)} L
                     </span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">
+                  <div className="flex justify-between items-center py-1">
+                    <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                       Irrigation Sessions
                     </span>
-                    <span className="text-sm font-medium">
+                    <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">
                       {analytics.water.sessionCount}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">
+                  <div className="flex justify-between items-center py-1">
+                    <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                       Fertilizer Applications
                     </span>
-                    <span className="text-sm font-medium">
+                    <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">
                       {analytics.fertilizer.applicationCount}
                     </span>
                   </div>
@@ -223,30 +238,32 @@ export default function DashboardPage() {
                   <div className="w-8 h-8 bg-gradient-to-br from-red-400 to-red-600 rounded-lg flex items-center justify-center mr-3">
                     <span className="text-white text-sm">🌡️</span>
                   </div>
-                  <h3 className="text-heading text-gray-900">
+                  <h3 className="text-heading text-gray-900 dark:text-gray-100">
                     Health & Issues
                   </h3>
                 </div>
                 <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">
+                  <div className="flex justify-between items-center py-1">
+                    <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                       Total Incidents
                     </span>
-                    <span className="text-sm font-medium">
+                    <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">
                       {analytics.pestDisease.totalIncidents}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Pest Issues</span>
-                    <span className="text-sm font-medium">
+                  <div className="flex justify-between items-center py-1">
+                    <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                      Pest Issues
+                    </span>
+                    <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">
                       {analytics.pestDisease.pestCount}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">
+                  <div className="flex justify-between items-center py-1">
+                    <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                       Disease Issues
                     </span>
-                    <span className="text-sm font-medium">
+                    <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">
                       {analytics.pestDisease.diseaseCount}
                     </span>
                   </div>
@@ -260,43 +277,55 @@ export default function DashboardPage() {
                 <div className="w-8 h-8 bg-gradient-to-br from-indigo-400 to-indigo-600 rounded-lg flex items-center justify-center mr-3">
                   <span className="text-white text-sm">⚡</span>
                 </div>
-                <h3 className="text-heading text-gray-900">Quick Actions</h3>
+                <h3 className="text-heading text-gray-900 dark:text-gray-100">
+                  Quick Actions
+                </h3>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
                 <button
                   onClick={() => router.push("/ai-companion")}
-                  className="btn-enhanced btn-primary group"
+                  className="btn-enhanced btn-primary group w-full touch-target"
                 >
-                  <span className="mr-2">🤖</span>
-                  AI Companion
+                  <span className="mr-2 text-base sm:text-lg">🤖</span>
+                  <span className="text-sm sm:text-base font-medium">
+                    AI Companion
+                  </span>
                 </button>
                 <button
                   onClick={() => router.push("/crops")}
-                  className="btn-enhanced bg-emerald-600 text-white hover:bg-emerald-700 focus:ring-emerald-500 shadow-sm hover:shadow"
+                  className="btn-enhanced bg-emerald-600 text-white hover:bg-emerald-700 dark:hover:bg-emerald-600 focus:ring-emerald-500 shadow-sm hover:shadow w-full touch-target"
                 >
-                  <span className="mr-2">🌱</span>
-                  Manage Crops
+                  <span className="mr-2 text-base sm:text-lg">🌱</span>
+                  <span className="text-sm sm:text-base font-medium">
+                    Manage Crops
+                  </span>
                 </button>
                 <button
                   onClick={() => router.push("/tasks")}
-                  className="btn-enhanced bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 shadow-sm hover:shadow"
+                  className="btn-enhanced bg-blue-600 text-white hover:bg-blue-700 dark:hover:bg-blue-600 focus:ring-blue-500 shadow-sm hover:shadow w-full touch-target"
                 >
-                  <span className="mr-2">✅</span>
-                  View Tasks
+                  <span className="mr-2 text-base sm:text-lg">✅</span>
+                  <span className="text-sm sm:text-base font-medium">
+                    View Tasks
+                  </span>
                 </button>
                 <button
                   onClick={() => router.push("/activities")}
-                  className="btn-enhanced bg-purple-600 text-white hover:bg-purple-700 focus:ring-purple-500 shadow-sm hover:shadow"
+                  className="btn-enhanced bg-purple-600 text-white hover:bg-purple-700 dark:hover:bg-purple-600 focus:ring-purple-500 shadow-sm hover:shadow w-full touch-target"
                 >
-                  <span className="mr-2">📋</span>
-                  Log Activity
+                  <span className="mr-2 text-base sm:text-lg">📋</span>
+                  <span className="text-sm sm:text-base font-medium">
+                    Log Activity
+                  </span>
                 </button>
                 <button
                   onClick={() => router.push("/reports")}
-                  className="btn-enhanced bg-orange-600 text-white hover:bg-orange-700 focus:ring-orange-500 shadow-sm hover:shadow"
+                  className="btn-enhanced bg-orange-600 text-white hover:bg-orange-700 dark:hover:bg-orange-600 focus:ring-orange-500 shadow-sm hover:shadow w-full touch-target"
                 >
-                  <span className="mr-2">📈</span>
-                  View Reports
+                  <span className="mr-2 text-base sm:text-lg">📈</span>
+                  <span className="text-sm sm:text-base font-medium">
+                    View Reports
+                  </span>
                 </button>
               </div>
             </div>
