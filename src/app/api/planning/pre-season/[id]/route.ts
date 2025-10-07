@@ -36,7 +36,7 @@ const updatePlanSchema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const { userId } = auth();
@@ -48,6 +48,7 @@ export async function GET(
       );
     }
 
+    const params = await context.params;
     const { id } = params;
 
     const plan = await prisma.preSeasonPlan.findFirst({
@@ -165,7 +166,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const { userId } = auth();
@@ -177,6 +178,7 @@ export async function PUT(
       );
     }
 
+    const params = await context.params;
     const { id } = params;
     const body = await request.json();
     const validatedData = updatePlanSchema.parse(body);
@@ -284,7 +286,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const { userId } = auth();
@@ -296,6 +298,7 @@ export async function DELETE(
       );
     }
 
+    const params = await context.params;
     const { id } = params;
 
     // Verify plan exists and belongs to user

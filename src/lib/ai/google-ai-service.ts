@@ -132,7 +132,18 @@ export class GoogleAIService {
     try {
       const prompt = this.buildInsightsPrompt(context, analysisType);
 
-      const result = await this.model.generateContent(prompt);
+      // Use a dedicated model for content generation if the primary model is chat-focused
+      const insightsModel = this.genAI.getGenerativeModel({
+        model: "gemini-1.5-flash", // Explicitly use a model for content generation
+        generationConfig: {
+          temperature: this.config.temperature || 0.7,
+          topK: this.config.topK || 40,
+          topP: this.config.topP || 0.95,
+          maxOutputTokens: this.config.maxOutputTokens || 1024,
+        },
+        systemInstruction: this.getFarmingSystemInstruction(),
+      });
+      const result = await insightsModel.generateContent(prompt);
       const response = await result.response;
       const text = response.text();
 

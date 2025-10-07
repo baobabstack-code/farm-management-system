@@ -20,7 +20,7 @@ import {
   Eye,
   TrendingUp,
   Sprout,
-  Spray,
+  Zap,
   Wheat,
   Shield,
   Calendar,
@@ -134,7 +134,7 @@ export default function EnhancedWeatherDashboard({
       case "irrigation":
         return <Droplets className="w-4 h-4" />;
       case "spraying":
-        return <Spray className="w-4 h-4" />;
+        return <Zap className="w-4 h-4" />;
       case "planting":
       case "harvesting":
         return <Wheat className="w-4 h-4" />;
@@ -546,7 +546,7 @@ export default function EnhancedWeatherDashboard({
           <Card>
             <CardHeader>
               <h3 className="text-lg font-semibold flex items-center gap-2">
-                <Spray className="w-5 h-5 text-blue-600" />
+                <Zap className="w-5 h-5 text-blue-600" />
                 Spray Conditions
               </h3>
             </CardHeader>

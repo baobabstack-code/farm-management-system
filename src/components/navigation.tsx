@@ -7,11 +7,18 @@ import Link from "next/link";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: "📊" },
+  { name: "AI Companion", href: "/ai-companion", icon: "🤖" },
   { name: "Crops", href: "/crops", icon: "🌱" },
+  { name: "Fields", href: "/fields", icon: "🏞️" },
+  { name: "Weather", href: "/weather", icon: "🌤️" },
   { name: "Soil Management", href: "/soil", icon: "🧪" },
+  { name: "Planning", href: "/planning", icon: "📝" },
+  { name: "Land Preparation", href: "/land-preparation", icon: "🚜" },
   { name: "Tasks", href: "/tasks", icon: "✅" },
   { name: "Activities", href: "/activities", icon: "📋" },
   { name: "Reports", href: "/reports", icon: "📈" },
+  { name: "Settings", href: "/settings", icon: "⚙️" },
+  { name: "Profile", href: "/profile", icon: "👤" },
 ];
 
 export default function Navigation() {

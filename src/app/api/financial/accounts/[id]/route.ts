@@ -28,7 +28,7 @@ const updateAccountSchema = z.object({
 // GET /api/financial/accounts/[id] - Get specific financial account
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const { userId } = auth();
@@ -37,6 +37,7 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const params = await context.params;
     const account = await prisma.financialAccount.findFirst({
       where: {
         id: params.id,
@@ -88,7 +89,7 @@ export async function GET(
 // PUT /api/financial/accounts/[id] - Update financial account
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const { userId } = auth();
@@ -97,6 +98,7 @@ export async function PUT(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const params = await context.params;
     const body = await request.json();
     const validatedData = updateAccountSchema.parse(body);
 
@@ -140,7 +142,7 @@ export async function PUT(
 // DELETE /api/financial/accounts/[id] - Deactivate financial account
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const { userId } = auth();
@@ -149,6 +151,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const params = await context.params;
     // Check if account exists and belongs to user
     const existingAccount = await prisma.financialAccount.findFirst({
       where: {

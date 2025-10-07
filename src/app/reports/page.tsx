@@ -420,8 +420,8 @@ export default function ReportsPage() {
                 </div>
 
                 {/* Harvest Report */}
-                <div className="bg-white dark:bg-slate-800 shadow rounded-lg p-6">
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+                <div className="card-mobile">
+                  <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                     Harvest Report
                   </h3>
                   <div className="space-y-4">
@@ -470,8 +470,8 @@ export default function ReportsPage() {
                 </div>
 
                 {/* Pest & Disease Report */}
-                <div className="bg-white dark:bg-slate-800 shadow rounded-lg p-6">
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+                <div className="card-mobile">
+                  <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                     Pest & Disease Report
                   </h3>
                   <div className="space-y-4">

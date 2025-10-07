@@ -56,42 +56,51 @@ export default function SettingsPage() {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-4">
-          <Settings className="w-8 h-8 text-green-600" />
-          <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-4">
+            <Settings className="w-8 h-8 text-green-600 dark:text-green-400" />
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+              Settings
+            </h1>
+          </div>
+          <p className="text-gray-600 dark:text-gray-300">
+            Manage your account settings, integrations, and preferences.
+          </p>
         </div>
-        <p className="text-gray-600">
-          Manage your account settings, integrations, and preferences.
-        </p>
-      </div>
 
-      <div className="grid gap-4">
-        {settingSections.map((section, index) => (
-          <Card key={index} className="hover:shadow-md transition-shadow">
-            <Link href={section.href}>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-green-50 rounded-lg">
-                      {section.icon}
+        <div className="grid gap-4">
+          {settingSections.map((section, index) => (
+            <Card
+              key={index}
+              className="hover:shadow-md transition-shadow dark:bg-slate-800 dark:border-gray-600"
+            >
+              <Link href={section.href}>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                        <div className="text-green-600 dark:text-green-400">
+                          {section.icon}
+                        </div>
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
+                          {section.title}
+                        </h3>
+                        <p className="text-gray-600 dark:text-gray-300 text-sm">
+                          {section.description}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                        {section.title}
-                      </h3>
-                      <p className="text-gray-600 text-sm">
-                        {section.description}
-                      </p>
-                    </div>
+                    <ChevronRight className="w-5 h-5 text-gray-400 dark:text-gray-500" />
                   </div>
-                  <ChevronRight className="w-5 h-5 text-gray-400" />
-                </div>
-              </CardContent>
-            </Link>
-          </Card>
-        ))}
+                </CardContent>
+              </Link>
+            </Card>
+          ))}
+        </div>
       </div>
     </div>
   );
