@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { usePullToRefresh, useIsMobile } from "@/hooks/useMobileGestures";
+import WeatherDashboard from "@/components/weather/WeatherDashboard";
 
 interface DashboardStats {
   totalCrops: number;
@@ -192,6 +193,11 @@ export default function DashboardPage() {
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Weather Dashboard */}
+            <div className="mb-6 lg:mb-8">
+              <WeatherDashboard />
             </div>
 
             {/* Activity Summary */}

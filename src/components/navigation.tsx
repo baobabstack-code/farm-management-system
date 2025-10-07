@@ -8,6 +8,7 @@ import Link from "next/link";
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: "📊" },
   { name: "Crops", href: "/crops", icon: "🌱" },
+  { name: "Soil Management", href: "/soil", icon: "🧪" },
   { name: "Tasks", href: "/tasks", icon: "✅" },
   { name: "Activities", href: "/activities", icon: "📋" },
   { name: "Reports", href: "/reports", icon: "📈" },

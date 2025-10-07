@@ -27,11 +27,20 @@ model Crop {
   updatedAt           DateTime  @updatedAt
 
   // Relations - userId is managed by Clerk
+  field           Field?             @relation(fields: [fieldId], references: [id], onDelete: SetNull)
+  fieldId         String?
   tasks           Task[]
   irrigationLogs  IrrigationLog[]
   fertilizerLogs  FertilizerLog[]
   pestDiseaseLogs PestDiseaseLog[]
   harvestLogs     HarvestLog[]
+  soilTests       SoilTest[]
+  soilAmendments  SoilAmendment[]
+  tillageOps      TillageOperation[]
+  preparationPlans LandPreparationPlan[]
+  costEntries     CostEntry[]
+  transactions    FinancialTransaction[]
+  budgetItems     BudgetItem[]
 
   @@map("crops")
 }
@@ -194,4 +203,1047 @@ enum QualityGrade {
   GOOD
   FAIR
   POOR
+}
+
+// Weather and Environmental Models
+model WeatherData {
+  id            String   @id @default(cuid())
+  location      String
+  latitude      Float
+  longitude     Float
+  temperature   Float
+  humidity      Float
+  precipitation Float
+  windSpeed     Float
+  windDirection Float
+  pressure      Float
+  uvIndex       Float
+  visibility    Float
+  description   String
+  icon          String
+  timestamp     DateTime
+  createdAt     DateTime @default(now())
+
+  @@map("weather_data")
+}
+
+model WeatherForecast {
+  id                  String   @id @default(cuid())
+  location            String
+  latitude            Float
+  longitude           Float
+  forecastDate        DateTime
+  tempMin             Float
+  tempMax             Float
+  humidity            Float
+  precipitation       Float
+  precipitationChance Float
+  windSpeed           Float
+  windDirection       Float
+  description         String
+  icon                String
+  timestamp           DateTime
+  createdAt           DateTime @default(now())
+
+  @@map("weather_forecasts")
+}
+
+model WeatherAlert {
+  id          String               @id @default(cuid())
+  userId      String
+  alertType   WeatherAlertType
+  severity    WeatherAlertSeverity
+  title       String
+  description String
+  location    String
+  startTime   DateTime
+  endTime     DateTime
+  isActive    Boolean              @default(true)
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+
+  @@map("weather_alerts")
+}
+
+// Field Management
+model Field {
+  id             String    @id @default(cuid())
+  userId         String
+  name           String
+  description    String?
+  area           Float
+  unit           String    @default("acres")
+  latitude       Float?
+  longitude      Float?
+  address        String?
+  boundaries     Json?     // Store GeoJSON polygon
+  soilType       String?
+  drainageType   String?
+  irrigationType String?
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  // Relations
+  crops            Crop[]
+  soilTests        SoilTest[]
+  soilAmendments   SoilAmendment[]
+  tillageOps       TillageOperation[]
+  plannedCrops     PlannedCrop[]
+  rotationPlans    CropRotationPlan[]
+  preparationPlans LandPreparationPlan[]
+  costEntries      CostEntry[]
+  transactions     FinancialTransaction[]
+  budgetItems      BudgetItem[]
+
+  @@map("fields")
+}
+
+// Soil Management
+model SoilTest {
+  id                       String       @id @default(cuid())
+  userId                   String
+  cropId                   String?
+  fieldId                  String?
+  sampleDate               DateTime
+  labName                  String
+  testType                 SoilTestType @default(BASIC)
+  pH                       Float
+  organicMatter            Float
+  nitrogen                 Float
+  phosphorus               Float
+  potassium                Float
+  calcium                  Float
+  magnesium                Float
+  sulfur                   Float
+  cationExchangeCapacity   Float
+  soilTexture              String
+  recommendations          String
+  cost                     Float
+  notes                    String?
+  createdAt                DateTime     @default(now())
+  updatedAt                DateTime     @updatedAt
+
+  // Relations
+  crop  Crop?  @relation(fields: [cropId], references: [id], onDelete: SetNull)
+  field Field? @relation(fields: [fieldId], references: [id], onDelete: SetNull)
+
+  @@map("soil_tests")
+}
+
+model SoilAmendment {
+  id              String   @id @default(cuid())
+  userId          String
+  cropId          String?
+  fieldId         String?
+  supplierId      String?
+  amendmentType   String
+  applicationDate DateTime
+  rate            Float
+  unit            String
+  cost            Float
+  supplierName    String?  // Legacy field for backward compatibility
+  method          String
+  notes           String?
+  createdAt       DateTime @default(now())
+
+  // Relations
+  crop     Crop?     @relation(fields: [cropId], references: [id], onDelete: SetNull)
+  field    Field?    @relation(fields: [fieldId], references: [id], onDelete: SetNull)
+  supplier Supplier? @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+
+  @@map("soil_amendments")
+}
+
+// Cost Management
+model CostCategory {
+  id           String           @id @default(cuid())
+  userId       String
+  name         String
+  description  String?
+  categoryType CostCategoryType @default(VARIABLE)
+  isActive     Boolean          @default(true)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  // Relations
+  costEntries         CostEntry[]
+  transactions        FinancialTransaction[]
+  budgetItems         BudgetItem[]
+
+  @@map("cost_categories")
+}
+
+model CostEntry {
+  id            String        @id @default(cuid())
+  userId        String
+  cropId        String?
+  fieldId       String?
+  categoryId    String
+  supplierId    String?
+  description   String
+  amount        Float
+  currency      String        @default("USD")
+  date          DateTime
+  supplierName  String?       // Legacy field for backward compatibility
+  invoiceNumber String?
+  paymentStatus PaymentStatus @default(PENDING)
+  notes         String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Relations
+  crop     Crop?         @relation(fields: [cropId], references: [id], onDelete: SetNull)
+  field    Field?        @relation(fields: [fieldId], references: [id], onDelete: SetNull)
+  category CostCategory  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  supplier Supplier?     @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+
+  @@map("cost_entries")
+}
+
+// Pre-Season Planning
+model PreSeasonPlan {
+  id              String       @id @default(cuid())
+  userId          String
+  season          String
+  year            Int
+  status          PlanStatus   @default(DRAFT)
+  totalBudget     Float
+  expectedRevenue Float
+  riskAssessment  String?
+  weatherRisk     String?
+  marketRisk      String?
+  operationalRisk String?
+  mitigationPlan  String?
+  planName        String
+  description     String?
+  startDate       DateTime
+  endDate         DateTime
+  approvedBy      String?
+  approvedAt      DateTime?
+  notes           String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  // Relations
+  plannedCrops       PlannedCrop[]
+  rotationPlans      CropRotationPlan[]
+  resourceAllocations ResourceAllocation[]
+  seasonalTasks      SeasonalTask[]
+  preparationPlans   LandPreparationPlan[]
+
+  @@map("pre_season_plans")
+}
+
+model PlannedCrop {
+  id                  String   @id @default(cuid())
+  planId              String
+  cropName            String
+  variety             String?
+  fieldId             String?
+  plannedArea         Float
+  areaUnit            String   @default("acres")
+  expectedYield       Float
+  yieldUnit           String   @default("tons")
+  plannedPlantingDate DateTime
+  plannedHarvestDate  DateTime
+  estimatedCosts      Float
+  estimatedRevenue    Float
+  profitMargin        Float?
+  laborHours          Float?
+  machineryHours      Float?
+  seedRate            Float?
+  fertilizerPlan      Json?    // Fertilizer application schedule
+  irrigationPlan      Json?    // Irrigation schedule
+  pestManagementPlan  Json?    // Pest and disease management plan
+  marketingPlan       String?
+  contractPrice       Float?
+  priority            Int      @default(1)
+  riskLevel           String   @default("MEDIUM")
+  notes               String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  // Relations
+  plan              PreSeasonPlan      @relation(fields: [planId], references: [id], onDelete: Cascade)
+  field             Field?             @relation(fields: [fieldId], references: [id], onDelete: SetNull)
+  resourceAllocations ResourceAllocation[]
+
+  @@map("planned_crops")
+}
+
+// Crop Rotation Planning
+model CropRotationPlan {
+  id              String   @id @default(cuid())
+  userId          String
+  planId          String?
+  fieldId         String
+  rotationName    String
+  description     String?
+  rotationYears   Int      @default(4)
+  startYear       Int
+  currentPhase    Int      @default(1)
+  rotationType    RotationType @default(SEQUENTIAL)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  plan            PreSeasonPlan?    @relation(fields: [planId], references: [id], onDelete: SetNull)
+  field           Field             @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  rotationPhases  RotationPhase[]
+  soilBenefits    SoilBenefit[]
+
+  @@map("crop_rotation_plans")
+}
+
+model RotationPhase {
+  id               String   @id @default(cuid())
+  rotationPlanId   String
+  phaseNumber      Int
+  cropName         String
+  variety          String?
+  plantingWindow   String   // "Early Spring", "Late Summer", etc.
+  expectedDuration Int      // Days
+  soilRequirements Json?
+  nutrients        Json?    // N, P, K requirements/contributions
+  waterRequirements Float?
+  laborRequirements Float?
+  expectedYield    Float?
+  marketValue      Float?
+  notes           String?
+  createdAt       DateTime @default(now())
+
+  // Relations
+  rotationPlan CropRotationPlan @relation(fields: [rotationPlanId], references: [id], onDelete: Cascade)
+
+  @@map("rotation_phases")
+}
+
+model SoilBenefit {
+  id               String   @id @default(cuid())
+  rotationPlanId   String
+  benefitType      SoilBenefitType
+  description      String
+  measurableImpact String?  // "15% increase in OM", "50% reduction in erosion"
+  timeFrame        String   // "1 year", "3 years"
+  createdAt        DateTime @default(now())
+
+  // Relations
+  rotationPlan CropRotationPlan @relation(fields: [rotationPlanId], references: [id], onDelete: Cascade)
+
+  @@map("soil_benefits")
+}
+
+// Resource Allocation
+model ResourceAllocation {
+  id              String       @id @default(cuid())
+  userId          String
+  planId          String?
+  plannedCropId   String?
+  resourceType    ResourceType
+  resourceName    String
+  plannedQuantity Float
+  unit            String
+  costPerUnit     Float
+  totalCost       Float
+  supplier        String?
+  allocationDate  DateTime?
+  priority        Int          @default(1)
+  isAllocated     Boolean      @default(false)
+  actualQuantity  Float?
+  actualCost      Float?
+  notes           String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  // Relations
+  plan         PreSeasonPlan? @relation(fields: [planId], references: [id], onDelete: SetNull)
+  plannedCrop  PlannedCrop?   @relation(fields: [plannedCropId], references: [id], onDelete: SetNull)
+
+  @@map("resource_allocations")
+}
+
+// Seasonal Task Planning
+model SeasonalTask {
+  id              String         @id @default(cuid())
+  userId          String
+  planId          String?
+  taskName        String
+  description     String?
+  category        TaskCategory
+  priority        TaskPriority   @default(MEDIUM)
+  estimatedHours  Float?
+  requiredSkills  String?
+  equipment       Json?          // Required equipment list
+  materials       Json?          // Required materials list
+  weatherDependent Boolean       @default(false)
+  seasonalTiming  SeasonTiming
+  plannedStartDate DateTime?
+  plannedEndDate  DateTime?
+  windowStart     String?        // "Week 12", "Early Spring"
+  windowEnd       String?
+  isRecurring     Boolean        @default(false)
+  recurrencePattern String?      // "Annual", "Bi-annual"
+  assignedTo      String?
+  status          TaskStatus     @default(PENDING)
+  dependencies    Json?          // Task dependencies
+  completedAt     DateTime?
+  actualHours     Float?
+  notes           String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  // Relations
+  plan PreSeasonPlan? @relation(fields: [planId], references: [id], onDelete: SetNull)
+
+  @@map("seasonal_tasks")
+}
+
+// Market Analysis for Planning
+model MarketAnalysis {
+  id              String   @id @default(cuid())
+  userId          String
+  cropName        String
+  variety         String?
+  analysisYear    Int
+  region          String?
+  averagePrice    Float
+  priceRange      String   // "$200-$300/ton"
+  demandTrend     String   // "Increasing", "Stable", "Declining"
+  supplyTrend     String
+  qualityFactors  Json?    // Quality requirements affecting price
+  seasonalPricing Json?    // Monthly/seasonal price variations
+  contractOpportunities String?
+  riskFactors     String?
+  recommendations String?
+  dataSource      String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("market_analysis")
+}
+
+// Weather Pattern Analysis
+model WeatherPattern {
+  id              String   @id @default(cuid())
+  userId          String
+  region          String
+  patternYear     Int
+  season          String
+  avgTemperature  Float
+  totalRainfall   Float
+  frostDates      Json?    // First and last frost dates
+  growingDays     Int?     // Frost-free days
+  extremeEvents   Json?    // Drought, floods, storms
+  cropImpacts     String?
+  adaptationNeeds String?
+  createdAt       DateTime @default(now())
+
+  @@map("weather_patterns")
+}
+
+// Land Preparation
+model TillageOperation {
+  id             String        @id @default(cuid())
+  userId         String
+  fieldId        String?
+  cropId         String?
+  preparationPlanId String?
+  equipmentId    String?
+  operationType  TillageType
+  operationDate  DateTime
+  completedAt    DateTime?
+  status         OperationStatus @default(PLANNED)
+  depth          Float
+  depthUnit      String        @default("inches")
+  speed          Float
+  speedUnit      String        @default("mph")
+  area           Float?
+  areaUnit       String        @default("acres")
+  equipment      String        // Legacy field for backward compatibility
+  operator       String?
+  assistant      String?       // Additional operator
+  fuelUsed       Float
+  fuelCost       Float?        
+  cost           Float
+  soilConditions String
+  soilMoisture   Float?
+  weatherConditions String?
+  temperature    Float?
+  windSpeed      Float?
+  effectiveness  Int?          // 1-10 rating
+  attachments    Json?         // File attachments (photos, etc.)
+  gpsCoordinates Json?         // GPS tracking data
+  notes          String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  // Relations
+  field           Field?              @relation(fields: [fieldId], references: [id], onDelete: SetNull)
+  crop            Crop?               @relation(fields: [cropId], references: [id], onDelete: SetNull)
+  preparationPlan LandPreparationPlan? @relation(fields: [preparationPlanId], references: [id], onDelete: SetNull)
+  equipmentUsed   Equipment?          @relation(fields: [equipmentId], references: [id], onDelete: SetNull)
+
+  @@map("tillage_operations")
+}
+
+// Equipment Management
+model Equipment {
+  id              String           @id @default(cuid())
+  userId          String
+  name            String
+  equipmentType   EquipmentType
+  category        EquipmentCategory @default(TILLAGE)
+  brand           String?
+  model           String?
+  serialNumber    String?
+  yearManufactured Int?
+  purchaseDate    DateTime?
+  purchasePrice   Float?
+  currentValue    Float?
+  status          EquipmentStatus  @default(ACTIVE)
+  condition       EquipmentCondition @default(GOOD)
+  fuelType        FuelType?        @default(DIESEL)
+  horsepower      Float?
+  workingWidth    Float?           // in feet
+  weight          Float?           // in pounds
+  hoursUsed       Float            @default(0)
+  lastServiceDate DateTime?
+  nextServiceDue  DateTime?
+  serviceInterval Float?           // hours between services
+  insuranceExpiry DateTime?
+  warrantyExpiry  DateTime?
+  location        String?
+  isShared        Boolean          @default(false)
+  dailyRate       Float?           // rental rate if applicable
+  notes           String?
+  attachments     Json?            // Photos, manuals, etc.
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  // Relations
+  tillageOps      TillageOperation[]
+  maintenanceLogs MaintenanceLog[]
+  fuelLogs        FuelLog[]
+  preparations    LandPreparationPlan[]
+
+  @@map("equipment")
+}
+
+// Land Preparation Plans
+model LandPreparationPlan {
+  id              String     @id @default(cuid())
+  userId          String
+  fieldId         String
+  cropId          String?
+  planId          String?    // Link to PreSeasonPlan
+  planName        String
+  description     String?
+  targetDate      DateTime
+  completedDate   DateTime?
+  status          PlanStatus @default(DRAFT)
+  totalArea       Float
+  areaUnit        String     @default("acres")
+  soilType        String?
+  currentCondition String?
+  targetCondition String?
+  weatherWindow   String?    // Optimal weather conditions
+  priority        Int        @default(1)
+  estimatedCost   Float?
+  actualCost      Float?
+  estimatedHours  Float?
+  actualHours     Float?
+  equipmentNeeded Json?      // List of required equipment
+  operatorSkills  String?    // Required skills/certifications
+  safetyNotes     String?    // Safety considerations
+  environmentalNotes String? // Environmental considerations
+  permits         String?    // Required permits or approvals
+  notes           String?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  // Relations
+  field           Field                @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  crop            Crop?                @relation(fields: [cropId], references: [id], onDelete: SetNull)
+  plan            PreSeasonPlan?       @relation(fields: [planId], references: [id], onDelete: SetNull)
+  operations      TillageOperation[]
+  workflowSteps   PreparationWorkflow[]
+  equipment       Equipment[]
+
+  @@map("land_preparation_plans")
+}
+
+// Preparation Workflow
+model PreparationWorkflow {
+  id              String                @id @default(cuid())
+  preparationPlanId String
+  stepNumber      Int
+  stepName        String
+  description     String?
+  operationType   TillageType
+  equipmentType   EquipmentType
+  estimatedDuration Float?              // hours
+  dependencies    Json?                 // Previous steps required
+  soilConditions  String?              // Required soil conditions
+  weatherConditions String?            // Required weather
+  status          WorkflowStepStatus   @default(PENDING)
+  scheduledDate   DateTime?
+  completedDate   DateTime?
+  assignedTo      String?
+  notes           String?
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+
+  // Relations
+  preparationPlan LandPreparationPlan @relation(fields: [preparationPlanId], references: [id], onDelete: Cascade)
+
+  @@map("preparation_workflows")
+}
+
+// Equipment Maintenance
+model MaintenanceLog {
+  id              String          @id @default(cuid())
+  userId          String
+  equipmentId     String
+  maintenanceType MaintenanceType
+  serviceDate     DateTime
+  hoursAtService  Float?
+  description     String
+  partsReplaced   Json?           // List of parts
+  laborHours      Float?
+  laborCost       Float?
+  partsCost       Float?
+  totalCost       Float
+  servicedBy      String?         // Technician/shop
+  nextServiceDue  DateTime?
+  warrantyWork    Boolean         @default(false)
+  attachments     Json?           // Receipts, photos
+  notes           String?
+  createdAt       DateTime        @default(now())
+
+  // Relations
+  equipment Equipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+
+  @@map("maintenance_logs")
+}
+
+// Fuel Usage Tracking
+model FuelLog {
+  id           String    @id @default(cuid())
+  userId       String
+  equipmentId  String
+  fuelDate     DateTime
+  fuelType     FuelType
+  quantity     Float
+  unit         String    @default("gallons")
+  pricePerUnit Float
+  totalCost    Float
+  odometer     Float?    // Hours or miles
+  location     String?
+  supplier     String?
+  receiptNumber String?
+  attachments  Json?     // Receipt photos
+  notes        String?
+  createdAt    DateTime  @default(now())
+
+  // Relations
+  equipment Equipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+
+  @@map("fuel_logs")
+}
+
+// Additional Enums
+enum WeatherAlertType {
+  FROST
+  STORM
+  DROUGHT
+  FLOOD
+  HIGH_WIND
+  EXTREME_HEAT
+  EXTREME_COLD
+  HAIL
+}
+
+enum WeatherAlertSeverity {
+  LOW
+  MODERATE
+  HIGH
+  SEVERE
+  EXTREME
+}
+
+enum SoilTestType {
+  BASIC
+  COMPREHENSIVE
+  MICRONUTRIENT
+  ORGANIC_MATTER
+  HEAVY_METALS
+}
+
+enum CostCategoryType {
+  VARIABLE
+  FIXED
+  SEMI_VARIABLE
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum PlanStatus {
+  DRAFT
+  IN_PROGRESS
+  APPROVED
+  COMPLETED
+  ARCHIVED
+}
+
+enum TillageType {
+  PRIMARY
+  SECONDARY
+  CULTIVATION
+  SUBSOILING
+  DISKING
+  PLOWING
+}
+
+// Enhanced Financial Management
+model FinancialAccount {
+  id              String                @id @default(cuid())
+  userId          String
+  accountName     String
+  accountType     FinancialAccountType
+  accountNumber   String?
+  description     String?
+  isActive        Boolean               @default(true)
+  quickbooksId    String?               // QuickBooks Account ID
+  balance         Float                 @default(0)
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+
+  // Relations
+  transactions    FinancialTransaction[]
+  budgetItems     BudgetItem[]
+
+  @@unique([userId, quickbooksId])
+  @@map("financial_accounts")
+}
+
+model FinancialTransaction {
+  id                String                    @id @default(cuid())
+  userId            String
+  accountId         String
+  cropId            String?
+  fieldId           String?
+  categoryId        String?
+  supplierId        String?
+  amount            Float
+  transactionType   FinancialTransactionType
+  description       String
+  transactionDate   DateTime
+  referenceNumber   String?
+  invoiceNumber     String?
+  paymentMethod     PaymentMethod?
+  paymentStatus     PaymentStatus             @default(PENDING)
+  quickbooksId      String?                   // QuickBooks Transaction ID
+  notes             String?
+  attachments       Json?                     // File attachments
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime                  @updatedAt
+
+  // Relations
+  account           FinancialAccount          @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  crop              Crop?                     @relation(fields: [cropId], references: [id], onDelete: SetNull)
+  field             Field?                    @relation(fields: [fieldId], references: [id], onDelete: SetNull)
+  category          CostCategory?             @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  supplier          Supplier?                 @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, quickbooksId])
+  @@map("financial_transactions")
+}
+
+model Supplier {
+  id              String      @id @default(cuid())
+  userId          String
+  name            String
+  contactName     String?
+  email           String?
+  phone           String?
+  address         String?
+  taxId           String?
+  paymentTerms    String?     // "Net 30", "COD", etc.
+  quickbooksId    String?     // QuickBooks Vendor ID
+  isActive        Boolean     @default(true)
+  notes           String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  // Relations
+  transactions    FinancialTransaction[]
+  costEntries     CostEntry[]
+  soilAmendments  SoilAmendment[]
+
+  @@unique([userId, quickbooksId])
+  @@map("suppliers")
+}
+
+model Budget {
+  id              String       @id @default(cuid())
+  userId          String
+  name            String
+  description     String?
+  budgetYear      Int
+  budgetType      BudgetType   @default(ANNUAL)
+  totalBudget     Float
+  status          BudgetStatus @default(DRAFT)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  // Relations
+  budgetItems     BudgetItem[]
+
+  @@map("budgets")
+}
+
+model BudgetItem {
+  id              String           @id @default(cuid())
+  budgetId        String
+  accountId       String?
+  categoryId      String?
+  cropId          String?
+  fieldId         String?
+  description     String
+  budgetedAmount  Float
+  actualAmount    Float            @default(0)
+  variance        Float            @default(0)
+  notes           String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  // Relations
+  budget          Budget           @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  account         FinancialAccount? @relation(fields: [accountId], references: [id], onDelete: SetNull)
+  category        CostCategory?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  crop            Crop?            @relation(fields: [cropId], references: [id], onDelete: SetNull)
+  field           Field?           @relation(fields: [fieldId], references: [id], onDelete: SetNull)
+
+  @@map("budget_items")
+}
+
+// QuickBooks Integration
+model QuickBooksConnection {
+  id                String    @id @default(cuid())
+  userId            String    @unique
+  companyId         String
+  accessToken       String
+  refreshToken      String
+  tokenExpiresAt    DateTime
+  realmId           String
+  companyName       String?
+  isActive          Boolean   @default(true)
+  lastSyncAt        DateTime?
+  syncStatus        String?   // "success", "error", "in_progress"
+  syncErrors        Json?     // Error details
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@map("quickbooks_connections")
+}
+
+model SyncLog {
+  id              String     @id @default(cuid())
+  userId          String
+  syncType        String     // "transactions", "accounts", "vendors", etc.
+  status          String     // "success", "error", "in_progress"
+  recordsAffected Int        @default(0)
+  errorMessage    String?
+  syncData        Json?      // Additional sync information
+  createdAt       DateTime   @default(now())
+
+  @@map("sync_logs")
+}
+
+// Additional Enums for Financial Management
+enum FinancialAccountType {
+  CHECKING
+  SAVINGS
+  CREDIT_CARD
+  ACCOUNTS_PAYABLE
+  ACCOUNTS_RECEIVABLE
+  EXPENSE
+  REVENUE
+  ASSET
+  LIABILITY
+  EQUITY
+}
+
+enum FinancialTransactionType {
+  INCOME
+  EXPENSE
+  TRANSFER
+  ADJUSTMENT
+}
+
+enum PaymentMethod {
+  CASH
+  CHECK
+  CREDIT_CARD
+  DEBIT_CARD
+  BANK_TRANSFER
+  ONLINE_PAYMENT
+  OTHER
+}
+
+enum BudgetType {
+  ANNUAL
+  SEASONAL
+  MONTHLY
+  PROJECT
+}
+
+enum BudgetStatus {
+  DRAFT
+  ACTIVE
+  COMPLETED
+  ARCHIVED
+}
+
+// Pre-Season Planning Enums
+enum RotationType {
+  SEQUENTIAL
+  INTERCROPPING
+  COVER_CROP
+  FALLOW
+  MIXED
+}
+
+enum SoilBenefitType {
+  NITROGEN_FIXATION
+  ORGANIC_MATTER
+  EROSION_CONTROL
+  PEST_SUPPRESSION
+  WEED_SUPPRESSION
+  SOIL_STRUCTURE
+  WATER_RETENTION
+  NUTRIENT_CYCLING
+}
+
+enum ResourceType {
+  SEED
+  FERTILIZER
+  PESTICIDE
+  FUEL
+  LABOR
+  EQUIPMENT
+  IRRIGATION
+  STORAGE
+  TRANSPORTATION
+  PACKAGING
+}
+
+enum SeasonTiming {
+  EARLY_SPRING
+  LATE_SPRING
+  EARLY_SUMMER
+  MID_SUMMER
+  LATE_SUMMER
+  EARLY_FALL
+  LATE_FALL
+  WINTER
+  YEAR_ROUND
+}
+
+// Land Preparation Enums
+enum OperationStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  DELAYED
+}
+
+enum EquipmentType {
+  PLOW
+  CULTIVATOR
+  DISC
+  HARROW
+  SUBSOILER
+  FIELD_CULTIVATOR
+  CHISEL_PLOW
+  ROTARY_TILLER
+  PLANTER
+  DRILL
+  SPREADER
+  SPRAYER
+  MOWER
+  RAKE
+  BALER
+  COMBINE
+  TRACTOR
+  OTHER
+}
+
+enum EquipmentCategory {
+  TILLAGE
+  PLANTING
+  HARVESTING
+  SPRAYING
+  MOWING
+  TRANSPORT
+  POWER
+  SPECIALTY
+}
+
+enum EquipmentStatus {
+  ACTIVE
+  MAINTENANCE
+  REPAIR
+  RETIRED
+  RENTED
+  LEASED
+}
+
+enum EquipmentCondition {
+  EXCELLENT
+  GOOD
+  FAIR
+  POOR
+  NEEDS_REPAIR
+}
+
+enum FuelType {
+  DIESEL
+  GASOLINE
+  PROPANE
+  ELECTRIC
+  HYBRID
+}
+
+enum MaintenanceType {
+  ROUTINE_SERVICE
+  OIL_CHANGE
+  FILTER_REPLACEMENT
+  BELT_REPLACEMENT
+  TIRE_REPLACEMENT
+  HYDRAULIC_SERVICE
+  ENGINE_REPAIR
+  TRANSMISSION_REPAIR
+  BRAKE_SERVICE
+  SAFETY_INSPECTION
+  ANNUAL_INSPECTION
+  WARRANTY_REPAIR
+  EMERGENCY_REPAIR
+}
+
+enum WorkflowStepStatus {
+  PENDING
+  READY
+  IN_PROGRESS
+  COMPLETED
+  SKIPPED
+  BLOCKED
 }
