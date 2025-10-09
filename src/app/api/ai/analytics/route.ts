@@ -90,6 +90,23 @@ export async function POST(request: NextRequest) {
   }
 }
 
+interface Task {
+  id: string;
+  status: string;
+  title?: string;
+  description?: string | null;
+  dueDate?: Date;
+  [key: string]: any; // Allow additional properties from database
+}
+
+interface Log {
+  id: string;
+  date?: Date;
+  amount?: number;
+  notes?: string | null;
+  [key: string]: any; // Allow additional properties from database
+}
+
 interface CropData {
   id: string;
   name: string;
@@ -99,11 +116,12 @@ interface CropData {
   actualHarvestDate?: Date | null;
   status: string;
   area?: number | null;
-  tasks?: any[];
-  irrigationLogs?: any[];
-  fertilizerLogs?: any[];
-  pestDiseaseLogs?: any[];
-  harvestLogs?: any[];
+  tasks?: any[]; // More flexible to accept actual database structure
+  irrigationLogs?: any[]; // More flexible to accept actual database structure
+  fertilizerLogs?: any[]; // More flexible to accept actual database structure
+  pestDiseaseLogs?: any[]; // More flexible to accept actual database structure
+  harvestLogs?: any[]; // More flexible to accept actual database structure
+  [key: string]: any; // Allow additional properties from database
 }
 
 interface ActivityData {
@@ -113,22 +131,28 @@ interface ActivityData {
   crop: { name: string; id: string };
 }
 
+interface Insight {
+  title: string;
+  description: string;
+  confidence: number;
+  actionable: boolean;
+  priority: "High" | "Medium" | "Low";
+  category: string;
+  source?: string;
+  model?: string;
+}
+
 function generateAdvancedInsights(
   crops: CropData[],
   activities: ActivityData[]
 ) {
-  const insights: any[] = [];
+  const insights: Insight[] = [];
   const now = new Date();
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
   const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
   // 1. Crop Health and Status Analysis
   if (crops.length > 0) {
-    const cropsByStatus = crops.reduce((acc: any, crop) => {
-      acc[crop.status] = (acc[crop.status] || 0) + 1;
-      return acc;
-    }, {});
-
     const overdueCrops = crops.filter((crop) => {
       const harvestDate = new Date(crop.expectedHarvestDate);
       return (
@@ -204,10 +228,13 @@ function generateAdvancedInsights(
     }
 
     // Activity type distribution
-    const activityTypes = recentActivities.reduce((acc: any, activity) => {
-      acc[activity.type] = (acc[activity.type] || 0) + 1;
-      return acc;
-    }, {});
+    const activityTypes = recentActivities.reduce(
+      (acc: Record<string, number>, activity) => {
+        acc[activity.type] = (acc[activity.type] || 0) + 1;
+        return acc;
+      },
+      {}
+    );
 
     if (activityTypes.IRRIGATION && activityTypes.IRRIGATION < 2) {
       insights.push({
@@ -242,26 +269,26 @@ function generateAdvancedInsights(
     );
     const avgCostPerActivity = totalCosts / activities.length;
 
-    const costsByType = activities.reduce((acc: any, activity) => {
-      if (!acc[activity.type]) acc[activity.type] = { total: 0, count: 0 };
-      acc[activity.type].total += activity.cost || 0;
-      acc[activity.type].count += 1;
-      return acc;
-    }, {});
+    const costsByType = activities.reduce(
+      (acc: Record<string, { total: number; count: number }>, activity) => {
+        if (!acc[activity.type]) acc[activity.type] = { total: 0, count: 0 };
+        acc[activity.type].total += activity.cost || 0;
+        acc[activity.type].count += 1;
+        return acc;
+      },
+      {}
+    );
 
     // Identify highest cost activity types
     const highestCostType = Object.entries(costsByType).sort(
-      ([, a]: any, [, b]: any) => b.total - a.total
+      ([, a], [, b]) => b.total - a.total
     )[0];
 
-    if (
-      highestCostType &&
-      (highestCostType[1] as any).total > totalCosts * 0.4
-    ) {
+    if (highestCostType && highestCostType[1].total > totalCosts * 0.4) {
       insights.push({
         title: `${highestCostType[0]} Dominates Farm Costs`,
         description: `${highestCostType[0]} activities account for ${Math.round(
-          ((highestCostType[1] as any).total / totalCosts) * 100
+          (highestCostType[1].total / totalCosts) * 100
         )}% of your total costs. Consider optimizing these operations for better profitability.`,
         confidence: 0.8,
         actionable: true,
@@ -288,9 +315,6 @@ function generateAdvancedInsights(
   }
 
   // 4. Seasonal and Timing Insights
-  const currentMonth = now.getMonth();
-  const currentSeason = getCurrentSeason(currentMonth);
-
   if (crops.length > 0) {
     const upcomingHarvests = crops.filter((crop) => {
       const harvestDate = new Date(crop.expectedHarvestDate);
@@ -383,12 +407,12 @@ function generateAdvancedInsights(
 /**
  * Parse AI-generated insights into structured format
  */
-function parseAIInsights(aiContent: string, model: string): any[] {
+function parseAIInsights(aiContent: string, model: string): Insight[] {
   try {
-    const insights: any[] = [];
+    const insights: Insight[] = [];
     const lines = aiContent.split("\n").filter((line) => line.trim());
 
-    let currentInsight: any = null;
+    let currentInsight: Partial<Insight> | null = null;
     let section = "none";
 
     for (const line of lines) {
@@ -397,8 +421,12 @@ function parseAIInsights(aiContent: string, model: string): any[] {
       // Detect section headers
       if (cleanLine.match(/^\d+\./)) {
         // Save previous insight
-        if (currentInsight) {
-          insights.push(currentInsight);
+        if (
+          currentInsight &&
+          currentInsight.title &&
+          currentInsight.description
+        ) {
+          insights.push(currentInsight as Insight);
         }
 
         // Start new insight
@@ -491,8 +519,8 @@ function parseAIInsights(aiContent: string, model: string): any[] {
     }
 
     // Save the last insight
-    if (currentInsight) {
-      insights.push(currentInsight);
+    if (currentInsight && currentInsight.title && currentInsight.description) {
+      insights.push(currentInsight as Insight);
     }
 
     // If no structured insights found, create a general one
@@ -528,11 +556,4 @@ function parseAIInsights(aiContent: string, model: string): any[] {
       },
     ];
   }
-}
-
-function getCurrentSeason(month: number): string {
-  if (month >= 2 && month <= 4) return "Spring";
-  if (month >= 5 && month <= 7) return "Summer";
-  if (month >= 8 && month <= 10) return "Fall";
-  return "Winter";
 }

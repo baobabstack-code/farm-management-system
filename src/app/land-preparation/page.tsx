@@ -495,7 +495,7 @@ export default function LandPreparationDashboard() {
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                         <div>
                           <p className="text-gray-600">Depth</p>
-                          <p className="font-medium">{operation.depth}"</p>
+                          <p className="font-medium">{operation.depth}&quot;</p>
                         </div>
                         <div>
                           <p className="text-gray-600">Speed</p>

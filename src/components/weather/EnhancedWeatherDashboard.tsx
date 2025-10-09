@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -50,14 +51,7 @@ export default function EnhancedWeatherDashboard({
     "current" | "forecast" | "insights" | "conditions"
   >("current");
 
-  useEffect(() => {
-    fetchWeatherData();
-    // Refresh weather data every 15 minutes
-    const interval = setInterval(fetchWeatherData, 15 * 60 * 1000);
-    return () => clearInterval(interval);
-  }, [latitude, longitude, location]);
-
-  const fetchWeatherData = async () => {
+  const fetchWeatherData = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(
@@ -78,7 +72,14 @@ export default function EnhancedWeatherDashboard({
     } finally {
       setLoading(false);
     }
-  };
+  }, [latitude, longitude, location]);
+
+  useEffect(() => {
+    fetchWeatherData();
+    // Refresh weather data every 15 minutes
+    const interval = setInterval(fetchWeatherData, 15 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [fetchWeatherData]);
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -364,10 +365,12 @@ export default function EnhancedWeatherDashboard({
 
               {/* Weather Icon */}
               <div className="text-center">
-                <img
+                <Image
                   src={`https://openweathermap.org/img/wn/${current.icon}@2x.png`}
                   alt={current.description}
-                  className="mx-auto w-16 h-16 mb-2"
+                  width={64}
+                  height={64}
+                  className="mx-auto mb-2"
                 />
                 <Button
                   onClick={fetchWeatherData}
@@ -393,10 +396,12 @@ export default function EnhancedWeatherDashboard({
                 <div className="font-medium text-gray-900 mb-2">
                   {formatDate(day.forecastDate)}
                 </div>
-                <img
+                <Image
                   src={`https://openweathermap.org/img/wn/${day.icon}.png`}
                   alt={day.description}
-                  className="mx-auto w-12 h-12 mb-2"
+                  width={48}
+                  height={48}
+                  className="mx-auto mb-2"
                 />
                 <div className="text-sm text-gray-600 capitalize mb-2">
                   {day.description}
@@ -434,8 +439,8 @@ export default function EnhancedWeatherDashboard({
                   No Active Insights
                 </h3>
                 <p className="text-gray-600">
-                  Current weather conditions don't require any specific farm
-                  actions.
+                  Current weather conditions don&apos;t require any specific
+                  farm actions.
                 </p>
               </CardContent>
             </Card>

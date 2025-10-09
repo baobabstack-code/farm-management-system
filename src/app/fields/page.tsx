@@ -15,7 +15,6 @@ import {
   Activity,
   Eye,
   Edit,
-  MoreVertical,
   Map,
 } from "lucide-react";
 
@@ -80,7 +79,7 @@ export default function FieldsPage() {
     }
   };
 
-  const handleFieldSaved = (savedField: Field) => {
+  const handleFieldSaved = () => {
     fetchFields(); // Refresh the fields list
     setShowCreateForm(false);
   };

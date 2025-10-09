@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 import { WeatherData, WeatherAlert, WeatherAlertSeverity } from "@/types";
 
 interface WeatherDashboardProps {
@@ -19,14 +20,7 @@ export default function WeatherDashboard({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchWeatherData();
-    // Refresh weather data every 10 minutes
-    const interval = setInterval(fetchWeatherData, 10 * 60 * 1000);
-    return () => clearInterval(interval);
-  }, [latitude, longitude, location]);
-
-  const fetchWeatherData = async () => {
+  const fetchWeatherData = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(
@@ -48,7 +42,14 @@ export default function WeatherDashboard({
     } finally {
       setLoading(false);
     }
-  };
+  }, [latitude, longitude, location]);
+
+  useEffect(() => {
+    fetchWeatherData();
+    // Refresh weather data every 10 minutes
+    const interval = setInterval(fetchWeatherData, 10 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [fetchWeatherData]);
 
   const getAlertColor = (severity: WeatherAlertSeverity) => {
     switch (severity) {
@@ -210,10 +211,12 @@ export default function WeatherDashboard({
           {/* Additional Info */}
           <div className="space-y-2">
             <div className="text-center">
-              <img
+              <Image
                 src={`https://openweathermap.org/img/wn/${weatherData.icon}@2x.png`}
                 alt={weatherData.description}
-                className="mx-auto w-16 h-16"
+                width={64}
+                height={64}
+                className="mx-auto"
               />
             </div>
             <button

@@ -182,7 +182,7 @@ export default function IntegrationsPage() {
           Need a Custom Integration?
         </h2>
         <p className="text-gray-600 mb-4">
-          Don't see the service you need? Contact us to discuss custom
+          Don&apos;t see the service you need? Contact us to discuss custom
           integration options for your specific requirements.
         </p>
         <Button variant="outline">

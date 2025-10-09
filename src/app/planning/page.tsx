@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -59,13 +59,7 @@ export default function PlanningDashboard() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedStatus, setSelectedStatus] = useState<string>("ALL");
 
-  useEffect(() => {
-    if (isLoaded && user) {
-      fetchPlans();
-    }
-  }, [isLoaded, user, selectedYear, selectedStatus]);
-
-  const fetchPlans = async () => {
+  const fetchPlans = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
@@ -87,7 +81,13 @@ export default function PlanningDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedYear, selectedStatus]);
+
+  useEffect(() => {
+    if (isLoaded && user) {
+      fetchPlans();
+    }
+  }, [isLoaded, user, fetchPlans]);
 
   const getStatusColor = (status: string) => {
     switch (status) {

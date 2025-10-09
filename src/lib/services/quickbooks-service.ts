@@ -60,14 +60,12 @@ export class QuickBooksService {
       const qbo = new QuickBooks(
         config.clientId,
         config.clientSecret,
-        "", // accessToken - will be set after exchange
-        false,
-        realmId,
+        "", // accessToken
+        "", // tokenSecret - not used in OAuth 2.0
         config.sandbox,
-        true, // Enable OAuth 2.0
-        null,
-        "2.0",
-        config.redirectUrl
+        false, // debug
+        2, // minor_version
+        realmId
       );
 
       const tokens = await this.exchangeCodeForTokens(qbo, code);
@@ -167,13 +165,11 @@ export class QuickBooksService {
           config.clientId,
           config.clientSecret,
           connection.accessToken,
-          false,
-          connection.realmId,
+          "", // tokenSecret - not used in OAuth 2.0
           config.sandbox,
-          true,
-          null,
-          "2.0",
-          config.redirectUrl
+          false, // debug
+          2, // minor_version
+          connection.realmId
         );
 
         const newTokens = await this.refreshTokens(
@@ -227,13 +223,11 @@ export class QuickBooksService {
         config.clientId,
         config.clientSecret,
         connection.accessToken,
-        false,
-        connection.realmId,
+        "", // tokenSecret - not used in OAuth 2.0
         config.sandbox,
-        true,
-        null,
-        "2.0",
-        config.redirectUrl
+        false, // debug
+        2, // minor_version
+        connection.realmId
       );
 
       const accounts = await this.getAccounts(qbo);
@@ -319,13 +313,11 @@ export class QuickBooksService {
         config.clientId,
         config.clientSecret,
         connection.accessToken,
-        false,
-        connection.realmId,
+        "", // tokenSecret - not used in OAuth 2.0
         config.sandbox,
-        true,
-        null,
-        "2.0",
-        config.redirectUrl
+        false, // debug
+        2, // minor_version
+        connection.realmId
       );
 
       const vendors = await this.getVendors(qbo);
@@ -419,17 +411,15 @@ export class QuickBooksService {
       config.clientId,
       config.clientSecret,
       connection.accessToken,
-      false,
-      connection.realmId,
+      "", // tokenSecret - not used in OAuth 2.0
       config.sandbox,
-      true,
-      null,
-      "2.0",
-      config.redirectUrl
+      false, // debug
+      2, // minor_version
+      connection.realmId
     );
 
     return new Promise((resolve, reject) => {
-      const expense = {
+      const expense: any = {
         AccountRef: {
           value: expenseData.accountId,
         },
@@ -477,8 +467,32 @@ export class QuickBooksService {
     });
   }
 
-  private static mapAccountType(qbAccountType: string): string {
-    const mapping: Record<string, string> = {
+  private static mapAccountType(
+    qbAccountType: string
+  ):
+    | "CHECKING"
+    | "SAVINGS"
+    | "CREDIT_CARD"
+    | "ACCOUNTS_PAYABLE"
+    | "ACCOUNTS_RECEIVABLE"
+    | "EXPENSE"
+    | "REVENUE"
+    | "ASSET"
+    | "LIABILITY"
+    | "EQUITY" {
+    const mapping: Record<
+      string,
+      | "CHECKING"
+      | "SAVINGS"
+      | "CREDIT_CARD"
+      | "ACCOUNTS_PAYABLE"
+      | "ACCOUNTS_RECEIVABLE"
+      | "EXPENSE"
+      | "REVENUE"
+      | "ASSET"
+      | "LIABILITY"
+      | "EQUITY"
+    > = {
       Bank: "CHECKING",
       "Other Current Asset": "ASSET",
       "Accounts Receivable": "ACCOUNTS_RECEIVABLE",
@@ -539,7 +553,7 @@ export class QuickBooksService {
       data: {
         lastSyncAt: new Date(),
         syncStatus: status,
-        syncErrors: errorMessage ? { error: errorMessage } : null,
+        syncErrors: errorMessage ? { error: errorMessage } : undefined,
         updatedAt: new Date(),
       },
     });

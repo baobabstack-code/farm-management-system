@@ -2,10 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { QuickBooksService } from "@/lib/services/quickbooks-service";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
 
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -54,7 +55,7 @@ export async function POST(request: NextRequest) {
       data: {
         lastSyncAt: new Date(),
         syncStatus: "success",
-        syncErrors: null,
+        syncErrors: Prisma.JsonNull,
       },
     });
 

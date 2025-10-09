@@ -193,7 +193,7 @@ export default function FieldForm({
               Field {mode === "edit" ? "Updated" : "Created"} Successfully!
             </h3>
             <p className="text-gray-600">
-              Your field "{formData.name}" has been{" "}
+              Your field &quot;{formData.name}&quot; has been{" "}
               {mode === "edit" ? "updated" : "created"}.
             </p>
           </CardContent>

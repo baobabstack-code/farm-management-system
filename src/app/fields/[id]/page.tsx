@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useParams, useRouter } from "next/navigation";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
@@ -12,12 +12,10 @@ import {
   ArrowLeft,
   Edit,
   MapPin,
-  Calendar,
   TrendingUp,
   Wheat,
   DollarSign,
   Activity,
-  MoreVertical,
   Trash2,
   Eye,
   EyeOff,
@@ -69,13 +67,7 @@ export default function FieldDetailsPage() {
   const [showEditForm, setShowEditForm] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  useEffect(() => {
-    if (user && fieldId) {
-      fetchField();
-    }
-  }, [user, fieldId]);
-
-  const fetchField = async () => {
+  const fetchField = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/fields/${fieldId}?includeStats=true`);
@@ -97,10 +89,19 @@ export default function FieldDetailsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [fieldId]);
 
-  const handleFieldUpdated = (updatedField: Field) => {
-    setField(updatedField);
+  useEffect(() => {
+    if (user && fieldId) {
+      fetchField();
+    }
+  }, [user, fieldId, fetchField]);
+
+  const handleFieldUpdated = (updatedFieldData: any) => {
+    // Merge the updated field data with existing field to preserve all properties
+    setField((prev) =>
+      prev ? { ...prev, ...updatedFieldData } : updatedFieldData
+    );
     setShowEditForm(false);
   };
 
@@ -573,8 +574,8 @@ export default function FieldDetailsPage() {
               <div className="flex items-center mb-4">
                 <AlertTriangle className="w-6 h-6 text-red-600 mr-3" />
                 <p className="text-gray-700">
-                  Are you sure you want to delete "{field.name}"? This action
-                  cannot be undone.
+                  Are you sure you want to delete &quot;{field.name}&quot;? This
+                  action cannot be undone.
                 </p>
               </div>
 

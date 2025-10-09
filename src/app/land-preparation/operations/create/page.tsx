@@ -150,7 +150,10 @@ export default function CreateTillageOperation() {
     }
   };
 
-  const handleInputChange = (name: string, value: string | number) => {
+  const handleInputChange = (
+    name: string,
+    value: string | number | undefined
+  ) => {
     setFormData((prev) => ({
       ...prev,
       [name]: value,

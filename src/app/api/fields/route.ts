@@ -17,8 +17,6 @@ const createFieldSchema = z.object({
   irrigationType: z.string().optional(),
 });
 
-const updateFieldSchema = createFieldSchema.partial();
-
 // GET /api/fields - Get all fields for user
 export async function GET(request: NextRequest) {
   try {

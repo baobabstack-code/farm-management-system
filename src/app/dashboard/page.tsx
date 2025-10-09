@@ -47,17 +47,6 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    if (!isLoaded) return;
-
-    if (!user) {
-      router.push("/sign-in");
-      return;
-    }
-
-    fetchAnalytics();
-  }, [user, isLoaded, router]);
-
   const fetchAnalytics = useCallback(async () => {
     try {
       const response = await fetch("/api/analytics");
@@ -74,6 +63,17 @@ export default function DashboardPage() {
       setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    if (!user) {
+      router.push("/sign-in");
+      return;
+    }
+
+    fetchAnalytics();
+  }, [user, isLoaded, router, fetchAnalytics]);
 
   const isMobile = useIsMobile();
   const pullToRefresh = usePullToRefresh<HTMLDivElement>({

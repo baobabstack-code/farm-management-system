@@ -138,7 +138,7 @@ export class SoilService {
           rate: data.rate,
           unit: data.unit,
           cost: data.cost,
-          supplier: data.supplier,
+          supplierName: data.supplier,
           method: data.method,
           notes: data.notes,
         },

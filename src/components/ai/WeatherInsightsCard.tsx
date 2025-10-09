@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useFeatureFlag } from "@/lib/feature-flags";
 
 interface WeatherInsight {
@@ -125,7 +125,7 @@ export default function WeatherInsightsCard() {
     }
   };
 
-  const fetchWeatherInsights = async () => {
+  const fetchWeatherInsights = useCallback(async () => {
     if (!location) return;
 
     setLoading(true);
@@ -154,7 +154,7 @@ export default function WeatherInsightsCard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [location]);
 
   useEffect(() => {
     if (aiAnalyticsEnabled && !location) {
