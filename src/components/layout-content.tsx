@@ -22,10 +22,12 @@ export default function LayoutContent({ children }: LayoutContentProps) {
 
   if (showSidebar) {
     return (
-      <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="flex h-screen bg-gray-50 dark:bg-slate-900">
         <Navigation />
-        <main className="flex-1 overflow-auto mobile-header-spacing mobile-safe-area">
-          <div className="min-h-full">{children}</div>
+        <main className="flex-1 overflow-auto mobile-header-spacing mobile-safe-area bg-gray-50 dark:bg-slate-900">
+          <div className="min-h-full bg-gray-50 dark:bg-slate-900">
+            {children}
+          </div>
         </main>
         <AIChatAssistant />
       </div>
@@ -33,5 +35,5 @@ export default function LayoutContent({ children }: LayoutContentProps) {
   }
 
   // For auth pages and unauthenticated users, show without sidebar
-  return <div className="min-h-screen">{children}</div>;
+  return <div className="min-h-screen bg-slate-900">{children}</div>;
 }

@@ -4,26 +4,52 @@
 
 @layer base {
   :root {
+    /* Farm-themed color palette */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
+
+    /* Primary green theme for farming */
     --primary: 142.1 76.2% 36.3%;
     --primary-foreground: 355.7 100% 97.3%;
+    --primary-hover: 142.1 76.2% 32%;
+
+    /* Secondary earth tones */
     --secondary: 210 40% 96%;
     --secondary-foreground: 222.2 84% 4.9%;
+    --secondary-hover: 210 40% 92%;
+
+    /* Muted backgrounds */
     --muted: 210 40% 98%;
     --muted-foreground: 215.4 16.3% 46.9%;
+
+    /* Accent colors */
     --accent: 210 40% 96%;
     --accent-foreground: 222.2 84% 4.9%;
+
+    /* Status colors */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
+    --success: 142.1 76.2% 36.3%;
+    --success-foreground: 355.7 100% 97.3%;
+    --warning: 45 93% 47%;
+    --warning-foreground: 210 40% 98%;
+    --info: 217.2 91.2% 59.8%;
+    --info-foreground: 210 40% 98%;
+
+    /* Border and input */
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 142.1 76.2% 36.3%;
     --radius: 0.5rem;
+
+    /* Farm-specific gradients */
+    --gradient-farm: linear-gradient(135deg, hsl(142.1 76.2% 36.3%) 0%, hsl(120 100% 25%) 100%);
+    --gradient-earth: linear-gradient(135deg, hsl(30 50% 85%) 0%, hsl(25 45% 75%) 100%);
+    --gradient-sky: linear-gradient(135deg, hsl(210 100% 95%) 0%, hsl(200 100% 85%) 100%);
   }
 
   .dark {
@@ -33,19 +59,44 @@
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
+
+    /* Primary green theme for farming - darker */
     --primary: 142.1 70.6% 45.3%;
     --primary-foreground: 144.9 80.4% 10%;
+    --primary-hover: 142.1 70.6% 50%;
+
+    /* Secondary earth tones - darker */
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
+    --secondary-hover: 217.2 32.6% 22%;
+
+    /* Muted backgrounds - darker */
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
+
+    /* Accent colors - darker */
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
+
+    /* Status colors - darker */
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
+    --success: 142.1 70.6% 45.3%;
+    --success-foreground: 144.9 80.4% 10%;
+    --warning: 45 93% 47%;
+    --warning-foreground: 210 40% 98%;
+    --info: 217.2 91.2% 59.8%;
+    --info-foreground: 210 40% 98%;
+
+    /* Border and input - darker */
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 142.4 71.8% 29.2%;
+
+    /* Farm-specific gradients - darker */
+    --gradient-farm: linear-gradient(135deg, hsl(142.1 70.6% 25%) 0%, hsl(120 100% 15%) 100%);
+    --gradient-earth: linear-gradient(135deg, hsl(30 30% 25%) 0%, hsl(25 25% 20%) 100%);
+    --gradient-sky: linear-gradient(135deg, hsl(210 50% 15%) 0%, hsl(200 50% 10%) 100%);
   }
 }
 
@@ -53,40 +104,37 @@
   * {
     @apply border-border;
   }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-slate-900 text-gray-100;
+  }
+
+  html {
+    @apply bg-slate-900;
   }
 }
 
-/* Enhanced layout and visual improvements */
+/* Farm Management System - Consistent Theme Utilities */
 @layer utilities {
+
+  /* === LAYOUT SYSTEM === */
   .layout-fix {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
   }
 
-  /* Improved grid layouts */
-  .grid-enhanced {
-    display: grid;
-    gap: 1.25rem;
-    width: 100%;
+  /* Standardized page container */
+  .page-container {
+    @apply min-h-screen;
+    background: var(--gradient-sky);
   }
 
-  .grid-enhanced-lg {
-    gap: 1.5rem;
+  .page-container.dark {
+    background: linear-gradient(135deg, hsl(222.2 84% 4.9%) 0%, hsl(217.2 32.6% 8%) 100%);
   }
 
-  /* Enhanced card styling */
-  .card-enhanced {
-    @apply bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 hover:shadow-md transition-all duration-200;
-  }
-
-  .card-enhanced:hover {
-    @apply border-gray-200 dark:border-slate-600 transform translate-y-[-1px];
-  }
-
-  /* Improved content containers */
+  /* Content containers */
   .content-container {
     width: 100%;
     max-width: 80rem;
@@ -106,34 +154,249 @@
     }
   }
 
-  /* Enhanced button styling */
-  .btn-enhanced {
-    @apply inline-flex items-center px-4 py-3 text-sm sm:text-base font-medium rounded-lg transition-all duration-200 touch-manipulation;
-    @apply focus:outline-none focus:ring-2 focus:ring-offset-2 min-h-[44px] justify-center;
+  /* === CARD SYSTEM === */
+  .farm-card {
+    @apply bg-card text-card-foreground rounded-xl shadow-sm border border-border;
+    @apply hover:shadow-md hover:border-border/80 transition-all duration-200;
+    @apply p-4 sm:p-6;
   }
 
-  .btn-primary {
-    @apply bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500;
-    @apply shadow-sm hover:shadow;
+  .farm-card-interactive {
+    @apply farm-card cursor-pointer;
+    @apply hover:scale-[1.02] active:scale-[0.98] touch-manipulation;
   }
 
-  /* Enhanced metric cards */
+  .farm-card-header {
+    @apply flex items-center justify-between mb-4 pb-4 border-b border-border/50;
+  }
+
+  .farm-card-title {
+    @apply text-lg sm:text-xl font-semibold text-foreground;
+  }
+
+  .farm-card-description {
+    @apply text-sm text-muted-foreground;
+  }
+
+  /* Metric cards for dashboard */
   .metric-card {
-    @apply bg-white dark:bg-slate-800 rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100 dark:border-slate-700;
-    @apply hover:shadow-md hover:border-gray-200 dark:hover:border-slate-600 active:shadow-lg transition-all duration-200 touch-manipulation;
+    @apply farm-card-interactive;
+    @apply bg-gradient-to-br from-card to-muted/20;
   }
 
-  /* Better typography scale */
-  .text-display {
-    @apply text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight;
+  /* === BUTTON SYSTEM === */
+  .farm-btn {
+    @apply inline-flex items-center justify-center px-4 py-3 text-sm sm:text-base font-medium;
+    @apply rounded-lg transition-all duration-200 touch-manipulation;
+    @apply focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+    @apply min-h-[44px] disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
-  .text-heading {
-    @apply text-lg sm:text-xl font-semibold;
+  .farm-btn-primary {
+    @apply farm-btn bg-primary text-primary-foreground;
+    @apply hover:bg-primary-hover shadow-sm hover:shadow-md;
   }
 
-  .text-subheading {
-    @apply text-base sm:text-lg font-medium;
+  .farm-btn-secondary {
+    @apply farm-btn bg-secondary text-secondary-foreground;
+    @apply hover:bg-secondary-hover border border-border;
+  }
+
+  .farm-btn-success {
+    @apply farm-btn bg-success text-success-foreground;
+    @apply hover:opacity-90 shadow-sm hover:shadow-md;
+  }
+
+  .farm-btn-warning {
+    @apply farm-btn bg-warning text-warning-foreground;
+    @apply hover:opacity-90 shadow-sm hover:shadow-md;
+  }
+
+  .farm-btn-destructive {
+    @apply farm-btn bg-destructive text-destructive-foreground;
+    @apply hover:opacity-90 shadow-sm hover:shadow-md;
+  }
+
+  .farm-btn-outline {
+    @apply farm-btn border border-border bg-background text-foreground;
+    @apply hover:bg-accent hover:text-accent-foreground;
+  }
+
+  .farm-btn-ghost {
+    @apply farm-btn text-foreground;
+    @apply hover:bg-accent hover:text-accent-foreground;
+  }
+
+  /* Button sizes */
+  .farm-btn-sm {
+    @apply px-3 py-2 text-sm min-h-[36px];
+  }
+
+  .farm-btn-lg {
+    @apply px-6 py-4 text-base sm:text-lg min-h-[52px];
+  }
+
+  /* === TYPOGRAPHY SYSTEM === */
+  .farm-heading-display {
+    @apply text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-foreground;
+  }
+
+  .farm-heading-page {
+    @apply text-xl sm:text-2xl lg:text-3xl font-bold text-foreground;
+  }
+
+  .farm-heading-section {
+    @apply text-lg sm:text-xl font-semibold text-foreground;
+  }
+
+  .farm-heading-card {
+    @apply text-base sm:text-lg font-semibold text-foreground;
+  }
+
+  .farm-text-body {
+    @apply text-sm sm:text-base text-foreground;
+  }
+
+  .farm-text-muted {
+    @apply text-xs sm:text-sm text-muted-foreground;
+  }
+
+  .farm-text-caption {
+    @apply text-xs text-muted-foreground;
+  }
+
+  /* === FORM SYSTEM === */
+  .farm-form {
+    @apply space-y-4 sm:space-y-6;
+  }
+
+  .farm-form-group {
+    @apply space-y-2;
+  }
+
+  .farm-form-label {
+    @apply block text-sm font-medium text-foreground;
+  }
+
+  .farm-form-input {
+    @apply w-full px-4 py-3 text-base border border-input rounded-lg;
+    @apply bg-background text-foreground placeholder:text-muted-foreground;
+    @apply focus:ring-2 focus:ring-ring focus:border-transparent;
+    @apply transition-colors touch-manipulation;
+  }
+
+  .farm-form-select {
+    @apply farm-form-input appearance-none cursor-pointer;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+  }
+
+  .farm-form-textarea {
+    @apply farm-form-input resize-y min-h-[100px];
+  }
+
+  /* === GRID SYSTEM === */
+  .farm-grid {
+    @apply grid gap-4 sm:gap-6;
+  }
+
+  .farm-grid-responsive {
+    @apply farm-grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3;
+  }
+
+  .farm-grid-metrics {
+    @apply farm-grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4;
+  }
+
+  .farm-grid-auto {
+    @apply farm-grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+
+  /* === STATUS BADGES === */
+  .farm-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .farm-badge-success {
+    @apply farm-badge bg-success/10 text-success border border-success/20;
+  }
+
+  .farm-badge-warning {
+    @apply farm-badge bg-warning/10 text-warning border border-warning/20;
+  }
+
+  .farm-badge-error {
+    @apply farm-badge bg-destructive/10 text-destructive border border-destructive/20;
+  }
+
+  .farm-badge-info {
+    @apply farm-badge bg-info/10 text-info border border-info/20;
+  }
+
+  .farm-badge-neutral {
+    @apply farm-badge bg-muted text-muted-foreground border border-border;
+  }
+
+  /* === PAGE HEADER SYSTEM === */
+  .farm-page-header {
+    @apply mb-6 lg:mb-8;
+  }
+
+  .farm-page-title-section {
+    @apply flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6;
+  }
+
+  .farm-page-title-group {
+    @apply flex items-center gap-3;
+  }
+
+  .farm-page-icon {
+    @apply w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shadow-lg;
+  }
+
+  .farm-page-title-text {
+    @apply space-y-1;
+  }
+
+  /* === ANIMATION SYSTEM === */
+  .farm-fade-in {
+    animation: farmFadeIn 0.5s ease-in-out;
+  }
+
+  .farm-stagger-item:nth-child(1) {
+    animation-delay: 0.1s;
+  }
+
+  .farm-stagger-item:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .farm-stagger-item:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+
+  .farm-stagger-item:nth-child(4) {
+    animation-delay: 0.4s;
+  }
+
+  .farm-stagger-item:nth-child(5) {
+    animation-delay: 0.5s;
+  }
+
+  @keyframes farmFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   /* Smooth scrolling and animations */
@@ -151,6 +414,7 @@
       opacity: 0;
       transform: translateY(10px);
     }
+
     to {
       opacity: 1;
       transform: translateY(0);
@@ -161,15 +425,19 @@
   .stagger-item:nth-child(1) {
     animation-delay: 0.1s;
   }
+
   .stagger-item:nth-child(2) {
     animation-delay: 0.2s;
   }
+
   .stagger-item:nth-child(3) {
     animation-delay: 0.3s;
   }
+
   .stagger-item:nth-child(4) {
     animation-delay: 0.4s;
   }
+
   .stagger-item:nth-child(5) {
     animation-delay: 0.5s;
   }

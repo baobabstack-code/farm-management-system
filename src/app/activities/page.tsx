@@ -379,7 +379,7 @@ export default function ActivitiesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 dark:from-slate-900 dark:to-purple-900/20">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-slate-900 dark:to-gray-800">
       <div className="content-container py-4 sm:py-6 lg:py-8 mobile-header-spacing">
         <div className="mb-6 lg:mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center mb-4 sm:mb-6 gap-4">

@@ -2,75 +2,40 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { CropService } from "@/lib/db";
 import { cropUpdateSchema } from "@/lib/validations/crop";
+import { ActivityLogger } from "@/lib/activity-logger";
+import { ApiResponseHandler } from "@/lib/api-response-handler";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
+export const GET = ApiResponseHandler.withErrorHandling(
+  async (request: Request, { params }: { params: Promise<{ id: string }> }) => {
     const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    ApiResponseHandler.requireAuth(userId);
 
     const { id } = await params;
     const crop = await CropService.findById(id, userId);
 
     if (!crop) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Crop not found",
-          timestamp: new Date().toISOString(),
-        },
-        { status: 404 }
-      );
+      return ApiResponseHandler.notFound("Crop");
     }
 
-    return NextResponse.json({
-      success: true,
-      data: crop,
-      timestamp: new Date().toISOString(),
-    });
-  } catch (error) {
-    console.error("Error fetching crop:", error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Internal server error",
-        timestamp: new Date().toISOString(),
-      },
-      { status: 500 }
-    );
+    return ApiResponseHandler.success(crop);
   }
-}
+);
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
+export const PUT = ApiResponseHandler.withErrorHandling(
+  async (request: Request, { params }: { params: Promise<{ id: string }> }) => {
     const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    ApiResponseHandler.requireAuth(userId);
 
-    const body = await request.json();
-    const validatedData = cropUpdateSchema.parse(body);
-
+    const validatedData = (await ApiResponseHandler.validateBody(
+      request,
+      cropUpdateSchema
+    )) as any;
     const { id } = await params;
 
     // Check if crop exists and belongs to user
     const existingCrop = await CropService.findById(id, userId);
     if (!existingCrop) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Crop not found",
-          timestamp: new Date().toISOString(),
-        },
-        { status: 404 }
-      );
+      return ApiResponseHandler.notFound("Crop");
     }
 
     const updateData: any = { ...validatedData };
@@ -85,78 +50,56 @@ export async function PUT(
 
     const updatedCrop = await CropService.update(id, userId, updateData);
 
-    return NextResponse.json({
-      success: true,
-      data: updatedCrop,
-      timestamp: new Date().toISOString(),
-    });
-  } catch (error) {
-    console.error("Error updating crop:", error);
+    // Log activity with changes
+    const changes: Record<string, any> = {};
+    if (validatedData && typeof validatedData === "object") {
+      Object.entries(validatedData).forEach(([key, value]) => {
+        if (value !== (existingCrop as any)[key]) {
+          changes[key] = { from: (existingCrop as any)[key], to: value };
+        }
+      });
+    }
 
-    if (error instanceof Error && error.name === "ZodError") {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Invalid input data",
-          details: error.message,
-          timestamp: new Date().toISOString(),
-        },
-        { status: 400 }
+    if (Object.keys(changes).length > 0) {
+      await ActivityLogger.cropUpdated(userId, id, updatedCrop.name, changes);
+    }
+
+    // Check for status changes
+    if (validatedData.status && validatedData.status !== existingCrop.status) {
+      await ActivityLogger.cropStatusChanged(
+        userId,
+        id,
+        updatedCrop.name,
+        existingCrop.status,
+        validatedData.status
       );
     }
 
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Internal server error",
-        timestamp: new Date().toISOString(),
-      },
-      { status: 500 }
-    );
+    return ApiResponseHandler.success(updatedCrop, "Crop updated successfully");
   }
-}
+);
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
+export const DELETE = ApiResponseHandler.withErrorHandling(
+  async (request: Request, { params }: { params: Promise<{ id: string }> }) => {
     const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    ApiResponseHandler.requireAuth(userId);
 
     const { id } = await params;
 
     // Check if crop exists and belongs to user
     const existingCrop = await CropService.findById(id, userId);
     if (!existingCrop) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Crop not found",
-          timestamp: new Date().toISOString(),
-        },
-        { status: 404 }
-      );
+      return ApiResponseHandler.notFound("Crop");
     }
+
+    // Log activity before deletion
+    await ActivityLogger.cropDeleted(userId, id, existingCrop.name);
 
     await CropService.delete(id, userId);
 
-    return NextResponse.json({
-      success: true,
-      message: "Crop deleted successfully",
-      timestamp: new Date().toISOString(),
-    });
-  } catch (error) {
-    console.error("Error deleting crop:", error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Internal server error",
-        timestamp: new Date().toISOString(),
-      },
-      { status: 500 }
+    return ApiResponseHandler.success(
+      { id, name: existingCrop.name },
+      "Crop deleted successfully"
     );
   }
-}
+);

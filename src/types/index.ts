@@ -467,6 +467,49 @@ export enum TillageType {
   PLOWING = "PLOWING",
 }
 
+// Activity Tracking Types
+export interface Activity {
+  id: string;
+  userId: string;
+  entityType: EntityType;
+  entityId: string;
+  actionType: ActivityType;
+  description: string;
+  metadata?: Record<string, any>;
+  timestamp: Date;
+  createdAt: Date;
+}
+
+export enum EntityType {
+  CROP = "CROP",
+  FIELD = "FIELD",
+  EQUIPMENT = "EQUIPMENT",
+  TASK = "TASK",
+  IRRIGATION_LOG = "IRRIGATION_LOG",
+  FERTILIZER_LOG = "FERTILIZER_LOG",
+  PEST_DISEASE_LOG = "PEST_DISEASE_LOG",
+  HARVEST_LOG = "HARVEST_LOG",
+  SOIL_TEST = "SOIL_TEST",
+  MAINTENANCE_LOG = "MAINTENANCE_LOG",
+  FUEL_LOG = "FUEL_LOG",
+}
+
+export enum ActivityType {
+  CREATED = "CREATED",
+  UPDATED = "UPDATED",
+  DELETED = "DELETED",
+  STATUS_CHANGED = "STATUS_CHANGED",
+  COMPLETED = "COMPLETED",
+  SCHEDULED = "SCHEDULED",
+  CANCELLED = "CANCELLED",
+  LOGGED = "LOGGED",
+  TESTED = "TESTED",
+  MAINTAINED = "MAINTAINED",
+  HARVESTED = "HARVESTED",
+  PLANTED = "PLANTED",
+  TREATED = "TREATED",
+}
+
 // Export Prisma enums for convenience
 export {
   CropStatus,

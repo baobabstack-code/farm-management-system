@@ -270,7 +270,7 @@ function TasksPageContent() {
     >
       <div
         ref={isMobile ? pullToRefresh.elementRef : null}
-        className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-900 dark:to-indigo-900/20 overflow-auto"
+        className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-slate-900 dark:to-gray-800 overflow-auto"
       >
         {isMobile && pullToRefresh.refreshIndicator}
         <div className="content-container py-4 sm:py-6 lg:py-8 mobile-header-spacing">

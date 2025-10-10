@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { CropService } from "@/lib/db";
 import { cropCreateSchema } from "@/lib/validations/crop";
+import { ActivityLogger } from "@/lib/activity-logger";
 
 export async function GET() {
   try {
@@ -48,6 +49,9 @@ export async function POST(request: NextRequest) {
       expectedHarvestDate: new Date(validatedData.expectedHarvestDate),
       area: validatedData.area,
     });
+
+    // Log activity
+    await ActivityLogger.cropCreated(userId, crop.id, crop.name);
 
     return NextResponse.json(
       {

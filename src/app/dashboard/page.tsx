@@ -98,98 +98,96 @@ export default function DashboardPage() {
   return (
     <div
       ref={isMobile ? pullToRefresh.elementRef : null}
-      className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-slate-900 dark:to-gray-800 overflow-auto"
+      className="page-container"
     >
       {isMobile && pullToRefresh.refreshIndicator}
       <div className="content-container py-4 sm:py-6 lg:py-8">
-        <div className="mb-6 lg:mb-8">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100 mb-2">
-            Farm Management Dashboard
-          </h1>
-          <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 max-w-2xl">
-            Welcome back, {user?.firstName || user?.username}! Here&apos;s your
-            comprehensive farm overview and key insights.
-          </p>
+        <div className="farm-page-header">
+          <div className="farm-page-title-section">
+            <div className="farm-page-title-group">
+              <div className="farm-page-icon bg-gradient-to-br from-primary to-primary-hover">
+                <span className="text-white text-2xl">📊</span>
+              </div>
+              <div className="farm-page-title-text">
+                <h1 className="farm-heading-display">
+                  Farm Management Dashboard
+                </h1>
+                <p className="farm-text-muted mt-1 max-w-2xl">
+                  Welcome back, {user?.firstName || user?.username}! Here&apos;s
+                  your comprehensive farm overview and key insights.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {error && (
-          <div className="mb-4 p-4 bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-400 rounded">
-            {error}
+          <div className="mb-6">
+            <div className="farm-card border-destructive/20 bg-destructive/5">
+              <div className="p-4 text-center">
+                <span className="text-destructive text-lg mr-2">⚠️</span>
+                <span className="text-destructive font-medium">{error}</span>
+              </div>
+            </div>
           </div>
         )}
 
         {analytics && (
           <React.Fragment>
             {/* Key Metrics */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6 lg:mb-8">
-              <div className="metric-card group cursor-pointer">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center shadow-sm">
-                      <span className="text-white text-lg">🌱</span>
-                    </div>
-                    <div>
-                      <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
-                        Total Crops
-                      </p>
-                      <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
-                        {analytics.dashboard.totalCrops}
-                      </p>
-                    </div>
+            <div className="farm-grid-metrics mb-6 lg:mb-8">
+              <div className="farm-card farm-card-interactive">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-gradient-to-br from-success to-success/80 rounded-xl flex items-center justify-center shadow-sm">
+                    <span className="text-white text-lg">🌱</span>
+                  </div>
+                  <div>
+                    <p className="farm-text-caption">Total Crops</p>
+                    <p className="text-xl sm:text-2xl font-bold text-foreground">
+                      {analytics.dashboard.totalCrops}
+                    </p>
                   </div>
                 </div>
               </div>
 
-              <div className="metric-card group cursor-pointer">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center shadow-sm">
-                      <span className="text-white text-lg">📋</span>
-                    </div>
-                    <div>
-                      <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
-                        Active Tasks
-                      </p>
-                      <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
-                        {analytics.dashboard.activeTasks}
-                      </p>
-                    </div>
+              <div className="farm-card farm-card-interactive">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-gradient-to-br from-info to-info/80 rounded-xl flex items-center justify-center shadow-sm">
+                    <span className="text-white text-lg">📋</span>
+                  </div>
+                  <div>
+                    <p className="farm-text-caption">Active Tasks</p>
+                    <p className="text-xl sm:text-2xl font-bold text-foreground">
+                      {analytics.dashboard.activeTasks}
+                    </p>
                   </div>
                 </div>
               </div>
 
-              <div className="metric-card group cursor-pointer">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-amber-600 rounded-xl flex items-center justify-center shadow-sm">
-                      <span className="text-white text-lg">⚠️</span>
-                    </div>
-                    <div>
-                      <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
-                        Overdue Tasks
-                      </p>
-                      <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
-                        {analytics.dashboard.overdueTasks}
-                      </p>
-                    </div>
+              <div className="farm-card farm-card-interactive">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-gradient-to-br from-warning to-warning/80 rounded-xl flex items-center justify-center shadow-sm">
+                    <span className="text-white text-lg">⚠️</span>
+                  </div>
+                  <div>
+                    <p className="farm-text-caption">Overdue Tasks</p>
+                    <p className="text-xl sm:text-2xl font-bold text-foreground">
+                      {analytics.dashboard.overdueTasks}
+                    </p>
                   </div>
                 </div>
               </div>
 
-              <div className="metric-card group cursor-pointer">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl flex items-center justify-center shadow-sm">
-                      <span className="text-white text-lg">🌾</span>
-                    </div>
-                    <div>
-                      <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
-                        Total Yield
-                      </p>
-                      <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
-                        {analytics.dashboard.totalYield.toFixed(1)} kg
-                      </p>
-                    </div>
+              <div className="farm-card farm-card-interactive">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary-hover rounded-xl flex items-center justify-center shadow-sm">
+                    <span className="text-white text-lg">🌾</span>
+                  </div>
+                  <div>
+                    <p className="farm-text-caption">Total Yield</p>
+                    <p className="text-xl sm:text-2xl font-bold text-foreground">
+                      {analytics.dashboard.totalYield.toFixed(1)} kg
+                    </p>
                   </div>
                 </div>
               </div>
@@ -202,74 +200,64 @@ export default function DashboardPage() {
 
             {/* Activity Summary */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6 lg:mb-8">
-              <div className="card-enhanced p-4 sm:p-6">
-                <div className="flex items-center mb-4">
-                  <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center mr-3">
-                    <span className="text-white text-sm">💧</span>
+              <div className="farm-card">
+                <div className="farm-card-header">
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 bg-gradient-to-br from-info to-info/80 rounded-lg flex items-center justify-center mr-3">
+                      <span className="text-white text-sm">💧</span>
+                    </div>
+                    <h3 className="farm-heading-card">Resource Usage</h3>
                   </div>
-                  <h3 className="text-heading text-gray-900 dark:text-gray-100">
-                    Resource Usage
-                  </h3>
                 </div>
                 <div className="space-y-4">
                   <div className="flex justify-between items-center py-1">
-                    <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                      Water Usage
-                    </span>
-                    <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <span className="farm-text-muted">Water Usage</span>
+                    <span className="farm-text-body font-medium">
                       {analytics.water.totalWater.toFixed(1)} L
                     </span>
                   </div>
                   <div className="flex justify-between items-center py-1">
-                    <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                      Irrigation Sessions
-                    </span>
-                    <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <span className="farm-text-muted">Irrigation Sessions</span>
+                    <span className="farm-text-body font-medium">
                       {analytics.water.sessionCount}
                     </span>
                   </div>
                   <div className="flex justify-between items-center py-1">
-                    <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                    <span className="farm-text-muted">
                       Fertilizer Applications
                     </span>
-                    <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <span className="farm-text-body font-medium">
                       {analytics.fertilizer.applicationCount}
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="card-enhanced p-4 sm:p-6">
-                <div className="flex items-center mb-4">
-                  <div className="w-8 h-8 bg-gradient-to-br from-red-400 to-red-600 rounded-lg flex items-center justify-center mr-3">
-                    <span className="text-white text-sm">🌡️</span>
+              <div className="farm-card">
+                <div className="farm-card-header">
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 bg-gradient-to-br from-warning to-warning/80 rounded-lg flex items-center justify-center mr-3">
+                      <span className="text-white text-sm">🌡️</span>
+                    </div>
+                    <h3 className="farm-heading-card">Health & Issues</h3>
                   </div>
-                  <h3 className="text-heading text-gray-900 dark:text-gray-100">
-                    Health & Issues
-                  </h3>
                 </div>
                 <div className="space-y-4">
                   <div className="flex justify-between items-center py-1">
-                    <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                      Total Incidents
-                    </span>
-                    <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <span className="farm-text-muted">Total Incidents</span>
+                    <span className="farm-text-body font-medium">
                       {analytics.pestDisease.totalIncidents}
                     </span>
                   </div>
                   <div className="flex justify-between items-center py-1">
-                    <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                      Pest Issues
-                    </span>
-                    <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <span className="farm-text-muted">Pest Issues</span>
+                    <span className="farm-text-body font-medium">
                       {analytics.pestDisease.pestCount}
                     </span>
                   </div>
                   <div className="flex justify-between items-center py-1">
-                    <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                      Disease Issues
-                    </span>
-                    <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <span className="farm-text-muted">Disease Issues</span>
+                    <span className="farm-text-body font-medium">
                       {analytics.pestDisease.diseaseCount}
                     </span>
                   </div>
@@ -278,19 +266,19 @@ export default function DashboardPage() {
             </div>
 
             {/* Quick Actions */}
-            <div className="card-enhanced p-4 sm:p-6">
-              <div className="flex items-center mb-6">
-                <div className="w-8 h-8 bg-gradient-to-br from-indigo-400 to-indigo-600 rounded-lg flex items-center justify-center mr-3">
-                  <span className="text-white text-sm">⚡</span>
+            <div className="farm-card">
+              <div className="farm-card-header">
+                <div className="flex items-center">
+                  <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary-hover rounded-lg flex items-center justify-center mr-3">
+                    <span className="text-white text-sm">⚡</span>
+                  </div>
+                  <h3 className="farm-heading-card">Quick Actions</h3>
                 </div>
-                <h3 className="text-heading text-gray-900 dark:text-gray-100">
-                  Quick Actions
-                </h3>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
                 <button
                   onClick={() => router.push("/ai-companion")}
-                  className="btn-enhanced btn-primary group w-full touch-target"
+                  className="farm-btn farm-btn-primary w-full"
                 >
                   <span className="mr-2 text-base sm:text-lg">🤖</span>
                   <span className="text-sm sm:text-base font-medium">
@@ -299,7 +287,7 @@ export default function DashboardPage() {
                 </button>
                 <button
                   onClick={() => router.push("/crops")}
-                  className="btn-enhanced bg-emerald-600 text-white hover:bg-emerald-700 dark:hover:bg-emerald-600 focus:ring-emerald-500 shadow-sm hover:shadow w-full touch-target"
+                  className="farm-btn farm-btn-success w-full"
                 >
                   <span className="mr-2 text-base sm:text-lg">🌱</span>
                   <span className="text-sm sm:text-base font-medium">
@@ -308,7 +296,7 @@ export default function DashboardPage() {
                 </button>
                 <button
                   onClick={() => router.push("/tasks")}
-                  className="btn-enhanced bg-blue-600 text-white hover:bg-blue-700 dark:hover:bg-blue-600 focus:ring-blue-500 shadow-sm hover:shadow w-full touch-target"
+                  className="farm-btn farm-btn-secondary w-full"
                 >
                   <span className="mr-2 text-base sm:text-lg">✅</span>
                   <span className="text-sm sm:text-base font-medium">
@@ -317,7 +305,7 @@ export default function DashboardPage() {
                 </button>
                 <button
                   onClick={() => router.push("/activities")}
-                  className="btn-enhanced bg-purple-600 text-white hover:bg-purple-700 dark:hover:bg-purple-600 focus:ring-purple-500 shadow-sm hover:shadow w-full touch-target"
+                  className="farm-btn farm-btn-outline w-full"
                 >
                   <span className="mr-2 text-base sm:text-lg">📋</span>
                   <span className="text-sm sm:text-base font-medium">
@@ -326,7 +314,7 @@ export default function DashboardPage() {
                 </button>
                 <button
                   onClick={() => router.push("/reports")}
-                  className="btn-enhanced bg-orange-600 text-white hover:bg-orange-700 dark:hover:bg-orange-600 focus:ring-orange-500 shadow-sm hover:shadow w-full touch-target"
+                  className="farm-btn farm-btn-outline w-full"
                 >
                   <span className="mr-2 text-base sm:text-lg">📈</span>
                   <span className="text-sm sm:text-base font-medium">

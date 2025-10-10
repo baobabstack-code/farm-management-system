@@ -3,6 +3,8 @@ import { auth } from "@clerk/nextjs/server";
 import { ActivityService } from "@/lib/db";
 import { pestDiseaseLogCreateSchema } from "@/lib/validations/activity";
 import { PestDiseaseType } from "@prisma/client";
+import { ActivityLogger } from "@/lib/activity-logger";
+import { prisma } from "@/lib/prisma";
 
 export async function GET(request: NextRequest) {
   try {
@@ -60,6 +62,22 @@ export async function POST(request: NextRequest) {
       treatment: validatedData.treatment,
       notes: validatedData.notes,
     });
+
+    // Get crop name for activity logging
+    const crop = await prisma.crop.findUnique({
+      where: { id: validatedData.cropId },
+      select: { name: true },
+    });
+
+    // Log activity
+    if (crop) {
+      await ActivityLogger.pestTreatmentLogged(
+        userId,
+        log.id,
+        crop.name,
+        validatedData.treatment || "Treatment applied"
+      );
+    }
 
     return NextResponse.json(
       {

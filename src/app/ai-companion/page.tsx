@@ -23,10 +23,12 @@ export default function AICompanionPage() {
 
   if (!isLoaded) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
-            <div className="text-center">Loading...</div>
+            <div className="text-center text-gray-900 dark:text-gray-100">
+              Loading...
+            </div>
           </div>
         </div>
       </div>
@@ -34,7 +36,7 @@ export default function AICompanionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-slate-900 dark:to-gray-800 overflow-auto">
       <div className="content-container py-4 sm:py-6 lg:py-8 mobile-header-spacing">
         <div className="mb-6 lg:mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center mb-4 gap-4">
@@ -42,12 +44,12 @@ export default function AICompanionPage() {
               <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center mr-4 shadow-lg">
                 <span className="text-white text-2xl">🤖</span>
               </div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-gray-900">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
                 AI Farm Companion
               </h1>
             </div>
           </div>
-          <p className="text-base sm:text-lg text-gray-600 max-w-3xl">
+          <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 max-w-3xl">
             Harness the power of artificial intelligence to get intelligent
             insights, personalized recommendations, and accurate forecasts that
             optimize your farm operations and maximize productivity.
@@ -76,7 +78,9 @@ export default function AICompanionPage() {
             <div className="w-8 h-8 bg-gradient-to-br from-slate-400 to-slate-600 rounded-lg flex items-center justify-center mr-3">
               <span className="text-white text-sm">🧧</span>
             </div>
-            <h3 className="text-heading text-gray-900">Quick Navigation</h3>
+            <h3 className="text-heading text-gray-900 dark:text-gray-100">
+              Quick Navigation
+            </h3>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             <button

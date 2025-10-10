@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import { ActivityLogger } from "@/lib/activity-logger";
 
 const createEquipmentSchema = z.object({
   name: z.string().min(1, "Equipment name is required"),
@@ -332,6 +333,9 @@ export async function POST(request: NextRequest) {
         },
       },
     });
+
+    // Log activity
+    await ActivityLogger.equipmentCreated(userId, equipment.id, equipment.name);
 
     return NextResponse.json(
       {

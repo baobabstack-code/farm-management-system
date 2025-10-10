@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import { ActivityLogger } from "@/lib/activity-logger";
+import { ApiResponseHandler } from "@/lib/api-response-handler";
 
 const updateFieldSchema = z.object({
   name: z.string().min(1, "Field name is required").optional(),
@@ -19,17 +21,11 @@ const updateFieldSchema = z.object({
 });
 
 // GET /api/fields/[id] - Get specific field with full details
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const { id } = await params;
-  try {
+export const GET = ApiResponseHandler.withErrorHandling(
+  async (request: Request, { params }: { params: Promise<{ id: string }> }) => {
+    const { id } = await params;
     const { userId } = await auth();
-
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    ApiResponseHandler.requireAuth(userId);
 
     const field = await prisma.field.findFirst({
       where: {
@@ -79,7 +75,7 @@ export async function GET(
     });
 
     if (!field) {
-      return NextResponse.json({ error: "Field not found" }, { status: 404 });
+      return ApiResponseHandler.notFound("Field");
     }
 
     // Calculate field analytics
@@ -128,7 +124,7 @@ export async function GET(
       potassium: test.potassium,
     }));
 
-    return NextResponse.json({
+    return ApiResponseHandler.success({
       ...field,
       analytics: {
         fieldAnalytics,
@@ -141,30 +137,20 @@ export async function GET(
             : 0,
       },
     });
-  } catch (error) {
-    console.error("Get field error:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch field" },
-      { status: 500 }
-    );
   }
-}
+);
 
 // PUT /api/fields/[id] - Update field
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const { id } = await params;
-  try {
+export const PUT = ApiResponseHandler.withErrorHandling(
+  async (request: Request, { params }: { params: Promise<{ id: string }> }) => {
+    const { id } = await params;
     const { userId } = await auth();
+    ApiResponseHandler.requireAuth(userId);
 
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const body = await request.json();
-    const validatedData = updateFieldSchema.parse(body);
+    const validatedData = await ApiResponseHandler.validateBody(
+      request,
+      updateFieldSchema
+    );
 
     // Check if field exists and belongs to user
     const existingField = await prisma.field.findFirst({
@@ -175,12 +161,12 @@ export async function PUT(
     });
 
     if (!existingField) {
-      return NextResponse.json({ error: "Field not found" }, { status: 404 });
+      return ApiResponseHandler.notFound("Field");
     }
 
     const updatedField = await prisma.field.update({
       where: { id },
-      data: validatedData,
+      data: validatedData as any,
       include: {
         _count: {
           select: {
@@ -194,35 +180,33 @@ export async function PUT(
       },
     });
 
-    return NextResponse.json(updatedField);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: "Validation failed", details: error.issues },
-        { status: 400 }
-      );
+    // Log activity with changes
+    const changes: Record<string, any> = {};
+    if (validatedData && typeof validatedData === "object") {
+      Object.entries(validatedData).forEach(([key, value]) => {
+        if (value !== (existingField as any)[key]) {
+          changes[key] = { from: (existingField as any)[key], to: value };
+        }
+      });
     }
 
-    console.error("Update field error:", error);
-    return NextResponse.json(
-      { error: "Failed to update field" },
-      { status: 500 }
+    if (Object.keys(changes).length > 0) {
+      await ActivityLogger.fieldUpdated(userId, id, updatedField.name, changes);
+    }
+
+    return ApiResponseHandler.success(
+      updatedField,
+      "Field updated successfully"
     );
   }
-}
+);
 
 // DELETE /api/fields/[id] - Deactivate field (soft delete)
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const { id } = await params;
-  try {
+export const DELETE = ApiResponseHandler.withErrorHandling(
+  async (request: Request, { params }: { params: Promise<{ id: string }> }) => {
+    const { id } = await params;
     const { userId } = await auth();
-
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    ApiResponseHandler.requireAuth(userId);
 
     // Check if field exists and belongs to user
     const existingField = await prisma.field.findFirst({
@@ -240,7 +224,7 @@ export async function DELETE(
     });
 
     if (!existingField) {
-      return NextResponse.json({ error: "Field not found" }, { status: 404 });
+      return ApiResponseHandler.notFound("Field");
     }
 
     // Check if field has active crops
@@ -252,14 +236,14 @@ export async function DELETE(
     });
 
     if (activeCrops > 0) {
-      return NextResponse.json(
-        {
-          error: "Cannot delete field with active crops",
-          details: `${activeCrops} active crop(s) found`,
-        },
-        { status: 400 }
+      return ApiResponseHandler.conflict(
+        "Cannot delete field with active crops",
+        { activeCrops: activeCrops }
       );
     }
+
+    // Log activity before deletion
+    await ActivityLogger.fieldDeleted(userId, id, existingField.name);
 
     // Soft delete - deactivate the field
     await prisma.field.update({
@@ -270,15 +254,9 @@ export async function DELETE(
       },
     });
 
-    return NextResponse.json({
-      success: true,
-      message: "Field deactivated successfully",
-    });
-  } catch (error) {
-    console.error("Delete field error:", error);
-    return NextResponse.json(
-      { error: "Failed to deactivate field" },
-      { status: 500 }
+    return ApiResponseHandler.success(
+      { id, name: existingField.name },
+      "Field deactivated successfully"
     );
   }
-}
+);

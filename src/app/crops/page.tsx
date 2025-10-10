@@ -167,7 +167,7 @@ export default function CropsPage() {
   return (
     <div
       ref={isMobile ? pullToRefresh.elementRef : null}
-      className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 dark:from-slate-900 dark:to-green-900/20 overflow-auto"
+      className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-slate-900 dark:to-gray-800 overflow-auto"
     >
       {isMobile && pullToRefresh.refreshIndicator}
       <div className="content-container py-4 sm:py-6 lg:py-8 mobile-header-spacing">

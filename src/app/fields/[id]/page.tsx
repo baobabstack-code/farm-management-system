@@ -3,11 +3,17 @@
 import { useState, useEffect, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useParams, useRouter } from "next/navigation";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import FieldForm from "@/components/fields/FieldForm";
+import {
+  PageContainer,
+  FarmCard,
+  FarmCardHeader,
+  FarmCardContent,
+  FarmButton,
+  FarmBadge,
+  LoadingState,
+  ErrorState,
+} from "@/components/ui/farm-theme";
+import DeleteConfirmationDialog from "@/components/ui/delete-confirmation-dialog";
 import {
   ArrowLeft,
   Edit,
@@ -17,12 +23,28 @@ import {
   DollarSign,
   Activity,
   Trash2,
+  Map,
+  Sprout,
+  TestTube,
+  Calendar,
+  Droplets,
+  Plus,
   Eye,
-  EyeOff,
-  AlertTriangle,
+  FileText,
+  Navigation,
+  Layers,
+  BarChart3,
+  Zap,
+  CloudRain,
 } from "lucide-react";
+import {
+  AddCropModal,
+  SoilTestModal,
+  FieldTreatmentModal,
+  WeatherRefreshModal,
+} from "@/components/ui/field-quick-action-modals";
 
-interface Field {
+interface FieldDetail {
   id: string;
   name: string;
   description?: string;
@@ -37,6 +59,11 @@ interface Field {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
+  crops?: Crop[];
+  soilTests?: SoilTest[];
+  soilAmendments?: SoilAmendment[];
+  tillageOps?: TillageOperation[];
+  costEntries?: CostEntry[];
   _count?: {
     crops: number;
     soilTests: number;
@@ -44,47 +71,127 @@ interface Field {
     tillageOps: number;
     costEntries: number;
   };
-  stats?: {
-    activeCropsCount: number;
-    totalCosts: number;
-    recentActivity: Array<{
-      operationType: string;
-      operationDate: string;
-      cropType?: string;
-    }>;
+  analytics?: {
+    fieldAnalytics: any;
+    currentSeasonCrops: Crop[];
+    costSummary: any[];
+    soilHealthTrend: SoilHealthPoint[];
+    utilizationRate: number;
   };
 }
 
-export default function FieldDetailsPage() {
-  const { user } = useUser();
+interface Crop {
+  id: string;
+  name: string;
+  variety?: string;
+  status: string;
+  plantingDate: string;
+  expectedHarvestDate: string;
+  actualHarvestDate?: string;
+  area?: number;
+  createdAt: string;
+}
+
+interface SoilTest {
+  id: string;
+  sampleDate: string;
+  pH: number;
+  organicMatter: number;
+  nitrogen: number;
+  phosphorus: number;
+  potassium: number;
+  testType: string;
+  labName: string;
+  recommendations?: string;
+}
+
+interface SoilAmendment {
+  id: string;
+  amendmentType: string;
+  applicationDate: string;
+  rate: number;
+  unit: string;
+  cost: number;
+  method: string;
+}
+
+interface TillageOperation {
+  id: string;
+  operationType: string;
+  operationDate: string;
+  depth: number;
+  equipment: string;
+  operator?: string;
+  cost: number;
+}
+
+interface CostEntry {
+  id: string;
+  description: string;
+  amount: number;
+  date: string;
+  category: { name: string };
+  supplier?: { name: string };
+}
+
+interface SoilHealthPoint {
+  date: string;
+  pH: number;
+  organicMatter: number;
+  nitrogen: number;
+  phosphorus: number;
+  potassium: number;
+}
+
+export default function FieldDetailPage() {
+  const { user, isLoaded } = useUser();
   const params = useParams();
   const router = useRouter();
   const fieldId = params.id as string;
 
-  const [field, setField] = useState<Field | null>(null);
+  const [field, setField] = useState<FieldDetail | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [showEditForm, setShowEditForm] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [error, setError] = useState("");
+  const [activeTab, setActiveTab] = useState<
+    "overview" | "crops" | "soil" | "history"
+  >("overview");
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [dependencies, setDependencies] = useState<any[]>([]);
+  const [deleting, setDeleting] = useState(false);
+
+  // Quick action modal states
+  const [showAddCropModal, setShowAddCropModal] = useState(false);
+  const [showSoilTestModal, setShowSoilTestModal] = useState(false);
+  const [showTreatmentModal, setShowTreatmentModal] = useState(false);
+  const [showWeatherModal, setShowWeatherModal] = useState(false);
 
   const fetchField = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/fields/${fieldId}?includeStats=true`);
+      const response = await fetch(
+        `/api/fields/${fieldId}?includeDetails=true`
+      );
+
       if (!response.ok) {
         if (response.status === 404) {
           setError("Field not found");
         } else {
-          throw new Error("Failed to fetch field");
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
         return;
       }
+
       const data = await response.json();
-      setField(data);
-    } catch (error) {
-      console.error("Error fetching field:", error);
+
+      if (data.success !== false) {
+        setField(data);
+      } else {
+        setError(data.error || "Failed to fetch field details");
+      }
+    } catch (err) {
+      console.error("Field fetch error:", err);
       setError(
-        error instanceof Error ? error.message : "Failed to fetch field"
+        err instanceof Error ? err.message : "Failed to fetch field details"
       );
     } finally {
       setLoading(false);
@@ -92,519 +199,929 @@ export default function FieldDetailsPage() {
   }, [fieldId]);
 
   useEffect(() => {
-    if (user && fieldId) {
+    if (!isLoaded) return;
+
+    if (!user) {
+      router.push("/sign-in");
+      return;
+    }
+
+    if (fieldId) {
       fetchField();
     }
-  }, [user, fieldId, fetchField]);
+  }, [user, isLoaded, router, fieldId, fetchField]);
 
-  const handleFieldUpdated = (updatedFieldData: any) => {
-    // Merge the updated field data with existing field to preserve all properties
-    setField((prev) =>
-      prev ? { ...prev, ...updatedFieldData } : updatedFieldData
+  const getStatusBadge = (status: string) => {
+    return status === "ACTIVE" ? (
+      <FarmBadge variant="success">Active</FarmBadge>
+    ) : (
+      <FarmBadge variant="neutral">Inactive</FarmBadge>
     );
-    setShowEditForm(false);
   };
 
-  const handleToggleStatus = async () => {
-    if (!field) return;
-
-    try {
-      const response = await fetch(`/api/fields/${field.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...field,
-          isActive: !field.isActive,
-        }),
-      });
-
-      if (!response.ok) throw new Error("Failed to update field status");
-
-      const updatedField = await response.json();
-      setField(updatedField);
-    } catch (error) {
-      console.error("Error updating field status:", error);
+  const getCropStatusBadge = (status: string) => {
+    switch (status) {
+      case "PLANTED":
+        return <FarmBadge variant="info">Planted</FarmBadge>;
+      case "GROWING":
+        return <FarmBadge variant="success">Growing</FarmBadge>;
+      case "FLOWERING":
+        return <FarmBadge variant="warning">Flowering</FarmBadge>;
+      case "FRUITING":
+        return <FarmBadge variant="warning">Fruiting</FarmBadge>;
+      case "HARVESTED":
+        return <FarmBadge variant="success">Harvested</FarmBadge>;
+      case "COMPLETED":
+        return <FarmBadge variant="neutral">Completed</FarmBadge>;
+      default:
+        return <FarmBadge variant="neutral">{status}</FarmBadge>;
     }
   };
 
-  const handleDeleteField = async () => {
+  const handleDeleteClick = async () => {
     if (!field) return;
 
     try {
-      const response = await fetch(`/api/fields/${field.id}`, {
+      // Check dependencies first
+      const response = await fetch(`/api/fields/${fieldId}/dependencies`);
+      const data = await response.json();
+
+      if (data.success) {
+        setDependencies(data.data.dependencies || []);
+        setShowDeleteDialog(true);
+      } else {
+        setError(data.error || "Failed to check dependencies");
+      }
+    } catch (err) {
+      console.error("Error checking dependencies:", err);
+      setError("Failed to check dependencies. Please try again.");
+    }
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!field) return;
+
+    try {
+      setDeleting(true);
+      const response = await fetch(`/api/fields/${fieldId}`, {
         method: "DELETE",
       });
 
-      if (!response.ok) throw new Error("Failed to delete field");
+      const data = await response.json();
 
-      // Redirect to fields list after successful deletion
-      router.push("/fields");
-    } catch (error) {
-      console.error("Error deleting field:", error);
-      setError("Failed to delete field");
+      if (data.success) {
+        router.push("/fields");
+      } else {
+        setError(data.error || "Failed to delete field");
+        setShowDeleteDialog(false);
+      }
+    } catch (err) {
+      console.error("Field deletion error:", err);
+      setError("Failed to delete field. Please try again.");
+      setShowDeleteDialog(false);
+    } finally {
+      setDeleting(false);
     }
   };
 
-  const formatCurrency = (amount: number) => {
+  const handleDeleteCancel = () => {
+    setShowDeleteDialog(false);
+    setDependencies([]);
+  };
+
+  const handleQuickActionSuccess = () => {
+    // Refresh field data when a quick action succeeds
+    fetchField();
+  };
+
+  const formatCurrency = (amount?: number) => {
+    if (!amount) return "N/A";
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
     }).format(amount);
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+  const formatDate = (dateString: string | Date) => {
+    if (!dateString) return "N/A";
+    return new Date(dateString).toLocaleDateString();
   };
 
-  if (loading) {
+  const formatArea = (area: number, unit: string) => {
+    return `${area.toLocaleString()} ${unit.replace("_", " ")}`;
+  };
+
+  // Calculate derived data
+  const activeCrops =
+    field?.crops?.filter(
+      (crop) => crop.status !== "COMPLETED" && crop.status !== "HARVESTED"
+    ) || [];
+
+  const totalCosts =
+    field?.costEntries?.reduce((sum, entry) => sum + entry.amount, 0) || 0;
+
+  if (!isLoaded || loading) {
+    return <LoadingState message="Loading field details..." />;
+  }
+
+  if (error && !field) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <div className="w-8 h-8 border-4 border-green-200 border-t-green-600 rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading field details...</p>
-          </div>
-        </div>
-      </div>
+      <PageContainer>
+        <ErrorState
+          title="Field Loading Error"
+          message={error}
+          onRetry={fetchField}
+        />
+      </PageContainer>
     );
   }
 
-  if (error || !field) {
+  if (!field) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-6">
-          <Button
-            variant="outline"
-            onClick={() => router.push("/fields")}
-            className="flex items-center"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Fields
-          </Button>
-        </div>
-
-        <Card className="border-red-200 bg-red-50">
-          <CardContent className="p-6">
-            <div className="flex items-center mb-4">
-              <AlertTriangle className="w-5 h-5 text-red-600 mr-3" />
-              <h3 className="text-lg font-semibold text-red-900">Error</h3>
-            </div>
-            <p className="text-red-800 mb-4">{error || "Field not found"}</p>
-            <div className="flex gap-3">
-              <Button variant="outline" onClick={() => router.push("/fields")}>
-                Go to Fields List
-              </Button>
-              {error !== "Field not found" && (
-                <Button
-                  onClick={fetchField}
-                  className="bg-red-600 hover:bg-red-700"
-                >
-                  Try Again
-                </Button>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <PageContainer>
+        <ErrorState
+          title="Field Not Found"
+          message="The requested field could not be found."
+        />
+      </PageContainer>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="outline"
+    <PageContainer>
+      {/* Breadcrumb Navigation */}
+      <div className="mb-4">
+        <nav className="flex items-center space-x-2 text-sm text-muted-foreground">
+          <FarmButton
+            variant="ghost"
+            size="sm"
             onClick={() => router.push("/fields")}
-            className="flex items-center"
+            className="text-muted-foreground hover:text-foreground p-1"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </Button>
+            Fields
+          </FarmButton>
+          <span>/</span>
+          <span className="text-foreground font-medium">{field.name}</span>
+        </nav>
+      </div>
 
-          <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold text-gray-900">{field.name}</h1>
-            <Badge
-              variant={field.isActive ? "default" : "secondary"}
-              className={field.isActive ? "bg-green-100 text-green-800" : ""}
+      <div className="farm-page-header">
+        <div className="farm-page-title-section">
+          <div className="farm-page-title-group">
+            <div className="farm-page-icon bg-gradient-to-br from-primary to-primary-hover">
+              <Map className="w-6 h-6 text-white" />
+            </div>
+            <div className="farm-page-title-text">
+              <h1 className="farm-heading-display">{field.name}</h1>
+              <p className="farm-text-muted mt-1">
+                {formatArea(field.area, field.unit)} • {activeCrops.length}{" "}
+                active crops •{" "}
+                {getStatusBadge(field.isActive ? "ACTIVE" : "INACTIVE")}
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <FarmButton
+              variant="outline"
+              onClick={() => router.push("/fields")}
             >
-              {field.isActive ? "Active" : "Inactive"}
-            </Badge>
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Fields
+            </FarmButton>
+            <FarmButton
+              variant="primary"
+              onClick={() => router.push(`/fields/${fieldId}/edit`)}
+            >
+              <Edit className="w-4 h-4 mr-2" />
+              Edit
+            </FarmButton>
           </div>
         </div>
+      </div>
 
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            onClick={handleToggleStatus}
-            className="flex items-center"
-          >
-            {field.isActive ? (
-              <>
-                <EyeOff className="w-4 h-4 mr-2" />
-                Deactivate
-              </>
-            ) : (
-              <>
-                <Eye className="w-4 h-4 mr-2" />
-                Activate
-              </>
-            )}
-          </Button>
-
-          <Button
-            variant="outline"
-            onClick={() => setShowEditForm(true)}
-            className="flex items-center"
-          >
-            <Edit className="w-4 h-4 mr-2" />
-            Edit
-          </Button>
-
-          <Button
-            variant="outline"
-            onClick={() => setShowDeleteConfirm(true)}
-            className="text-red-600 hover:text-red-700 border-red-200 hover:border-red-300"
-          >
-            <Trash2 className="w-4 h-4" />
-          </Button>
+      {/* Tab Navigation */}
+      <div className="mb-6">
+        <div className="border-b border-border">
+          <nav className="flex space-x-8">
+            <button
+              onClick={() => setActiveTab("overview")}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === "overview"
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
+              }`}
+            >
+              Overview
+            </button>
+            <button
+              onClick={() => setActiveTab("crops")}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === "crops"
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
+              }`}
+            >
+              Crops ({field.crops?.length || 0})
+            </button>
+            <button
+              onClick={() => setActiveTab("soil")}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === "soil"
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
+              }`}
+            >
+              Soil Data ({field.soilTests?.length || 0})
+            </button>
+            <button
+              onClick={() => setActiveTab("history")}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === "history"
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
+              }`}
+            >
+              Field History
+            </button>
+          </nav>
         </div>
       </div>
 
-      {/* Field Summary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Field Area</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {field.area} {field.unit}
-                </p>
-              </div>
-              <TrendingUp className="w-8 h-8 text-blue-500" />
-            </div>
-          </CardContent>
-        </Card>
+      {/* Tab Content */}
+      {activeTab === "overview" && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Field Summary Stats */}
+          <FarmCard>
+            <FarmCardHeader title="Field Statistics" />
+            <FarmCardContent>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <Layers className="w-4 h-4 text-muted-foreground" />
+                    <span className="farm-text-muted">Total Area</span>
+                  </div>
+                  <span className="farm-text-body font-medium">
+                    {formatArea(field.area, field.unit)}
+                  </span>
+                </div>
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">
-                  Active Crops
-                </p>
-                <p className="text-2xl font-bold text-green-600">
-                  {field.stats?.activeCropsCount || 0}
-                </p>
-              </div>
-              <Wheat className="w-8 h-8 text-green-500" />
-            </div>
-          </CardContent>
-        </Card>
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <Sprout className="w-4 h-4 text-muted-foreground" />
+                    <span className="farm-text-muted">Active Crops</span>
+                  </div>
+                  <span className="farm-text-body font-medium">
+                    {activeCrops.length}
+                  </span>
+                </div>
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">
-                  Total Investment
-                </p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {formatCurrency(field.stats?.totalCosts || 0)}
-                </p>
-              </div>
-              <DollarSign className="w-8 h-8 text-purple-500" />
-            </div>
-          </CardContent>
-        </Card>
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <DollarSign className="w-4 h-4 text-muted-foreground" />
+                    <span className="farm-text-muted">Total Costs</span>
+                  </div>
+                  <span className="farm-text-body font-medium">
+                    {formatCurrency(totalCosts)}
+                  </span>
+                </div>
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">
-                  Total Operations
-                </p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {(field._count?.tillageOps || 0) + (field._count?.crops || 0)}
-                </p>
-              </div>
-              <Activity className="w-8 h-8 text-orange-500" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <Activity className="w-4 h-4 text-muted-foreground" />
+                    <span className="farm-text-muted">Operations</span>
+                  </div>
+                  <span className="farm-text-body font-medium">
+                    {(field._count?.tillageOps || 0) +
+                      (field._count?.crops || 0)}
+                  </span>
+                </div>
 
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Field Information */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Basic Details */}
-          <Card>
-            <CardHeader>
-              <h3 className="text-lg font-semibold">Field Details</h3>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="farm-text-muted">Status</span>
+                  {getStatusBadge(field.isActive ? "ACTIVE" : "INACTIVE")}
+                </div>
+              </div>
+            </FarmCardContent>
+          </FarmCard>
+
+          {/* Field Information */}
+          <FarmCard>
+            <FarmCardHeader title="Field Details" />
+            <FarmCardContent>
+              <div className="space-y-3">
                 {field.description && (
                   <div>
-                    <p className="text-sm font-medium text-gray-600">
-                      Description
-                    </p>
-                    <p className="text-gray-900">{field.description}</p>
+                    <span className="farm-text-muted">Description</span>
+                    <p className="farm-text-body mt-1">{field.description}</p>
                   </div>
                 )}
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Area</p>
-                    <p className="text-gray-900">
-                      {field.area} {field.unit}
-                    </p>
+                {field.soilType && (
+                  <div className="flex justify-between items-center">
+                    <span className="farm-text-muted">Soil Type</span>
+                    <span className="farm-text-body font-medium">
+                      {field.soilType.replace("_", " ")}
+                    </span>
                   </div>
+                )}
 
-                  {field.soilType && (
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">
-                        Soil Type
-                      </p>
-                      <p className="text-gray-900">{field.soilType}</p>
-                    </div>
-                  )}
-
-                  {field.drainageType && (
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">
-                        Drainage
-                      </p>
-                      <p className="text-gray-900">{field.drainageType}</p>
-                    </div>
-                  )}
-
-                  {field.irrigationType && (
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">
-                        Irrigation
-                      </p>
-                      <p className="text-gray-900">{field.irrigationType}</p>
-                    </div>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Created</p>
-                    <p className="text-gray-900">
-                      {formatDate(field.createdAt)}
-                    </p>
+                {field.drainageType && (
+                  <div className="flex justify-between items-center">
+                    <span className="farm-text-muted">Drainage</span>
+                    <span className="farm-text-body font-medium">
+                      {field.drainageType.replace("_", " ")}
+                    </span>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">
-                      Last Updated
-                    </p>
-                    <p className="text-gray-900">
-                      {formatDate(field.updatedAt)}
-                    </p>
+                )}
+
+                {field.irrigationType && (
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <Droplets className="w-4 h-4 text-muted-foreground" />
+                      <span className="farm-text-muted">Irrigation</span>
+                    </div>
+                    <span className="farm-text-body font-medium">
+                      {field.irrigationType.replace("_", " ")}
+                    </span>
                   </div>
+                )}
+
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-muted-foreground" />
+                    <span className="farm-text-muted">Created</span>
+                  </div>
+                  <span className="farm-text-body font-medium">
+                    {formatDate(field.createdAt)}
+                  </span>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </FarmCardContent>
+          </FarmCard>
 
           {/* Location Information */}
-          {(field.address || field.latitude || field.longitude) && (
-            <Card>
-              <CardHeader>
-                <h3 className="text-lg font-semibold flex items-center">
-                  <MapPin className="w-5 h-5 mr-2" />
-                  Location
-                </h3>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {field.address && (
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">
-                        Address
-                      </p>
-                      <p className="text-gray-900">{field.address}</p>
-                    </div>
-                  )}
-
-                  {(field.latitude || field.longitude) && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {field.latitude && (
-                        <div>
-                          <p className="text-sm font-medium text-gray-600">
-                            Latitude
-                          </p>
-                          <p className="text-gray-900">{field.latitude}°</p>
-                        </div>
-                      )}
-                      {field.longitude && (
-                        <div>
-                          <p className="text-sm font-medium text-gray-600">
-                            Longitude
-                          </p>
-                          <p className="text-gray-900">{field.longitude}°</p>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-
-        {/* Activity & Stats */}
-        <div className="space-y-6">
-          {/* Recent Activity */}
-          <Card>
-            <CardHeader>
-              <h3 className="text-lg font-semibold flex items-center">
-                <Activity className="w-5 h-5 mr-2" />
-                Recent Activity
-              </h3>
-            </CardHeader>
-            <CardContent>
-              {field.stats?.recentActivity &&
-              field.stats.recentActivity.length > 0 ? (
-                <div className="space-y-3">
-                  {field.stats.recentActivity.map((activity, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0"
-                    >
-                      <div>
-                        <p className="font-medium text-gray-900">
-                          {activity.operationType}
-                        </p>
-                        {activity.cropType && (
-                          <p className="text-sm text-gray-600">
-                            {activity.cropType}
-                          </p>
-                        )}
-                      </div>
-                      <p className="text-sm text-gray-500">
-                        {formatDate(activity.operationDate)}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <Activity className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                  <p className="text-gray-500">No recent activity</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Operation Counts */}
-          <Card>
-            <CardHeader>
-              <h3 className="text-lg font-semibold">Operations Summary</h3>
-            </CardHeader>
-            <CardContent>
+          <FarmCard>
+            <FarmCardHeader title="Location" />
+            <FarmCardContent>
               <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Crops</span>
-                  <span className="font-medium">
-                    {field._count?.crops || 0}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Tillage Operations</span>
-                  <span className="font-medium">
-                    {field._count?.tillageOps || 0}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Soil Tests</span>
-                  <span className="font-medium">
-                    {field._count?.soilTests || 0}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Soil Amendments</span>
-                  <span className="font-medium">
-                    {field._count?.soilAmendments || 0}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Cost Entries</span>
-                  <span className="font-medium">
-                    {field._count?.costEntries || 0}
-                  </span>
-                </div>
+                {field.address && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <MapPin className="w-4 h-4 text-muted-foreground" />
+                      <span className="farm-text-muted">Address</span>
+                    </div>
+                    <p className="farm-text-body">{field.address}</p>
+                  </div>
+                )}
+
+                {field.latitude && (
+                  <div className="flex justify-between items-center">
+                    <span className="farm-text-muted">Latitude</span>
+                    <span className="farm-text-body font-medium">
+                      {field.latitude}°
+                    </span>
+                  </div>
+                )}
+
+                {field.longitude && (
+                  <div className="flex justify-between items-center">
+                    <span className="farm-text-muted">Longitude</span>
+                    <span className="farm-text-body font-medium">
+                      {field.longitude}°
+                    </span>
+                  </div>
+                )}
+
+                {field.latitude && field.longitude && (
+                  <div className="pt-3 border-t border-border">
+                    <FarmButton
+                      variant="outline"
+                      size="sm"
+                      className="w-full"
+                      onClick={() => {
+                        const url = `https://www.google.com/maps?q=${field.latitude},${field.longitude}`;
+                        window.open(url, "_blank");
+                      }}
+                    >
+                      <Navigation className="w-4 h-4 mr-2" />
+                      View on Map
+                    </FarmButton>
+                  </div>
+                )}
+
+                {!field.address && !field.latitude && !field.longitude && (
+                  <div className="text-center py-4">
+                    <MapPin className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                    <p className="farm-text-muted">
+                      No location data available
+                    </p>
+                  </div>
+                )}
               </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+            </FarmCardContent>
+          </FarmCard>
 
-      {/* Edit Form Modal */}
-      <FieldForm
-        isOpen={showEditForm}
-        mode="edit"
-        field={field}
-        onSave={handleFieldUpdated}
-        onCancel={() => setShowEditForm(false)}
-      />
+          {/* Quick Actions */}
+          <div className="lg:col-span-3">
+            <FarmCard>
+              <FarmCardHeader
+                title="Quick Actions"
+                badge={
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Zap className="w-3 h-3" />
+                    Fast Entry
+                  </div>
+                }
+              />
+              <FarmCardContent>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <FarmButton
+                    variant="outline"
+                    className="h-auto p-4 flex-col gap-2 hover:bg-primary/5 hover:border-primary/20"
+                    onClick={() => setShowAddCropModal(true)}
+                  >
+                    <Sprout className="w-5 h-5 text-green-500" />
+                    <span className="text-sm">Add Crop</span>
+                  </FarmButton>
 
-      {/* Delete Confirmation Modal */}
-      {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <Card className="w-full max-w-md">
-            <CardHeader>
-              <h2 className="text-xl font-semibold text-red-900">
-                Delete Field
-              </h2>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center mb-4">
-                <AlertTriangle className="w-6 h-6 text-red-600 mr-3" />
-                <p className="text-gray-700">
-                  Are you sure you want to delete &quot;{field.name}&quot;? This
-                  action cannot be undone.
-                </p>
-              </div>
+                  <FarmButton
+                    variant="outline"
+                    className="h-auto p-4 flex-col gap-2 hover:bg-primary/5 hover:border-primary/20"
+                    onClick={() => setShowSoilTestModal(true)}
+                  >
+                    <TestTube className="w-5 h-5 text-blue-500" />
+                    <span className="text-sm">Soil Test</span>
+                  </FarmButton>
 
-              <Alert className="mb-6 border-red-200 bg-red-50">
-                <AlertDescription className="text-red-800">
-                  This will also delete all associated crops, operations, and
-                  data for this field.
-                </AlertDescription>
-              </Alert>
+                  <FarmButton
+                    variant="outline"
+                    className="h-auto p-4 flex-col gap-2 hover:bg-primary/5 hover:border-primary/20"
+                    onClick={() => setShowTreatmentModal(true)}
+                  >
+                    <Droplets className="w-5 h-5 text-green-600" />
+                    <span className="text-sm">Schedule Treatment</span>
+                  </FarmButton>
 
-              <div className="flex gap-3">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowDeleteConfirm(false)}
-                  className="flex-1"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleDeleteField}
-                  className="flex-1 bg-red-600 hover:bg-red-700"
-                >
-                  Delete Field
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+                  <FarmButton
+                    variant="outline"
+                    className="h-auto p-4 flex-col gap-2 hover:bg-primary/5 hover:border-primary/20"
+                    onClick={() => setShowWeatherModal(true)}
+                  >
+                    <CloudRain className="w-5 h-5 text-blue-600" />
+                    <span className="text-sm">Weather Data</span>
+                  </FarmButton>
+                </div>
+
+                {/* Secondary Actions */}
+                <div className="mt-4 pt-4 border-t border-border">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <FarmButton
+                      variant="ghost"
+                      size="sm"
+                      className="justify-start"
+                      onClick={() => setActiveTab("crops")}
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      View Crops
+                    </FarmButton>
+
+                    <FarmButton
+                      variant="ghost"
+                      size="sm"
+                      className="justify-start"
+                      onClick={() => setActiveTab("soil")}
+                    >
+                      <TestTube className="w-4 h-4 mr-2" />
+                      Soil Data
+                    </FarmButton>
+
+                    <FarmButton
+                      variant="ghost"
+                      size="sm"
+                      className="justify-start"
+                      onClick={() => setActiveTab("history")}
+                    >
+                      <Activity className="w-4 h-4 mr-2" />
+                      Field History
+                    </FarmButton>
+
+                    <FarmButton
+                      variant="ghost"
+                      size="sm"
+                      className="justify-start"
+                      onClick={() => router.push(`/reports?field=${fieldId}`)}
+                    >
+                      <FileText className="w-4 h-4 mr-2" />
+                      View Reports
+                    </FarmButton>
+                  </div>
+                </div>
+              </FarmCardContent>
+            </FarmCard>
+          </div>
+
+          {/* Delete Action */}
+          <div className="lg:col-span-3">
+            <FarmCard className="border-destructive/20">
+              <FarmCardHeader title="Danger Zone" />
+              <FarmCardContent>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="farm-heading-card text-destructive">
+                      Delete Field
+                    </h4>
+                    <p className="farm-text-muted">
+                      Permanently delete this field and all associated data.
+                      This action cannot be undone.
+                    </p>
+                  </div>
+                  <FarmButton variant="destructive" onClick={handleDeleteClick}>
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete Field
+                  </FarmButton>
+                </div>
+              </FarmCardContent>
+            </FarmCard>
+          </div>
         </div>
       )}
-    </div>
+
+      {activeTab === "crops" && (
+        <div>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="farm-heading-section">Field Crops</h2>
+            <FarmButton
+              variant="primary"
+              onClick={() => router.push(`/crops/add?field=${fieldId}`)}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Crop
+            </FarmButton>
+          </div>
+
+          {!field.crops || field.crops.length === 0 ? (
+            <FarmCard>
+              <FarmCardContent>
+                <div className="text-center py-8">
+                  <Sprout className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="farm-heading-card mb-2">No Crops Yet</h3>
+                  <p className="farm-text-muted mb-4">
+                    Start by adding crops to track their growth and progress.
+                  </p>
+                  <FarmButton
+                    variant="primary"
+                    onClick={() => router.push(`/crops/add?field=${fieldId}`)}
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add First Crop
+                  </FarmButton>
+                </div>
+              </FarmCardContent>
+            </FarmCard>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {field.crops.map((crop) => (
+                <FarmCard
+                  key={crop.id}
+                  className="cursor-pointer hover:shadow-md transition-shadow"
+                >
+                  <FarmCardContent>
+                    <div className="p-4">
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <h4 className="farm-heading-card">{crop.name}</h4>
+                          {crop.variety && (
+                            <p className="farm-text-muted">{crop.variety}</p>
+                          )}
+                        </div>
+                        {getCropStatusBadge(crop.status)}
+                      </div>
+
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="farm-text-muted">Planted</span>
+                          <span className="farm-text-body">
+                            {formatDate(crop.plantingDate)}
+                          </span>
+                        </div>
+
+                        <div className="flex justify-between items-center">
+                          <span className="farm-text-muted">
+                            Expected Harvest
+                          </span>
+                          <span className="farm-text-body">
+                            {formatDate(crop.expectedHarvestDate)}
+                          </span>
+                        </div>
+
+                        {crop.area && (
+                          <div className="flex justify-between items-center">
+                            <span className="farm-text-muted">Area</span>
+                            <span className="farm-text-body">
+                              {crop.area} m²
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="mt-4 pt-3 border-t border-border">
+                        <FarmButton
+                          variant="outline"
+                          size="sm"
+                          className="w-full"
+                          onClick={() => router.push(`/crops/${crop.id}`)}
+                        >
+                          <Eye className="w-4 h-4 mr-2" />
+                          View Details
+                        </FarmButton>
+                      </div>
+                    </div>
+                  </FarmCardContent>
+                </FarmCard>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {activeTab === "soil" && (
+        <div>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="farm-heading-section">Soil Data</h2>
+            <FarmButton
+              variant="primary"
+              onClick={() => router.push(`/soil-tests/add?field=${fieldId}`)}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Soil Test
+            </FarmButton>
+          </div>
+
+          {!field.soilTests || field.soilTests.length === 0 ? (
+            <FarmCard>
+              <FarmCardContent>
+                <div className="text-center py-8">
+                  <TestTube className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="farm-heading-card mb-2">No Soil Tests</h3>
+                  <p className="farm-text-muted mb-4">
+                    Track soil health with regular testing to optimize crop
+                    growth.
+                  </p>
+                  <FarmButton
+                    variant="primary"
+                    onClick={() =>
+                      router.push(`/soil-tests/add?field=${fieldId}`)
+                    }
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add First Test
+                  </FarmButton>
+                </div>
+              </FarmCardContent>
+            </FarmCard>
+          ) : (
+            <div className="space-y-4">
+              {field.soilTests.map((test) => (
+                <FarmCard key={test.id}>
+                  <FarmCardContent>
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                          <TestTube className="w-4 h-4 text-primary" />
+                        </div>
+                        <div>
+                          <h4 className="farm-heading-card">
+                            {test.testType.replace("_", " ")} Test
+                          </h4>
+                          <p className="farm-text-muted">
+                            {formatDate(test.sampleDate)} • {test.labName}
+                          </p>
+
+                          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-3">
+                            <div>
+                              <span className="farm-text-caption">pH</span>
+                              <p className="farm-text-body font-medium">
+                                {test.pH}
+                              </p>
+                            </div>
+                            <div>
+                              <span className="farm-text-caption">
+                                Organic Matter
+                              </span>
+                              <p className="farm-text-body font-medium">
+                                {test.organicMatter}%
+                              </p>
+                            </div>
+                            <div>
+                              <span className="farm-text-caption">
+                                Nitrogen
+                              </span>
+                              <p className="farm-text-body font-medium">
+                                {test.nitrogen} ppm
+                              </p>
+                            </div>
+                            <div>
+                              <span className="farm-text-caption">
+                                Phosphorus
+                              </span>
+                              <p className="farm-text-body font-medium">
+                                {test.phosphorus} ppm
+                              </p>
+                            </div>
+                            <div>
+                              <span className="farm-text-caption">
+                                Potassium
+                              </span>
+                              <p className="farm-text-body font-medium">
+                                {test.potassium} ppm
+                              </p>
+                            </div>
+                          </div>
+
+                          {test.recommendations && (
+                            <div className="mt-3 p-3 bg-muted/50 rounded-lg">
+                              <span className="farm-text-caption">
+                                Recommendations
+                              </span>
+                              <p className="farm-text-body mt-1">
+                                {test.recommendations}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </FarmCardContent>
+                </FarmCard>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {activeTab === "history" && (
+        <div>
+          <h2 className="farm-heading-section mb-6">Field History</h2>
+
+          <div className="space-y-6">
+            {/* Tillage Operations */}
+            <FarmCard>
+              <FarmCardHeader
+                title="Tillage Operations"
+                badge={
+                  <FarmButton variant="outline" size="sm">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Log Operation
+                  </FarmButton>
+                }
+              />
+              <FarmCardContent>
+                {!field.tillageOps || field.tillageOps.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Activity className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="farm-heading-card mb-2">
+                      No Operations Logged
+                    </h3>
+                    <p className="farm-text-muted">
+                      Start tracking field operations to maintain detailed
+                      records.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {field.tillageOps.slice(0, 5).map((op) => (
+                      <div
+                        key={op.id}
+                        className="flex items-center justify-between py-2 border-b border-border last:border-0"
+                      >
+                        <div>
+                          <p className="farm-text-body font-medium">
+                            {op.operationType.replace("_", " ")}
+                          </p>
+                          <p className="farm-text-muted">
+                            {op.equipment} • {op.depth}" depth
+                            {op.operator && ` • ${op.operator}`}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="farm-text-body">
+                            {formatDate(op.operationDate)}
+                          </p>
+                          <p className="farm-text-muted">
+                            {formatCurrency(op.cost)}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </FarmCardContent>
+            </FarmCard>
+
+            {/* Cost Summary */}
+            <FarmCard>
+              <FarmCardHeader title="Cost Summary" />
+              <FarmCardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="p-4 border border-border rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <DollarSign className="w-4 h-4 text-muted-foreground" />
+                      <span className="farm-text-muted">Total Costs</span>
+                    </div>
+                    <p className="farm-text-body font-medium text-lg">
+                      {formatCurrency(totalCosts)}
+                    </p>
+                  </div>
+
+                  <div className="p-4 border border-border rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <BarChart3 className="w-4 h-4 text-muted-foreground" />
+                      <span className="farm-text-muted">Cost Entries</span>
+                    </div>
+                    <p className="farm-text-body font-medium text-lg">
+                      {field._count?.costEntries || 0}
+                    </p>
+                  </div>
+
+                  <div className="p-4 border border-border rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <TrendingUp className="w-4 h-4 text-muted-foreground" />
+                      <span className="farm-text-muted">Avg per Operation</span>
+                    </div>
+                    <p className="farm-text-body font-medium text-lg">
+                      {formatCurrency(
+                        field._count?.costEntries
+                          ? totalCosts / field._count.costEntries
+                          : 0
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </FarmCardContent>
+            </FarmCard>
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <FarmCard className="border-destructive/20 bg-destructive/5 mt-6">
+          <FarmCardContent>
+            <div className="flex items-center gap-3 p-4">
+              <span className="text-destructive text-lg">⚠️</span>
+              <span className="text-destructive font-medium">{error}</span>
+            </div>
+          </FarmCardContent>
+        </FarmCard>
+      )}
+
+      <DeleteConfirmationDialog
+        isOpen={showDeleteDialog}
+        entityName={field?.name || ""}
+        entityType="Field"
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+        dependencies={dependencies}
+        loading={deleting}
+      />
+
+      {/* Quick Action Modals */}
+      {field && (
+        <>
+          <AddCropModal
+            isOpen={showAddCropModal}
+            onClose={() => setShowAddCropModal(false)}
+            fieldId={fieldId}
+            fieldName={field.name}
+            onSuccess={handleQuickActionSuccess}
+          />
+
+          <SoilTestModal
+            isOpen={showSoilTestModal}
+            onClose={() => setShowSoilTestModal(false)}
+            fieldId={fieldId}
+            fieldName={field.name}
+            onSuccess={handleQuickActionSuccess}
+          />
+
+          <FieldTreatmentModal
+            isOpen={showTreatmentModal}
+            onClose={() => setShowTreatmentModal(false)}
+            fieldId={fieldId}
+            fieldName={field.name}
+            onSuccess={handleQuickActionSuccess}
+          />
+
+          <WeatherRefreshModal
+            isOpen={showWeatherModal}
+            onClose={() => setShowWeatherModal(false)}
+            fieldId={fieldId}
+            fieldName={field.name}
+            latitude={field.latitude}
+            longitude={field.longitude}
+            onSuccess={handleQuickActionSuccess}
+          />
+        </>
+      )}
+    </PageContainer>
   );
 }

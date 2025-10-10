@@ -1247,3 +1247,48 @@ enum WorkflowStepStatus {
   SKIPPED
   BLOCKED
 }
+
+// Activity Tracking System
+model Activity {
+  id          String       @id @default(cuid())
+  userId      String
+  entityType  EntityType
+  entityId    String
+  actionType  ActivityType
+  description String
+  metadata    Json?        // Additional context data
+  timestamp   DateTime     @default(now())
+  createdAt   DateTime     @default(now())
+
+  @@map("activities")
+}
+
+enum EntityType {
+  CROP
+  FIELD
+  EQUIPMENT
+  TASK
+  IRRIGATION_LOG
+  FERTILIZER_LOG
+  PEST_DISEASE_LOG
+  HARVEST_LOG
+  SOIL_TEST
+  MAINTENANCE_LOG
+  FUEL_LOG
+}
+
+enum ActivityType {
+  CREATED
+  UPDATED
+  DELETED
+  STATUS_CHANGED
+  COMPLETED
+  SCHEDULED
+  CANCELLED
+  LOGGED
+  TESTED
+  MAINTAINED
+  HARVESTED
+  PLANTED
+  TREATED
+}
