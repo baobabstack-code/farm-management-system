@@ -12,7 +12,7 @@ export const PageContainer = React.forwardRef<
   PageContainerProps
 >(({ className, children, ...props }, ref) => (
   <div ref={ref} className={cn("page-container", className)} {...props}>
-    <div className="content-container py-4 sm:py-6 lg:py-8 mobile-header-spacing">
+    <div className="content-container padding-responsive-lg mobile-header-spacing content-spacing">
       {children}
     </div>
   </div>
@@ -40,12 +40,10 @@ export const PageHeader = React.forwardRef<HTMLDivElement, PageHeaderProps>(
           )}
           <div className="farm-page-title-text">
             <h1 className="farm-heading-display">{title}</h1>
-            {description && (
-              <p className="farm-text-muted mt-1">{description}</p>
-            )}
+            {description && <p className="farm-text-muted">{description}</p>}
           </div>
         </div>
-        {actions && <div className="flex items-center gap-3">{actions}</div>}
+        {actions && <div className="farm-page-actions">{actions}</div>}
       </div>
     </div>
   )
@@ -103,7 +101,7 @@ export const FarmCardContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("space-y-4", className)} {...props} />
+  <div ref={ref} className={cn("farm-card-content", className)} {...props} />
 ));
 FarmCardContent.displayName = "FarmCardContent";
 
@@ -234,10 +232,10 @@ export const FarmFormGroup = React.forwardRef<
   <div ref={ref} className={cn("farm-form-group", className)} {...props}>
     <label className="farm-form-label">
       {label}
-      {required && <span className="text-destructive ml-1">*</span>}
+      {required && <span className="text-destructive ml-1.5">*</span>}
     </label>
     {children}
-    {error && <p className="text-sm text-destructive mt-1">{error}</p>}
+    {error && <p className="text-sm text-destructive mt-2 px-1">{error}</p>}
   </div>
 ));
 FarmFormGroup.displayName = "FarmFormGroup";
@@ -374,15 +372,17 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 }) => (
   <FarmCard>
     <FarmCardContent>
-      <div className="text-center py-8 sm:py-12">
+      <div className="text-center section-spacing">
         {icon && (
-          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-14 h-14 sm:w-18 sm:h-18 bg-muted rounded-full flex-center mx-auto mb-5">
             {icon}
           </div>
         )}
-        <h3 className="farm-heading-card mb-2">{title}</h3>
-        <p className="farm-text-muted mb-6">{description}</p>
-        {action}
+        <h3 className="farm-heading-card mb-3">{title}</h3>
+        <p className="farm-text-muted mb-7 max-w-md mx-auto leading-relaxed">
+          {description}
+        </p>
+        {action && <div className="flex-center">{action}</div>}
       </div>
     </FarmCardContent>
   </FarmCard>

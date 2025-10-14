@@ -2,10 +2,18 @@
 
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { useRouter } from "next/navigation";
 import FieldForm from "@/components/fields/FieldForm";
+import {
+  PageHeader,
+  FarmCard,
+  FarmCardHeader,
+  FarmCardContent,
+  FarmButton,
+  FarmBadge,
+  LoadingState,
+  EmptyState,
+} from "@/components/ui/farm-theme";
 import {
   Plus,
   MapPin,
@@ -51,6 +59,7 @@ interface Field {
 
 export default function FieldsPage() {
   const { user } = useUser();
+  const router = useRouter();
   const [fields, setFields] = useState<Field[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -90,14 +99,12 @@ export default function FieldsPage() {
 
   const getFieldStatusBadge = (field: Field) => {
     if (!field.isActive) {
-      return <Badge variant="secondary">Inactive</Badge>;
+      return <FarmBadge variant="neutral">Inactive</FarmBadge>;
     }
     if (field.stats?.activeCropsCount && field.stats.activeCropsCount > 0) {
-      return (
-        <Badge className="bg-green-100 text-green-800">Active Crops</Badge>
-      );
+      return <FarmBadge variant="success">Active Crops</FarmBadge>;
     }
-    return <Badge variant="outline">Available</Badge>;
+    return <FarmBadge variant="info">Available</FarmBadge>;
   };
 
   const formatCurrency = (amount: number) => {
@@ -115,256 +122,222 @@ export default function FieldsPage() {
   );
 
   if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <div className="w-8 h-8 border-4 border-green-200 border-t-green-600 rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading your fields...</p>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingState message="Loading your fields..." />;
   }
 
   if (error) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <Card className="border-red-200 bg-red-50">
-          <CardContent className="p-6">
-            <p className="text-red-800">Error: {error}</p>
-            <Button onClick={fetchFields} variant="outline" className="mt-4">
-              Try Again
-            </Button>
-          </CardContent>
-        </Card>
+      <div className="page-container">
+        <div className="content-container padding-responsive-lg mobile-header-spacing content-spacing">
+          <div className="farm-card border-destructive/20 bg-destructive/5">
+            <div className="flex-center gap-content padding-responsive">
+              <div className="flex-center w-10 h-10 bg-destructive/10 rounded-full">
+                <span className="text-destructive text-lg">⚠️</span>
+              </div>
+              <div className="flex-1">
+                <span className="text-destructive font-medium">
+                  Error: {error}
+                </span>
+                <div className="mt-4">
+                  <FarmButton onClick={fetchFields} variant="outline">
+                    Try Again
+                  </FarmButton>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-slate-900 dark:to-gray-800 overflow-auto">
-      <div className="content-container py-4 sm:py-6 lg:py-8 mobile-header-spacing">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
-            <Map className="w-8 h-8 text-green-600" />
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-              Field Management
-            </h1>
-          </div>
-          <Button
-            onClick={() => setShowCreateForm(true)}
-            className="bg-green-600 hover:bg-green-700"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add New Field
-          </Button>
-        </div>
+    <div className="page-container">
+      <div className="content-container padding-responsive-lg mobile-header-spacing content-spacing">
+        <PageHeader
+          title="Field Management"
+          description="Manage your farm fields, track area, and monitor field activities"
+          icon={<Map className="w-6 h-6" />}
+          actions={
+            <FarmButton
+              variant="primary"
+              onClick={() => setShowCreateForm(true)}
+            >
+              <Plus className="w-4 h-4" />
+              Add New Field
+            </FarmButton>
+          }
+        />
 
         {/* Summary Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">
-                    Total Fields
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {fields.length}
-                  </p>
-                </div>
-                <Map className="w-8 h-8 text-blue-500" />
+        <div className="stats-container">
+          <div className="stat-card">
+            <div className="flex-start gap-content">
+              <div className="w-12 h-12 bg-gradient-to-br from-info to-info/80 rounded-xl flex-center shadow-sm">
+                <Map className="w-6 h-6 text-white" />
               </div>
-            </CardContent>
-          </Card>
+              <div className="flex-1">
+                <p className="stat-label">Total Fields</p>
+                <p className="stat-value">{fields.length}</p>
+              </div>
+            </div>
+          </div>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">
-                    Active Fields
-                  </p>
-                  <p className="text-2xl font-bold text-green-600">
-                    {activeFields}
-                  </p>
-                </div>
-                <Activity className="w-8 h-8 text-green-500" />
+          <div className="stat-card">
+            <div className="flex-start gap-content">
+              <div className="w-12 h-12 bg-gradient-to-br from-success to-success/80 rounded-xl flex-center shadow-sm">
+                <Activity className="w-6 h-6 text-white" />
               </div>
-            </CardContent>
-          </Card>
+              <div className="flex-1">
+                <p className="stat-label">Active Fields</p>
+                <p className="stat-value">{activeFields}</p>
+              </div>
+            </div>
+          </div>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">
-                    Total Area
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {totalArea}
-                  </p>
-                  <p className="text-xs text-gray-500">acres</p>
-                </div>
-                <TrendingUp className="w-8 h-8 text-yellow-500" />
+          <div className="stat-card">
+            <div className="flex-start gap-content">
+              <div className="w-12 h-12 bg-gradient-to-br from-warning to-warning/80 rounded-xl flex-center shadow-sm">
+                <TrendingUp className="w-6 h-6 text-white" />
               </div>
-            </CardContent>
-          </Card>
+              <div className="flex-1">
+                <p className="stat-label">Total Area</p>
+                <p className="stat-value">{totalArea}</p>
+                <p className="stat-unit">acres</p>
+              </div>
+            </div>
+          </div>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">
-                    Total Investment
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {formatCurrency(totalCosts)}
-                  </p>
-                </div>
-                <DollarSign className="w-8 h-8 text-purple-500" />
+          <div className="stat-card">
+            <div className="flex-start gap-content">
+              <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary-hover rounded-xl flex-center shadow-sm">
+                <DollarSign className="w-6 h-6 text-white" />
               </div>
-            </CardContent>
-          </Card>
+              <div className="flex-1">
+                <p className="stat-label">Total Investment</p>
+                <p className="stat-value">{formatCurrency(totalCosts)}</p>
+              </div>
+            </div>
+          </div>
         </div>
+        <div>
+          <p className="text-sm font-medium text-gray-600">Total Area</p>
+          <p className="text-2xl font-bold text-gray-900">{totalArea}</p>
+          <p className="text-xs text-gray-500">acres</p>
+        </div>
+        <TrendingUp className="w-8 h-8 text-yellow-500" />
 
         {/* Fields Grid */}
         {fields.length === 0 ? (
-          <Card>
-            <CardContent className="p-12 text-center">
-              <Map className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                No Fields Yet
-              </h3>
-              <p className="text-gray-600 mb-6">
-                Start by adding your first field to begin managing your farm
-                operations.
-              </p>
-              <Button
+          <EmptyState
+            icon={<Map className="text-4xl" />}
+            title="No Fields Yet"
+            description="Start by adding your first field to begin managing your farm operations."
+            action={
+              <FarmButton
+                variant="success"
                 onClick={() => setShowCreateForm(true)}
-                className="bg-green-600 hover:bg-green-700"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Your First Field
-              </Button>
-            </CardContent>
-          </Card>
+              </FarmButton>
+            }
+          />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="farm-grid-auto">
             {fields.map((field) => (
-              <Card
+              <FarmCard
                 key={field.id}
-                className="hover:shadow-lg transition-shadow"
+                interactive
+                onClick={() => router.push(`/fields/${field.id}`)}
               >
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h3 className="font-semibold text-lg">{field.name}</h3>
-                      <p className="text-sm text-gray-600">
-                        {field.area} {field.unit}
-                      </p>
-                    </div>
-                    {getFieldStatusBadge(field)}
-                  </div>
-                </CardHeader>
+                <FarmCardHeader
+                  title={field.name}
+                  description={`${field.area} ${field.unit}`}
+                  badge={getFieldStatusBadge(field)}
+                />
 
-                <CardContent>
-                  {/* Field Details */}
-                  <div className="space-y-3 mb-4">
+                <FarmCardContent>
+                  <div className="farm-card-content">
                     {field.address && (
-                      <div className="flex items-center text-sm text-gray-600">
-                        <MapPin className="w-4 h-4 mr-2" />
-                        {field.address}
+                      <div className="flex-between py-2">
+                        <div className="icon-text-sm">
+                          <MapPin className="w-4 h-4 text-muted-foreground" />
+                          <span className="farm-text-muted">Address</span>
+                        </div>
+                        <span className="farm-text-body font-semibold">
+                          {field.address}
+                        </span>
                       </div>
                     )}
 
                     {field.soilType && (
-                      <div className="flex items-center text-sm text-gray-600">
-                        <div className="w-4 h-4 mr-2 bg-amber-200 rounded" />
-                        Soil: {field.soilType}
+                      <div className="flex-between py-2">
+                        <span className="farm-text-muted">Soil Type</span>
+                        <span className="farm-text-body font-semibold">
+                          {field.soilType}
+                        </span>
                       </div>
                     )}
 
                     {field.irrigationType && (
-                      <div className="flex items-center text-sm text-gray-600">
-                        <div className="w-4 h-4 mr-2 bg-blue-200 rounded" />
-                        Irrigation: {field.irrigationType}
+                      <div className="flex-between py-2">
+                        <span className="farm-text-muted">Irrigation</span>
+                        <span className="farm-text-body font-semibold">
+                          {field.irrigationType}
+                        </span>
                       </div>
                     )}
-                  </div>
 
-                  {/* Statistics */}
-                  <div className="grid grid-cols-2 gap-4 mb-4 text-center">
-                    <div className="p-3 bg-gray-50 rounded-lg">
-                      <div className="flex items-center justify-center mb-1">
-                        <Wheat className="w-4 h-4 text-green-500" />
+                    <div className="flex-between py-2">
+                      <div className="icon-text-sm">
+                        <Wheat className="w-4 h-4 text-muted-foreground" />
+                        <span className="farm-text-muted">Active Crops</span>
                       </div>
-                      <p className="text-lg font-semibold">
+                      <span className="farm-text-body font-semibold">
                         {field.stats?.activeCropsCount || 0}
-                      </p>
-                      <p className="text-xs text-gray-600">Active Crops</p>
+                      </span>
                     </div>
 
-                    <div className="p-3 bg-gray-50 rounded-lg">
-                      <div className="flex items-center justify-center mb-1">
-                        <DollarSign className="w-4 h-4 text-purple-500" />
+                    <div className="flex-between py-2">
+                      <div className="icon-text-sm">
+                        <DollarSign className="w-4 h-4 text-muted-foreground" />
+                        <span className="farm-text-muted">Total Costs</span>
                       </div>
-                      <p className="text-lg font-semibold">
+                      <span className="farm-text-body font-semibold">
                         {formatCurrency(field.stats?.totalCosts || 0)}
-                      </p>
-                      <p className="text-xs text-gray-600">Total Costs</p>
+                      </span>
                     </div>
                   </div>
 
-                  {/* Action Buttons */}
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1"
-                      onClick={() =>
-                        (window.location.href = `/fields/${field.id}`)
-                      }
-                    >
-                      <Eye className="w-4 h-4 mr-2" />
-                      View Details
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() =>
-                        (window.location.href = `/fields/${field.id}/edit`)
-                      }
-                    >
-                      <Edit className="w-4 h-4" />
-                    </Button>
+                  <div className="farm-card-section">
+                    <div className="action-buttons-sm">
+                      <FarmButton
+                        variant="outline"
+                        size="sm"
+                        className="flex-1"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(`/fields/${field.id}`);
+                        }}
+                      >
+                        <Eye className="w-4 h-4" />
+                        View Details
+                      </FarmButton>
+                      <FarmButton
+                        variant="outline"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(`/fields/${field.id}/edit`);
+                        }}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </FarmButton>
+                    </div>
                   </div>
-
-                  {/* Recent Activity */}
-                  {field.stats?.recentActivity &&
-                    field.stats.recentActivity.length > 0 && (
-                      <div className="mt-4 pt-4 border-t">
-                        <p className="text-xs font-medium text-gray-600 mb-2">
-                          Recent Activity
-                        </p>
-                        <div className="space-y-1">
-                          {field.stats.recentActivity
-                            .slice(0, 2)
-                            .map((activity, idx) => (
-                              <p key={idx} className="text-xs text-gray-500">
-                                {activity.operationType} •{" "}
-                                {new Date(
-                                  activity.operationDate
-                                ).toLocaleDateString()}
-                              </p>
-                            ))}
-                        </div>
-                      </div>
-                    )}
-                </CardContent>
-              </Card>
+                </FarmCardContent>
+              </FarmCard>
             ))}
           </div>
         )}

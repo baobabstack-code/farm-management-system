@@ -68,6 +68,7 @@ export default function CropDetailPage() {
 
   const [crop, setCrop] = useState<CropDetail | null>(null);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<
     "overview" | "timeline" | "activities"
   >("overview");
@@ -118,13 +119,29 @@ export default function CropDetailPage() {
   });
 
   const fetchCrop = useCallback(async () => {
-    return handleAsyncError(async () => {
+    try {
       setLoading(true);
-      const data = await cropApi.getCrop(cropId);
+
+      // Add timeout to prevent infinite loading
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Request timeout")), 10000)
+      );
+
+      const dataPromise = cropApi.getCrop(cropId);
+      const data = await Promise.race([dataPromise, timeoutPromise]);
+
       setCrop(data.data || data);
+      setLoading(false);
       return data;
-    }, "fetch-crop");
-  }, [cropId, handleAsyncError]);
+    } catch (error) {
+      console.error("Error fetching crop:", error);
+      setLoading(false);
+      setFetchError(
+        error instanceof Error ? error.message : "Failed to load crop details"
+      );
+      throw error;
+    }
+  }, [cropId]);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -221,18 +238,35 @@ export default function CropDetailPage() {
     return <LoadingState message="Loading crop details..." />;
   }
 
-  if (isError && !crop) {
+  if (fetchError || (isError && !crop)) {
     return (
-      <DetailPageErrorBoundary>
-        <DetailPageErrorDisplay
-          error={error!}
-          entityType="crop"
-          entityId={cropId}
-          onRetry={canRetry ? retry : fetchCrop}
-          showRetry={true}
-          showNavigation={true}
-        />
-      </DetailPageErrorBoundary>
+      <div className="page-container">
+        <div className="content-container padding-responsive-lg mobile-header-spacing content-spacing">
+          <div className="farm-card border-destructive/20 bg-destructive/5">
+            <div className="flex-center gap-content padding-responsive">
+              <div className="flex-center w-10 h-10 bg-destructive/10 rounded-full">
+                <span className="text-destructive text-lg">⚠️</span>
+              </div>
+              <div className="flex-1">
+                <span className="text-destructive font-medium">
+                  {fetchError || "Failed to load crop details"}
+                </span>
+                <div className="mt-4 flex gap-3">
+                  <FarmButton onClick={fetchCrop} variant="outline">
+                    Try Again
+                  </FarmButton>
+                  <FarmButton
+                    onClick={() => router.push("/crops")}
+                    variant="outline"
+                  >
+                    Back to Crops
+                  </FarmButton>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     );
   }
 
@@ -255,30 +289,28 @@ export default function CropDetailPage() {
     <PageContainer>
       {/* Breadcrumb Navigation */}
       {crop.field && (
-        <div className="mb-4">
-          <nav className="flex items-center space-x-2 text-sm text-muted-foreground">
-            <FarmButton
-              variant="ghost"
-              size="sm"
-              onClick={() => router.push("/fields")}
-              className="text-muted-foreground hover:text-foreground p-1"
-            >
-              Fields
-            </FarmButton>
-            <span>/</span>
-            <FarmButton
-              variant="ghost"
-              size="sm"
-              onClick={() => router.push(`/fields/${crop.field?.id}`)}
-              className="text-muted-foreground hover:text-foreground p-1"
-            >
-              {crop.field.name}
-            </FarmButton>
-            <span>/</span>
-            <span className="text-foreground font-medium">Crops</span>
-            <span>/</span>
-            <span className="text-foreground font-medium">{crop.name}</span>
-          </nav>
+        <div className="farm-page-nav">
+          <FarmButton
+            variant="ghost"
+            size="sm"
+            onClick={() => router.push("/fields")}
+            className="farm-page-nav-item"
+          >
+            Fields
+          </FarmButton>
+          <span className="farm-page-nav-separator">/</span>
+          <FarmButton
+            variant="ghost"
+            size="sm"
+            onClick={() => router.push(`/fields/${crop.field?.id}`)}
+            className="farm-page-nav-item"
+          >
+            {crop.field.name}
+          </FarmButton>
+          <span className="farm-page-nav-separator">/</span>
+          <span className="text-foreground font-medium">Crops</span>
+          <span className="farm-page-nav-separator">/</span>
+          <span className="text-foreground font-medium">{crop.name}</span>
         </div>
       )}
 
@@ -314,16 +346,16 @@ export default function CropDetailPage() {
               </p>
             </div>
           </div>
-          <div className="flex gap-3">
+          <div className="farm-page-actions-primary">
             <FarmButton variant="outline" onClick={() => router.push("/crops")}>
-              <ArrowLeft className="w-4 h-4 mr-2" />
+              <ArrowLeft className="w-4 h-4" />
               Back to Crops
             </FarmButton>
             <FarmButton
               variant="primary"
               onClick={() => router.push(`/crops/${cropId}/edit`)}
             >
-              <Edit className="w-4 h-4 mr-2" />
+              <Edit className="w-4 h-4" />
               Edit
             </FarmButton>
           </div>
@@ -332,13 +364,17 @@ export default function CropDetailPage() {
 
       {/* Harvest Alert */}
       {isOverdue && (
-        <FarmCard className="border-destructive/20 bg-destructive/5 mb-6">
+        <FarmCard className="border-destructive/20 bg-destructive/5">
           <FarmCardContent>
-            <div className="flex items-center gap-3 p-4">
-              <AlertTriangle className="w-5 h-5 text-destructive" />
-              <div>
-                <p className="font-medium text-destructive">Harvest Overdue</p>
-                <p className="farm-text-caption">
+            <div className="flex-start gap-content">
+              <div className="flex-center w-10 h-10 bg-destructive/10 rounded-full">
+                <AlertTriangle className="w-5 h-5 text-destructive" />
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold text-destructive mb-1">
+                  Harvest Overdue
+                </p>
+                <p className="farm-text-muted">
                   Expected harvest was {Math.abs(daysToHarvest)} days ago
                 </p>
               </div>

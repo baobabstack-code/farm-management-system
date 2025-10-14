@@ -3,7 +3,15 @@
 import { useState, useEffect, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import {
+  PageHeader,
+  FarmCard,
+  FarmCardHeader,
+  FarmCardContent,
+  FarmButton,
+  LoadingState,
+} from "@/components/ui/farm-theme";
+import { BarChart3, Download, Calendar, TrendingUp } from "lucide-react";
 
 interface ReportData {
   dashboard: {
@@ -93,9 +101,9 @@ export default function ReportsPage() {
       ["Dashboard", "Recent Harvests", reportData.dashboard.recentHarvests],
       ["Dashboard", "Total Yield (kg)", reportData.dashboard.totalYield],
       ["Dashboard", "Water Usage (L)", reportData.dashboard.waterUsage],
-      ["Water", "Total Water Used (L)", reportData.water.totalWater],
+      ["Water", "Total Water (L)", reportData.water.totalWater],
       ["Water", "Average Per Session (L)", reportData.water.averagePerSession],
-      ["Water", "Total Sessions", reportData.water.sessionCount],
+      ["Water", "Session Count", reportData.water.sessionCount],
       ["Fertilizer", "Total Amount (kg)", reportData.fertilizer.totalAmount],
       [
         "Fertilizer",
@@ -124,445 +132,237 @@ export default function ReportsPage() {
   };
 
   if (!isLoaded || loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          <div className="px-4 py-6 sm:px-0">
-            <div className="text-center text-gray-900 dark:text-gray-100">
-              Loading...
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!reportData) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          <div className="px-4 py-6 sm:px-0">
-            <div className="text-center">
-              {error ? (
-                <div className="p-4 bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-400 rounded">
-                  {error}
-                </div>
-              ) : (
-                <span className="text-gray-900 dark:text-gray-100">
-                  Loading report data...
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingState message="Loading report data..." />;
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-yellow-50 dark:from-slate-900 dark:to-orange-900/20">
-      <div className="content-container py-4 sm:py-6 lg:py-8 mobile-header-spacing">
-        <div className="mb-6 lg:mb-8">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-yellow-600 rounded-xl flex items-center justify-center mr-4 shadow-lg">
-                <span className="text-white text-2xl">📈</span>
-              </div>
-              <div>
-                <h1 className="text-display text-gray-900 dark:text-gray-100">
-                  Farm Reports & Analytics
-                </h1>
-                <p className="text-gray-600 dark:text-gray-300 mt-1">
-                  Comprehensive insights into your farm performance
-                </p>
-              </div>
-            </div>
-            <button
+    <div className="page-container">
+      <div className="content-container padding-responsive-lg mobile-header-spacing content-spacing">
+        <PageHeader
+          title="Farm Reports & Analytics"
+          description="Comprehensive insights into your farm performance"
+          icon={<BarChart3 className="w-6 h-6" />}
+          actions={
+            <FarmButton
               onClick={exportToCSV}
               disabled={!reportData}
-              className="btn-enhanced bg-orange-600 text-white hover:bg-orange-700 dark:hover:bg-orange-600 focus:ring-orange-500 shadow-lg hover:shadow-xl disabled:opacity-50 w-full sm:w-auto touch-target"
+              variant="success"
             >
-              <span className="mr-2 text-base sm:text-lg">📄</span>
-              <span className="text-sm sm:text-base">Export to CSV</span>
-            </button>
-          </div>
+              <Download className="w-4 h-4" />
+              Export CSV
+            </FarmButton>
+          }
+        />
 
-          {error && (
-            <div className="mb-4 p-4 bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-400 rounded">
-              {error}
-            </div>
-          )}
-
-          {/* Date Range Filter */}
-          <div className="mb-8 card-enhanced p-6">
-            <div className="flex items-center mb-6">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center mr-3">
-                <span className="text-white text-sm">📅</span>
+        {error && (
+          <div className="farm-card border-destructive/20 bg-destructive/5">
+            <div className="flex-center gap-content padding-responsive">
+              <div className="flex-center w-10 h-10 bg-destructive/10 rounded-full">
+                <span className="text-destructive text-lg">⚠️</span>
               </div>
-              <h2 className="text-heading text-gray-900 dark:text-gray-100">
-                Date Range Filter
-              </h2>
+              <span className="text-destructive font-medium">{error}</span>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          </div>
+        )}
+
+        {/* Date Range Filter */}
+        <FarmCard>
+          <FarmCardHeader
+            title="Report Filters"
+            description="Select date range for your reports"
+          />
+          <FarmCardContent>
+            <div className="farm-grid grid-cols-1 md:grid-cols-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Start Date
-                </label>
+                <label className="farm-label">Start Date</label>
                 <input
                   type="date"
                   value={dateRange.startDate}
                   onChange={(e) =>
                     setDateRange({ ...dateRange, startDate: e.target.value })
                   }
-                  className="input-mobile"
+                  className="farm-input"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  End Date
-                </label>
+                <label className="farm-label">End Date</label>
                 <input
                   type="date"
                   value={dateRange.endDate}
                   onChange={(e) =>
                     setDateRange({ ...dateRange, endDate: e.target.value })
                   }
-                  className="input-mobile"
+                  className="farm-input"
                 />
               </div>
               <div className="flex items-end">
-                <Button
-                  onClick={() => setDateRange({ startDate: "", endDate: "" })}
-                  className="bg-gray-600 hover:bg-gray-700 dark:hover:bg-gray-600 w-full sm:w-auto touch-target"
+                <FarmButton
+                  onClick={fetchReportData}
+                  variant="success"
+                  className="w-full"
                 >
-                  <span className="text-sm sm:text-base">Clear Filters</span>
-                </Button>
+                  <TrendingUp className="w-4 h-4" />
+                  Update Report
+                </FarmButton>
               </div>
             </div>
-          </div>
+          </FarmCardContent>
+        </FarmCard>
 
-          {reportData && (
-            <>
-              {/* Summary Cards */}
-              <div className="grid-mobile-adaptive mb-6 lg:mb-8">
-                <div className="card-mobile">
-                  <div className="p-4 sm:p-5">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                          <span className="text-white font-bold">🌱</span>
-                        </div>
+        {reportData && (
+          <>
+            {/* Dashboard Metrics */}
+            <FarmCard>
+              <FarmCardHeader
+                title="Dashboard Overview"
+                description="Key farm metrics and performance indicators"
+              />
+              <FarmCardContent>
+                <div className="stats-container">
+                  <div className="stat-card">
+                    <div className="flex-start gap-content">
+                      <div className="w-12 h-12 bg-gradient-to-br from-success to-success/80 rounded-xl flex-center shadow-sm">
+                        <span className="text-white text-xl">🌱</span>
                       </div>
-                      <div className="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
-                            Total Crops
-                          </dt>
-                          <dd className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100">
-                            {reportData.dashboard.totalCrops}
-                          </dd>
-                        </dl>
+                      <div className="flex-1">
+                        <p className="stat-label">Total Crops</p>
+                        <p className="stat-value">
+                          {reportData.dashboard.totalCrops}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="flex-start gap-content">
+                      <div className="w-12 h-12 bg-gradient-to-br from-info to-info/80 rounded-xl flex-center shadow-sm">
+                        <span className="text-white text-xl">✅</span>
+                      </div>
+                      <div className="flex-1">
+                        <p className="stat-label">Active Tasks</p>
+                        <p className="stat-value">
+                          {reportData.dashboard.activeTasks}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="flex-start gap-content">
+                      <div className="w-12 h-12 bg-gradient-to-br from-warning to-warning/80 rounded-xl flex-center shadow-sm">
+                        <span className="text-white text-xl">⚠️</span>
+                      </div>
+                      <div className="flex-1">
+                        <p className="stat-label">Overdue Tasks</p>
+                        <p className="stat-value">
+                          {reportData.dashboard.overdueTasks}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="flex-start gap-content">
+                      <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary-hover rounded-xl flex-center shadow-sm">
+                        <span className="text-white text-xl">🌾</span>
+                      </div>
+                      <div className="flex-1">
+                        <p className="stat-label">Total Yield</p>
+                        <p className="stat-value">
+                          {reportData.dashboard.totalYield} kg
+                        </p>
                       </div>
                     </div>
                   </div>
                 </div>
+              </FarmCardContent>
+            </FarmCard>
 
-                <div className="card-mobile">
-                  <div className="p-4 sm:p-5">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                          <span className="text-white font-bold">📋</span>
-                        </div>
-                      </div>
-                      <div className="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
-                            Active Tasks
-                          </dt>
-                          <dd className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100">
-                            {reportData.dashboard.activeTasks}
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="card-mobile">
-                  <div className="p-4 sm:p-5">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
-                          <span className="text-white font-bold">🌾</span>
-                        </div>
-                      </div>
-                      <div className="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
-                            Total Yield
-                          </dt>
-                          <dd className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100">
-                            {reportData.dashboard.totalYield.toFixed(1)} kg
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="card-mobile">
-                  <div className="p-4 sm:p-5">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <div className="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center">
-                          <span className="text-white font-bold">💧</span>
-                        </div>
-                      </div>
-                      <div className="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
-                            Water Usage
-                          </dt>
-                          <dd className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100">
-                            {reportData.dashboard.waterUsage.toFixed(1)} L
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Detailed Reports */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6 lg:mb-8">
-                {/* Water Usage Report */}
-                <div className="card-mobile">
-                  <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
-                    Water Usage Report
-                  </h3>
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center py-1">
-                      <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
-                        Total Water Used
-                      </span>
-                      <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">
-                        {reportData.water.totalWater.toFixed(1)} L
+            {/* Resource Usage */}
+            <div className="farm-grid grid-cols-1 lg:grid-cols-2">
+              <FarmCard>
+                <FarmCardHeader
+                  title="Water Usage"
+                  description="Irrigation and water management metrics"
+                />
+                <FarmCardContent>
+                  <div className="farm-card-content">
+                    <div className="flex-between py-2">
+                      <span className="farm-text-muted">Total Water Used</span>
+                      <span className="farm-text-body font-semibold">
+                        {reportData.water.totalWater} L
                       </span>
                     </div>
-                    <div className="flex justify-between items-center py-1">
-                      <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
-                        Irrigation Sessions
+                    <div className="flex-between py-2">
+                      <span className="farm-text-muted">
+                        Average Per Session
                       </span>
-                      <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">
+                      <span className="farm-text-body font-semibold">
+                        {reportData.water.averagePerSession} L
+                      </span>
+                    </div>
+                    <div className="flex-between py-2">
+                      <span className="farm-text-muted">Total Sessions</span>
+                      <span className="farm-text-body font-semibold">
                         {reportData.water.sessionCount}
                       </span>
                     </div>
-                    <div className="flex justify-between items-center py-1">
-                      <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
-                        Average per Session
-                      </span>
-                      <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">
-                        {reportData.water.averagePerSession.toFixed(1)} L
-                      </span>
-                    </div>
                   </div>
-                </div>
+                </FarmCardContent>
+              </FarmCard>
 
-                {/* Fertilizer Report */}
-                <div className="card-mobile">
-                  <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
-                    Fertilizer Usage Report
-                  </h3>
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center py-1">
-                      <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
-                        Total Amount Used
-                      </span>
-                      <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">
-                        {reportData.fertilizer.totalAmount.toFixed(1)} kg
+              <FarmCard>
+                <FarmCardHeader
+                  title="Fertilizer Usage"
+                  description="Fertilizer application and usage metrics"
+                />
+                <FarmCardContent>
+                  <div className="farm-card-content">
+                    <div className="flex-between py-2">
+                      <span className="farm-text-muted">Total Amount</span>
+                      <span className="farm-text-body font-semibold">
+                        {reportData.fertilizer.totalAmount} kg
                       </span>
                     </div>
-                    <div className="flex justify-between items-center py-1">
-                      <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
-                        Applications
-                      </span>
-                      <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <div className="flex-between py-2">
+                      <span className="farm-text-muted">Applications</span>
+                      <span className="farm-text-body font-semibold">
                         {reportData.fertilizer.applicationCount}
                       </span>
                     </div>
-                    {reportData.fertilizer.typeBreakdown &&
-                      Object.entries(reportData.fertilizer.typeBreakdown)
-                        .length > 0 && (
-                        <div>
-                          <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Fertilizer Types Used:
-                          </h4>
-                          {reportData.fertilizer.typeBreakdown &&
-                            Object.entries(
-                              reportData.fertilizer.typeBreakdown
-                            ).map(([type, amount]) => (
-                              <div
-                                key={type}
-                                className="flex justify-between items-center"
-                              >
-                                <span className="text-xs text-gray-600 dark:text-gray-300">
-                                  {type}
-                                </span>
-                                <span className="text-xs font-medium text-gray-900 dark:text-gray-100">
-                                  {amount} kg
-                                </span>
-                              </div>
-                            ))}
-                        </div>
-                      )}
                   </div>
-                </div>
+                </FarmCardContent>
+              </FarmCard>
+            </div>
 
-                {/* Harvest Report */}
-                <div className="card-mobile">
-                  <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
-                    Harvest Report
-                  </h3>
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600 dark:text-gray-300">
-                        Total Yield
-                      </span>
-                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                        {reportData.yield.totalYield.toFixed(1)} kg
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600 dark:text-gray-300">
-                        Harvest Sessions
-                      </span>
-                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                        {reportData.yield.harvestCount}
-                      </span>
-                    </div>
-                    {reportData.yield.cropBreakdown &&
-                      Object.entries(reportData.yield.cropBreakdown).length >
-                        0 && (
-                        <div>
-                          <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Yield by Crop:
-                          </h4>
-                          {reportData.yield.cropBreakdown &&
-                            Object.entries(reportData.yield.cropBreakdown).map(
-                              ([crop, yieldAmount]) => (
-                                <div
-                                  key={crop}
-                                  className="flex justify-between items-center"
-                                >
-                                  <span className="text-xs text-gray-600 dark:text-gray-300">
-                                    {crop}
-                                  </span>
-                                  <span className="text-xs font-medium text-gray-900 dark:text-gray-100">
-                                    {yieldAmount} kg
-                                  </span>
-                                </div>
-                              )
-                            )}
-                        </div>
-                      )}
+            {/* Health & Issues */}
+            <FarmCard>
+              <FarmCardHeader
+                title="Pest & Disease Management"
+                description="Health monitoring and issue tracking"
+              />
+              <FarmCardContent>
+                <div className="farm-card-content">
+                  <div className="flex-between py-2">
+                    <span className="farm-text-muted">Total Incidents</span>
+                    <span className="farm-text-body font-semibold">
+                      {reportData.pestDisease.totalIncidents}
+                    </span>
+                  </div>
+                  <div className="flex-between py-2">
+                    <span className="farm-text-muted">Pest Issues</span>
+                    <span className="farm-text-body font-semibold">
+                      {reportData.pestDisease.pestCount}
+                    </span>
+                  </div>
+                  <div className="flex-between py-2">
+                    <span className="farm-text-muted">Disease Issues</span>
+                    <span className="farm-text-body font-semibold">
+                      {reportData.pestDisease.diseaseCount}
+                    </span>
                   </div>
                 </div>
-
-                {/* Pest & Disease Report */}
-                <div className="card-mobile">
-                  <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
-                    Pest & Disease Report
-                  </h3>
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600 dark:text-gray-300">
-                        Total Incidents
-                      </span>
-                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                        {reportData.pestDisease.totalIncidents}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600 dark:text-gray-300">
-                        Pest Issues
-                      </span>
-                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                        {reportData.pestDisease.pestCount}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600 dark:text-gray-300">
-                        Disease Issues
-                      </span>
-                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                        {reportData.pestDisease.diseaseCount}
-                      </span>
-                    </div>
-                    {reportData.pestDisease.severityBreakdown &&
-                      Object.entries(reportData.pestDisease.severityBreakdown)
-                        .length > 0 && (
-                        <div>
-                          <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Severity Breakdown:
-                          </h4>
-                          {reportData.pestDisease.severityBreakdown &&
-                            Object.entries(
-                              reportData.pestDisease.severityBreakdown
-                            ).map(([severity, count]) => (
-                              <div
-                                key={severity}
-                                className="flex justify-between items-center"
-                              >
-                                <span className="text-xs text-gray-600 dark:text-gray-300">
-                                  {severity}
-                                </span>
-                                <span className="text-xs font-medium text-gray-900 dark:text-gray-100">
-                                  {count}
-                                </span>
-                              </div>
-                            ))}
-                        </div>
-                      )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Task Summary */}
-              <div className="card-mobile">
-                <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
-                  Task Summary
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="text-center">
-                    <div className="text-xl sm:text-2xl font-bold text-blue-600 dark:text-blue-400">
-                      {reportData.dashboard.activeTasks}
-                    </div>
-                    <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
-                      Active Tasks
-                    </div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-xl sm:text-2xl font-bold text-red-600 dark:text-red-400">
-                      {reportData.dashboard.overdueTasks}
-                    </div>
-                    <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
-                      Overdue Tasks
-                    </div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-xl sm:text-2xl font-bold text-green-600 dark:text-green-400">
-                      {reportData.dashboard.recentHarvests}
-                    </div>
-                    <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
-                      Recent Harvests
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
-        </div>
+              </FarmCardContent>
+            </FarmCard>
+          </>
+        )}
       </div>
     </div>
   );

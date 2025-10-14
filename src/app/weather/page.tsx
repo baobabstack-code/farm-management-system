@@ -2,10 +2,17 @@
 
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import EnhancedWeatherDashboard from "@/components/weather/EnhancedWeatherDashboard";
+import {
+  PageHeader,
+  FarmCard,
+  FarmCardHeader,
+  FarmCardContent,
+  FarmButton,
+  LoadingState,
+  EmptyState,
+} from "@/components/ui/farm-theme";
 import { MapPin, Settings, Plus, Cloud, AlertTriangle } from "lucide-react";
 
 interface LocationSettings {
@@ -59,14 +66,14 @@ export default function WeatherPage() {
       isDefault: false,
     };
 
-    setLocations((prev) => [...prev, newLocation]);
+    setLocations([...locations, newLocation]);
     setNewLocationData({ name: "", latitude: "", longitude: "" });
     setShowLocationForm(false);
   };
 
   const handleSetDefault = (location: LocationSettings) => {
-    setLocations((prev) =>
-      prev.map((loc) => ({
+    setLocations(
+      locations.map((loc) => ({
         ...loc,
         isDefault: loc.name === location.name,
       }))
@@ -113,250 +120,235 @@ export default function WeatherPage() {
   };
 
   if (!isLoaded) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <Cloud className="w-8 h-8 text-gray-400 animate-pulse mx-auto mb-4" />
-            <p className="text-gray-600">Loading weather dashboard...</p>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingState message="Loading weather dashboard..." />;
   }
 
   if (!user) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <Card className="border-red-200 bg-red-50">
-          <CardContent className="p-6">
-            <Alert>
-              <AlertTriangle className="w-4 h-4" />
-              <AlertDescription>
-                Please sign in to access weather data and insights.
-              </AlertDescription>
-            </Alert>
-          </CardContent>
-        </Card>
+      <div className="page-container">
+        <div className="content-container padding-responsive-lg mobile-header-spacing content-spacing">
+          <PageHeader
+            title="Weather & Insights"
+            description="Monitor weather conditions and get farming insights"
+            icon={<Cloud className="w-6 h-6" />}
+          />
+          <div className="farm-card border-warning/20 bg-warning/5">
+            <div className="flex-center gap-content padding-responsive">
+              <div className="flex-center w-10 h-10 bg-warning/10 rounded-full">
+                <AlertTriangle className="w-5 h-5 text-warning" />
+              </div>
+              <div className="flex-1">
+                <span className="text-warning font-medium">
+                  Authentication Required
+                </span>
+                <p className="text-sm mt-1 text-muted-foreground">
+                  Please sign in to access weather data and insights.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-slate-900 dark:to-gray-800 overflow-auto">
-      <div className="content-container py-4 sm:py-6 lg:py-8 mobile-header-spacing">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
-            <Cloud className="w-8 h-8 text-blue-600" />
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-              Weather & Insights
-            </h1>
-          </div>
+    <div className="page-container">
+      <div className="content-container padding-responsive-lg mobile-header-spacing content-spacing">
+        <PageHeader
+          title="Weather & Insights"
+          description="Monitor weather conditions and get farming insights"
+          icon={<Cloud className="w-6 h-6" />}
+          actions={
+            <div className="flex items-center gap-3">
+              {/* Location Selector */}
+              <div className="flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-muted-foreground" />
+                <select
+                  value={currentLocation.name}
+                  onChange={(e) => {
+                    const selected = locations.find(
+                      (loc) => loc.name === e.target.value
+                    );
+                    if (selected) setCurrentLocation(selected);
+                  }}
+                  className="farm-input min-w-[150px]"
+                >
+                  {locations.map((location) => (
+                    <option key={location.name} value={location.name}>
+                      {location.name} {location.isDefault ? "(Default)" : ""}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-          <div className="flex items-center gap-3">
-            {/* Location Selector */}
-            <div className="flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-gray-500" />
-              <select
-                value={currentLocation.name}
-                onChange={(e) => {
-                  const selected = locations.find(
-                    (loc) => loc.name === e.target.value
-                  );
-                  if (selected) setCurrentLocation(selected);
-                }}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              <FarmButton
+                variant="outline"
+                onClick={() => setShowLocationForm(true)}
               >
-                {locations.map((location) => (
-                  <option key={location.name} value={location.name}>
-                    {location.name} {location.isDefault ? "(Default)" : ""}
-                  </option>
-                ))}
-              </select>
+                <Plus className="w-4 h-4" />
+                Add Location
+              </FarmButton>
             </div>
+          }
+        />
 
-            <Button
-              variant="outline"
-              onClick={() => setShowLocationForm(true)}
-              className="flex items-center gap-2"
-            >
-              <Plus className="w-4 h-4" />
-              Add Location
-            </Button>
-          </div>
-        </div>
-
-        {/* Location Management Form */}
+        {/* Add Location Form */}
         {showLocationForm && (
-          <Card className="mb-6">
-            <CardHeader>
-              <h3 className="text-lg font-semibold">Add New Location</h3>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Location Name
-                  </label>
-                  <input
-                    type="text"
-                    value={newLocationData.name}
-                    onChange={(e) =>
-                      setNewLocationData({
-                        ...newLocationData,
-                        name: e.target.value,
-                      })
-                    }
-                    placeholder="e.g., North Field"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
+          <FarmCard>
+            <FarmCardHeader
+              title="Add New Location"
+              description="Add a new farm location for weather monitoring"
+            />
+            <FarmCardContent>
+              <div className="farm-form">
+                <div className="farm-grid grid-cols-1 md:grid-cols-2">
+                  <div>
+                    <label className="farm-label">Location Name *</label>
+                    <input
+                      type="text"
+                      required
+                      value={newLocationData.name}
+                      onChange={(e) =>
+                        setNewLocationData({
+                          ...newLocationData,
+                          name: e.target.value,
+                        })
+                      }
+                      placeholder="e.g., North Field"
+                      className="farm-input"
+                    />
+                  </div>
+                  <div>
+                    <label className="farm-label">Latitude *</label>
+                    <input
+                      type="number"
+                      step="any"
+                      required
+                      value={newLocationData.latitude}
+                      onChange={(e) =>
+                        setNewLocationData({
+                          ...newLocationData,
+                          latitude: e.target.value,
+                        })
+                      }
+                      placeholder="e.g., 40.7128"
+                      className="farm-input"
+                    />
+                  </div>
+                  <div>
+                    <label className="farm-label">Longitude *</label>
+                    <input
+                      type="number"
+                      step="any"
+                      required
+                      value={newLocationData.longitude}
+                      onChange={(e) =>
+                        setNewLocationData({
+                          ...newLocationData,
+                          longitude: e.target.value,
+                        })
+                      }
+                      placeholder="e.g., -74.0060"
+                      className="farm-input"
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Latitude
-                  </label>
-                  <input
-                    type="number"
-                    step="any"
-                    value={newLocationData.latitude}
-                    onChange={(e) =>
-                      setNewLocationData({
-                        ...newLocationData,
-                        latitude: e.target.value,
-                      })
-                    }
-                    placeholder="e.g., 40.7128"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Longitude
-                  </label>
-                  <input
-                    type="number"
-                    step="any"
-                    value={newLocationData.longitude}
-                    onChange={(e) =>
-                      setNewLocationData({
-                        ...newLocationData,
-                        longitude: e.target.value,
-                      })
-                    }
-                    placeholder="e.g., -74.0060"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
+                <div className="action-buttons">
+                  <FarmButton onClick={getCurrentPosition} variant="outline">
+                    <MapPin className="w-4 h-4" />
+                    Use My Location
+                  </FarmButton>
+                  <div className="flex-1" />
+                  <FarmButton
+                    onClick={() => setShowLocationForm(false)}
+                    variant="outline"
+                  >
+                    Cancel
+                  </FarmButton>
+                  <FarmButton onClick={handleAddLocation} variant="success">
+                    Add Location
+                  </FarmButton>
                 </div>
               </div>
-
-              <div className="flex items-center gap-3">
-                <Button
-                  onClick={getCurrentPosition}
-                  variant="outline"
-                  size="sm"
-                >
-                  <MapPin className="w-4 h-4 mr-2" />
-                  Use My Location
-                </Button>
-
-                <div className="flex-1" />
-
-                <Button
-                  onClick={() => setShowLocationForm(false)}
-                  variant="outline"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleAddLocation}
-                  className="bg-blue-600 hover:bg-blue-700"
-                >
-                  Add Location
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+            </FarmCardContent>
+          </FarmCard>
         )}
 
-        {/* Location Management */}
-        {locations.length > 1 && (
-          <Card className="mb-6">
-            <CardHeader>
-              <h3 className="text-lg font-semibold flex items-center gap-2">
-                <Settings className="w-5 h-5" />
-                Manage Locations
-              </h3>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {locations.map((location) => (
-                  <div
-                    key={location.name}
-                    className="flex items-center justify-between p-3 border rounded-lg"
-                  >
-                    <div className="flex items-center gap-3">
-                      <MapPin className="w-4 h-4 text-gray-500" />
-                      <div>
-                        <p className="font-medium text-gray-900">
-                          {location.name}
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          {location.latitude.toFixed(4)},{" "}
-                          {location.longitude.toFixed(4)}
-                        </p>
-                      </div>
-                      {location.isDefault && (
-                        <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
-                          Default
-                        </span>
-                      )}
+        {/* Saved Locations */}
+        <FarmCard>
+          <FarmCardHeader
+            title="Saved Locations"
+            description="Manage your farm locations for weather monitoring"
+          />
+          <FarmCardContent>
+            <div className="farm-grid-auto">
+              {locations.map((location) => (
+                <div
+                  key={location.name}
+                  className="farm-card-section border rounded-lg p-4"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <h4 className="font-semibold">{location.name}</h4>
+                      <p className="text-sm text-muted-foreground">
+                        {location.latitude.toFixed(4)},{" "}
+                        {location.longitude.toFixed(4)}
+                      </p>
                     </div>
-
-                    <div className="flex items-center gap-2">
-                      {!location.isDefault && (
-                        <Button
-                          onClick={() => handleSetDefault(location)}
-                          variant="outline"
-                          size="sm"
-                        >
-                          Set Default
-                        </Button>
-                      )}
-                      <Button
-                        onClick={() => setCurrentLocation(location)}
+                    {location.isDefault && (
+                      <span className="text-xs bg-success/10 text-success px-2 py-1 rounded">
+                        Default
+                      </span>
+                    )}
+                  </div>
+                  <div className="action-buttons-sm">
+                    {!location.isDefault && (
+                      <FarmButton
+                        onClick={() => handleSetDefault(location)}
                         variant="outline"
                         size="sm"
-                        className="bg-green-50 text-green-700 hover:bg-green-100"
                       >
-                        View Weather
-                      </Button>
-                      {locations.length > 1 && (
-                        <Button
-                          onClick={() => handleDeleteLocation(location.name)}
-                          variant="outline"
-                          size="sm"
-                          className="text-red-600 hover:text-red-700 border-red-200 hover:border-red-300"
-                        >
-                          Delete
-                        </Button>
-                      )}
-                    </div>
+                        Set Default
+                      </FarmButton>
+                    )}
+                    <FarmButton
+                      onClick={() => setCurrentLocation(location)}
+                      variant="outline"
+                      size="sm"
+                    >
+                      View Weather
+                    </FarmButton>
+                    {locations.length > 1 && (
+                      <FarmButton
+                        onClick={() => handleDeleteLocation(location.name)}
+                        variant="destructive"
+                        size="sm"
+                      >
+                        Delete
+                      </FarmButton>
+                    )}
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
+                </div>
+              ))}
+            </div>
+          </FarmCardContent>
+        </FarmCard>
 
-        {/* Enhanced Weather Dashboard */}
-        <EnhancedWeatherDashboard
-          latitude={currentLocation.latitude}
-          longitude={currentLocation.longitude}
-          location={currentLocation.name}
-        />
+        {/* Weather Dashboard */}
+        <FarmCard>
+          <FarmCardHeader
+            title={`Weather for ${currentLocation.name}`}
+            description="Current conditions and forecast for your selected location"
+          />
+          <FarmCardContent>
+            <EnhancedWeatherDashboard
+              latitude={currentLocation.latitude}
+              longitude={currentLocation.longitude}
+            />
+          </FarmCardContent>
+        </FarmCard>
       </div>
     </div>
   );

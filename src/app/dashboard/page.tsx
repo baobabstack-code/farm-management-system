@@ -5,6 +5,7 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { usePullToRefresh, useIsMobile } from "@/hooks/useMobileGestures";
 import WeatherDashboard from "@/components/weather/WeatherDashboard";
+import { PageHeader, LoadingState } from "@/components/ui/farm-theme";
 
 interface DashboardStats {
   totalCrops: number;
@@ -82,17 +83,7 @@ export default function DashboardPage() {
   });
 
   if (!isLoaded || loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          <div className="px-4 py-6 sm:px-0">
-            <div className="text-center text-gray-900 dark:text-gray-100">
-              Loading...
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingState message="Loading dashboard..." />;
   }
 
   return (
@@ -101,91 +92,78 @@ export default function DashboardPage() {
       className="page-container"
     >
       {isMobile && pullToRefresh.refreshIndicator}
-      <div className="content-container py-4 sm:py-6 lg:py-8">
-        <div className="farm-page-header">
-          <div className="farm-page-title-section">
-            <div className="farm-page-title-group">
-              <div className="farm-page-icon bg-gradient-to-br from-primary to-primary-hover">
-                <span className="text-white text-2xl">📊</span>
-              </div>
-              <div className="farm-page-title-text">
-                <h1 className="farm-heading-display">
-                  Farm Management Dashboard
-                </h1>
-                <p className="farm-text-muted mt-1 max-w-2xl">
-                  Welcome back, {user?.firstName || user?.username}! Here&apos;s
-                  your comprehensive farm overview and key insights.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="content-container padding-responsive-lg mobile-header-spacing content-spacing">
+        <PageHeader
+          title="Farm Management Dashboard"
+          description={`Welcome back, ${user?.firstName || user?.username}! Here's your comprehensive farm overview and key insights.`}
+          icon={<span className="text-2xl">📊</span>}
+        />
 
-        {error && (
-          <div className="mb-6">
-            <div className="farm-card border-destructive/20 bg-destructive/5">
-              <div className="p-4 text-center">
-                <span className="text-destructive text-lg mr-2">⚠️</span>
-                <span className="text-destructive font-medium">{error}</span>
+        {/* {error && (
+          <div className="farm-card border-destructive/20 bg-destructive/5">
+            <div className="flex-center gap-content padding-responsive">
+              <div className="flex-center w-10 h-10 bg-destructive/10 rounded-full">
+                <span className="text-destructive text-lg">⚠️</span>
               </div>
+              <span className="text-destructive font-medium">{error}</span>
             </div>
           </div>
-        )}
+        )} */}
 
         {analytics && (
           <React.Fragment>
             {/* Key Metrics */}
-            <div className="farm-grid-metrics mb-6 lg:mb-8">
-              <div className="farm-card farm-card-interactive">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-success to-success/80 rounded-xl flex items-center justify-center shadow-sm">
-                    <span className="text-white text-lg">🌱</span>
+            <div className="stats-container">
+              <div className="stat-card">
+                <div className="flex-start gap-content">
+                  <div className="w-12 h-12 bg-gradient-to-br from-success to-success/80 rounded-xl flex-center shadow-sm">
+                    <span className="text-white text-xl">🌱</span>
                   </div>
-                  <div>
-                    <p className="farm-text-caption">Total Crops</p>
-                    <p className="text-xl sm:text-2xl font-bold text-foreground">
+                  <div className="flex-1">
+                    <p className="stat-label">Total Crops</p>
+                    <p className="stat-value">
                       {analytics.dashboard.totalCrops}
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="farm-card farm-card-interactive">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-info to-info/80 rounded-xl flex items-center justify-center shadow-sm">
-                    <span className="text-white text-lg">📋</span>
+              <div className="stat-card">
+                <div className="flex-start gap-content">
+                  <div className="w-12 h-12 bg-gradient-to-br from-info to-info/80 rounded-xl flex-center shadow-sm">
+                    <span className="text-white text-xl">📋</span>
                   </div>
-                  <div>
-                    <p className="farm-text-caption">Active Tasks</p>
-                    <p className="text-xl sm:text-2xl font-bold text-foreground">
+                  <div className="flex-1">
+                    <p className="stat-label">Active Tasks</p>
+                    <p className="stat-value">
                       {analytics.dashboard.activeTasks}
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="farm-card farm-card-interactive">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-warning to-warning/80 rounded-xl flex items-center justify-center shadow-sm">
-                    <span className="text-white text-lg">⚠️</span>
+              <div className="stat-card">
+                <div className="flex-start gap-content">
+                  <div className="w-12 h-12 bg-gradient-to-br from-warning to-warning/80 rounded-xl flex-center shadow-sm">
+                    <span className="text-white text-xl">⚠️</span>
                   </div>
-                  <div>
-                    <p className="farm-text-caption">Overdue Tasks</p>
-                    <p className="text-xl sm:text-2xl font-bold text-foreground">
+                  <div className="flex-1">
+                    <p className="stat-label">Overdue Tasks</p>
+                    <p className="stat-value">
                       {analytics.dashboard.overdueTasks}
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="farm-card farm-card-interactive">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary-hover rounded-xl flex items-center justify-center shadow-sm">
-                    <span className="text-white text-lg">🌾</span>
+              <div className="stat-card">
+                <div className="flex-start gap-content">
+                  <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary-hover rounded-xl flex-center shadow-sm">
+                    <span className="text-white text-xl">🌾</span>
                   </div>
-                  <div>
-                    <p className="farm-text-caption">Total Yield</p>
-                    <p className="text-xl sm:text-2xl font-bold text-foreground">
+                  <div className="flex-1">
+                    <p className="stat-label">Total Yield</p>
+                    <p className="stat-value">
                       {analytics.dashboard.totalYield.toFixed(1)} kg
                     </p>
                   </div>
@@ -194,39 +172,37 @@ export default function DashboardPage() {
             </div>
 
             {/* Weather Dashboard */}
-            <div className="mb-6 lg:mb-8">
-              <WeatherDashboard />
-            </div>
+            <WeatherDashboard />
 
             {/* Activity Summary */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6 lg:mb-8">
+            <div className="farm-grid grid-cols-1 lg:grid-cols-2">
               <div className="farm-card">
                 <div className="farm-card-header">
-                  <div className="flex items-center">
-                    <div className="w-8 h-8 bg-gradient-to-br from-info to-info/80 rounded-lg flex items-center justify-center mr-3">
-                      <span className="text-white text-sm">💧</span>
+                  <div className="icon-text">
+                    <div className="w-10 h-10 bg-gradient-to-br from-info to-info/80 rounded-lg flex-center">
+                      <span className="text-white text-lg">💧</span>
                     </div>
                     <h3 className="farm-heading-card">Resource Usage</h3>
                   </div>
                 </div>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center py-1">
+                <div className="farm-card-content">
+                  <div className="flex-between py-2">
                     <span className="farm-text-muted">Water Usage</span>
-                    <span className="farm-text-body font-medium">
+                    <span className="farm-text-body font-semibold">
                       {analytics.water.totalWater.toFixed(1)} L
                     </span>
                   </div>
-                  <div className="flex justify-between items-center py-1">
+                  <div className="flex-between py-2">
                     <span className="farm-text-muted">Irrigation Sessions</span>
-                    <span className="farm-text-body font-medium">
+                    <span className="farm-text-body font-semibold">
                       {analytics.water.sessionCount}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center py-1">
+                  <div className="flex-between py-2">
                     <span className="farm-text-muted">
                       Fertilizer Applications
                     </span>
-                    <span className="farm-text-body font-medium">
+                    <span className="farm-text-body font-semibold">
                       {analytics.fertilizer.applicationCount}
                     </span>
                   </div>
@@ -235,29 +211,29 @@ export default function DashboardPage() {
 
               <div className="farm-card">
                 <div className="farm-card-header">
-                  <div className="flex items-center">
-                    <div className="w-8 h-8 bg-gradient-to-br from-warning to-warning/80 rounded-lg flex items-center justify-center mr-3">
-                      <span className="text-white text-sm">🌡️</span>
+                  <div className="icon-text">
+                    <div className="w-10 h-10 bg-gradient-to-br from-warning to-warning/80 rounded-lg flex-center">
+                      <span className="text-white text-lg">🌡️</span>
                     </div>
                     <h3 className="farm-heading-card">Health & Issues</h3>
                   </div>
                 </div>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center py-1">
+                <div className="farm-card-content">
+                  <div className="flex-between py-2">
                     <span className="farm-text-muted">Total Incidents</span>
-                    <span className="farm-text-body font-medium">
+                    <span className="farm-text-body font-semibold">
                       {analytics.pestDisease.totalIncidents}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center py-1">
+                  <div className="flex-between py-2">
                     <span className="farm-text-muted">Pest Issues</span>
-                    <span className="farm-text-body font-medium">
+                    <span className="farm-text-body font-semibold">
                       {analytics.pestDisease.pestCount}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center py-1">
+                  <div className="flex-between py-2">
                     <span className="farm-text-muted">Disease Issues</span>
-                    <span className="farm-text-body font-medium">
+                    <span className="farm-text-body font-semibold">
                       {analytics.pestDisease.diseaseCount}
                     </span>
                   </div>
@@ -268,59 +244,51 @@ export default function DashboardPage() {
             {/* Quick Actions */}
             <div className="farm-card">
               <div className="farm-card-header">
-                <div className="flex items-center">
-                  <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary-hover rounded-lg flex items-center justify-center mr-3">
-                    <span className="text-white text-sm">⚡</span>
+                <div className="icon-text">
+                  <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary-hover rounded-lg flex-center">
+                    <span className="text-white text-lg">⚡</span>
                   </div>
                   <h3 className="farm-heading-card">Quick Actions</h3>
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
-                <button
-                  onClick={() => router.push("/ai-companion")}
-                  className="farm-btn farm-btn-primary w-full"
-                >
-                  <span className="mr-2 text-base sm:text-lg">🤖</span>
-                  <span className="text-sm sm:text-base font-medium">
+              <div className="farm-card-content">
+                <div className="farm-grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
+                  <button
+                    onClick={() => router.push("/ai-companion")}
+                    className="farm-btn farm-btn-success w-full"
+                  >
+                    <span className="text-lg">🤖</span>
                     AI Companion
-                  </span>
-                </button>
-                <button
-                  onClick={() => router.push("/crops")}
-                  className="farm-btn farm-btn-success w-full"
-                >
-                  <span className="mr-2 text-base sm:text-lg">🌱</span>
-                  <span className="text-sm sm:text-base font-medium">
+                  </button>
+                  <button
+                    onClick={() => router.push("/crops")}
+                    className="farm-btn farm-btn-success w-full"
+                  >
+                    <span className="text-lg">🌱</span>
                     Manage Crops
-                  </span>
-                </button>
-                <button
-                  onClick={() => router.push("/tasks")}
-                  className="farm-btn farm-btn-secondary w-full"
-                >
-                  <span className="mr-2 text-base sm:text-lg">✅</span>
-                  <span className="text-sm sm:text-base font-medium">
+                  </button>
+                  <button
+                    onClick={() => router.push("/tasks")}
+                    className="farm-btn farm-btn-success w-full"
+                  >
+                    <span className="text-lg">✅</span>
                     View Tasks
-                  </span>
-                </button>
-                <button
-                  onClick={() => router.push("/activities")}
-                  className="farm-btn farm-btn-outline w-full"
-                >
-                  <span className="mr-2 text-base sm:text-lg">📋</span>
-                  <span className="text-sm sm:text-base font-medium">
+                  </button>
+                  <button
+                    onClick={() => router.push("/activities")}
+                    className="farm-btn farm-btn-success w-full"
+                  >
+                    <span className="text-lg">📋</span>
                     Log Activity
-                  </span>
-                </button>
-                <button
-                  onClick={() => router.push("/reports")}
-                  className="farm-btn farm-btn-outline w-full"
-                >
-                  <span className="mr-2 text-base sm:text-lg">📈</span>
-                  <span className="text-sm sm:text-base font-medium">
+                  </button>
+                  <button
+                    onClick={() => router.push("/reports")}
+                    className="farm-btn farm-btn-success w-full"
+                  >
+                    <span className="text-lg">📈</span>
                     View Reports
-                  </span>
-                </button>
+                  </button>
+                </div>
               </div>
             </div>
           </React.Fragment>

@@ -47,9 +47,21 @@
     --radius: 0.5rem;
 
     /* Farm-specific gradients */
-    --gradient-farm: linear-gradient(135deg, hsl(142.1 76.2% 36.3%) 0%, hsl(120 100% 25%) 100%);
-    --gradient-earth: linear-gradient(135deg, hsl(30 50% 85%) 0%, hsl(25 45% 75%) 100%);
-    --gradient-sky: linear-gradient(135deg, hsl(210 100% 95%) 0%, hsl(200 100% 85%) 100%);
+    --gradient-farm: linear-gradient(
+      135deg,
+      hsl(142.1 76.2% 36.3%) 0%,
+      hsl(120 100% 25%) 100%
+    );
+    --gradient-earth: linear-gradient(
+      135deg,
+      hsl(30 50% 85%) 0%,
+      hsl(25 45% 75%) 100%
+    );
+    --gradient-sky: linear-gradient(
+      135deg,
+      hsl(210 100% 95%) 0%,
+      hsl(200 100% 85%) 100%
+    );
   }
 
   .dark {
@@ -94,9 +106,21 @@
     --ring: 142.4 71.8% 29.2%;
 
     /* Farm-specific gradients - darker */
-    --gradient-farm: linear-gradient(135deg, hsl(142.1 70.6% 25%) 0%, hsl(120 100% 15%) 100%);
-    --gradient-earth: linear-gradient(135deg, hsl(30 30% 25%) 0%, hsl(25 25% 20%) 100%);
-    --gradient-sky: linear-gradient(135deg, hsl(210 50% 15%) 0%, hsl(200 50% 10%) 100%);
+    --gradient-farm: linear-gradient(
+      135deg,
+      hsl(142.1 70.6% 25%) 0%,
+      hsl(120 100% 15%) 100%
+    );
+    --gradient-earth: linear-gradient(
+      135deg,
+      hsl(30 30% 25%) 0%,
+      hsl(25 25% 20%) 100%
+    );
+    --gradient-sky: linear-gradient(
+      135deg,
+      hsl(210 50% 15%) 0%,
+      hsl(200 50% 10%) 100%
+    );
   }
 }
 
@@ -116,7 +140,6 @@
 
 /* Farm Management System - Consistent Theme Utilities */
 @layer utilities {
-
   /* === LAYOUT SYSTEM === */
   .layout-fix {
     margin: 0;
@@ -131,7 +154,11 @@
   }
 
   .page-container.dark {
-    background: linear-gradient(135deg, hsl(222.2 84% 4.9%) 0%, hsl(217.2 32.6% 8%) 100%);
+    background: linear-gradient(
+      135deg,
+      hsl(222.2 84% 4.9%) 0%,
+      hsl(217.2 32.6% 8%) 100%
+    );
   }
 
   /* Content containers */
@@ -154,47 +181,69 @@
     }
   }
 
-  /* === CARD SYSTEM === */
+  /* === ENHANCED CARD SYSTEM === */
   .farm-card {
     @apply bg-card text-card-foreground rounded-xl shadow-sm border border-border;
     @apply hover:shadow-md hover:border-border/80 transition-all duration-200;
-    @apply p-4 sm:p-6;
+    @apply p-5 sm:p-6 lg:p-7;
   }
 
   .farm-card-interactive {
     @apply farm-card cursor-pointer;
-    @apply hover:scale-[1.02] active:scale-[0.98] touch-manipulation;
+    @apply hover:scale-[1.01] active:scale-[0.99] touch-manipulation;
+    @apply hover:shadow-lg transition-all duration-300 ease-out;
   }
 
   .farm-card-header {
-    @apply flex items-center justify-between mb-4 pb-4 border-b border-border/50;
+    @apply flex items-start justify-between mb-5 pb-4 border-b border-border/50;
+    @apply gap-4;
   }
 
   .farm-card-title {
-    @apply text-lg sm:text-xl font-semibold text-foreground;
+    @apply text-lg sm:text-xl font-semibold text-foreground leading-tight;
+    @apply mb-1;
   }
 
   .farm-card-description {
-    @apply text-sm text-muted-foreground;
+    @apply text-sm text-muted-foreground leading-relaxed;
+    @apply mt-1;
   }
 
-  /* Metric cards for dashboard */
+  /* Enhanced metric cards for dashboard */
   .metric-card {
     @apply farm-card-interactive;
     @apply bg-gradient-to-br from-card to-muted/20;
+    @apply p-6 sm:p-7 lg:p-8;
   }
 
-  /* === BUTTON SYSTEM === */
+  /* Card content spacing */
+  .farm-card-content {
+    @apply space-y-5;
+  }
+
+  /* Card sections with proper spacing */
+  .farm-card-section {
+    @apply py-4 first:pt-0 last:pb-0;
+    @apply border-b border-border/30 last:border-b-0;
+  }
+
+  .farm-card-section-title {
+    @apply text-base font-medium text-foreground mb-3;
+  }
+
+  /* === ENHANCED BUTTON SYSTEM === */
   .farm-btn {
-    @apply inline-flex items-center justify-center px-4 py-3 text-sm sm:text-base font-medium;
+    @apply inline-flex items-center justify-center gap-2 px-5 py-3 text-sm sm:text-base font-medium;
     @apply rounded-lg transition-all duration-200 touch-manipulation;
     @apply focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
     @apply min-h-[44px] disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply shadow-sm hover:shadow-md active:shadow-sm;
+    @apply transform hover:scale-[1.02] active:scale-[0.98];
   }
 
   .farm-btn-primary {
     @apply farm-btn bg-primary text-primary-foreground;
-    @apply hover:bg-primary-hover shadow-sm hover:shadow-md;
+    @apply hover:bg-primary-hover;
   }
 
   .farm-btn-secondary {
@@ -204,36 +253,49 @@
 
   .farm-btn-success {
     @apply farm-btn bg-success text-success-foreground;
-    @apply hover:opacity-90 shadow-sm hover:shadow-md;
+    @apply hover:opacity-90;
   }
 
   .farm-btn-warning {
     @apply farm-btn bg-warning text-warning-foreground;
-    @apply hover:opacity-90 shadow-sm hover:shadow-md;
+    @apply hover:opacity-90;
   }
 
   .farm-btn-destructive {
     @apply farm-btn bg-destructive text-destructive-foreground;
-    @apply hover:opacity-90 shadow-sm hover:shadow-md;
+    @apply hover:opacity-90;
   }
 
   .farm-btn-outline {
-    @apply farm-btn border border-border bg-background text-foreground;
-    @apply hover:bg-accent hover:text-accent-foreground;
+    @apply farm-btn border-2 border-border bg-background text-foreground;
+    @apply hover:bg-accent hover:text-accent-foreground hover:border-accent;
   }
 
   .farm-btn-ghost {
-    @apply farm-btn text-foreground;
-    @apply hover:bg-accent hover:text-accent-foreground;
+    @apply farm-btn text-foreground shadow-none;
+    @apply hover:bg-accent hover:text-accent-foreground hover:shadow-sm;
   }
 
-  /* Button sizes */
+  /* Enhanced button sizes with better spacing */
   .farm-btn-sm {
-    @apply px-3 py-2 text-sm min-h-[36px];
+    @apply px-4 py-2 text-sm min-h-[36px] gap-1.5;
   }
 
   .farm-btn-lg {
-    @apply px-6 py-4 text-base sm:text-lg min-h-[52px];
+    @apply px-7 py-4 text-base sm:text-lg min-h-[52px] gap-3;
+  }
+
+  /* Button groups with proper spacing */
+  .farm-btn-group {
+    @apply flex flex-wrap gap-3 items-center;
+  }
+
+  .farm-btn-group-sm {
+    @apply farm-btn-group gap-2;
+  }
+
+  .farm-btn-group-lg {
+    @apply farm-btn-group gap-4;
   }
 
   /* === TYPOGRAPHY SYSTEM === */
@@ -265,42 +327,69 @@
     @apply text-xs text-muted-foreground;
   }
 
-  /* === FORM SYSTEM === */
+  /* === ENHANCED FORM SYSTEM === */
   .farm-form {
-    @apply space-y-4 sm:space-y-6;
+    @apply space-y-5 sm:space-y-6;
   }
 
   .farm-form-group {
-    @apply space-y-2;
+    @apply space-y-3;
   }
 
   .farm-form-label {
-    @apply block text-sm font-medium text-foreground;
+    @apply block text-sm font-medium text-foreground mb-2;
+    @apply leading-relaxed;
   }
 
   .farm-form-input {
-    @apply w-full px-4 py-3 text-base border border-input rounded-lg;
+    @apply w-full px-4 py-3.5 text-base border border-input rounded-lg;
     @apply bg-background text-foreground placeholder:text-muted-foreground;
     @apply focus:ring-2 focus:ring-ring focus:border-transparent;
-    @apply transition-colors touch-manipulation;
+    @apply transition-all duration-200 touch-manipulation;
+    @apply hover:border-ring/50 focus:shadow-sm;
+    @apply min-h-[48px];
   }
 
   .farm-form-select {
     @apply farm-form-input appearance-none cursor-pointer;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-    background-position: right 0.75rem center;
+    background-position: right 1rem center;
     background-repeat: no-repeat;
-    background-size: 1.5em 1.5em;
-    padding-right: 2.5rem;
+    background-size: 1.25em 1.25em;
+    padding-right: 3rem;
   }
 
   .farm-form-textarea {
-    @apply farm-form-input resize-y min-h-[100px];
+    @apply farm-form-input resize-y min-h-[120px];
+    @apply leading-relaxed;
   }
 
-  /* === GRID SYSTEM === */
+  /* Form sections with better spacing */
+  .farm-form-section {
+    @apply space-y-5 p-5 border border-border rounded-lg bg-muted/20;
+  }
+
+  .farm-form-section-title {
+    @apply text-base font-semibold text-foreground mb-4;
+    @apply pb-2 border-b border-border/50;
+  }
+
+  /* Form grid layouts */
+  .farm-form-grid {
+    @apply grid gap-5;
+  }
+
+  .farm-form-grid-2 {
+    @apply farm-form-grid grid-cols-1 sm:grid-cols-2;
+  }
+
+  .farm-form-grid-3 {
+    @apply farm-form-grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3;
+  }
+
+  /* === ENHANCED GRID SYSTEM === */
   .farm-grid {
-    @apply grid gap-4 sm:gap-6;
+    @apply grid gap-5 sm:gap-6 lg:gap-7;
   }
 
   .farm-grid-responsive {
@@ -313,7 +402,31 @@
 
   .farm-grid-auto {
     @apply farm-grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  /* Enhanced grid variants */
+  .farm-grid-dense {
+    @apply farm-grid gap-4;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+
+  .farm-grid-wide {
+    @apply farm-grid gap-6 sm:gap-8;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  }
+
+  /* List layouts with better spacing */
+  .farm-list {
+    @apply space-y-4 sm:space-y-5;
+  }
+
+  .farm-list-dense {
+    @apply space-y-3;
+  }
+
+  .farm-list-relaxed {
+    @apply space-y-6 sm:space-y-7;
   }
 
   /* === STATUS BADGES === */
@@ -341,25 +454,48 @@
     @apply farm-badge bg-muted text-muted-foreground border border-border;
   }
 
-  /* === PAGE HEADER SYSTEM === */
+  /* === ENHANCED PAGE HEADER SYSTEM === */
   .farm-page-header {
-    @apply mb-6 lg:mb-8;
+    @apply mb-7 lg:mb-9;
   }
 
   .farm-page-title-section {
-    @apply flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6;
+    @apply flex flex-col sm:flex-row justify-between items-start sm:items-center gap-5 mb-5 sm:mb-7;
   }
 
   .farm-page-title-group {
-    @apply flex items-center gap-3;
+    @apply flex items-center gap-4;
   }
 
   .farm-page-icon {
-    @apply w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shadow-lg;
+    @apply w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center shadow-lg;
+    @apply text-white text-xl sm:text-2xl;
   }
 
   .farm-page-title-text {
-    @apply space-y-1;
+    @apply space-y-2;
+  }
+
+  /* Page navigation and breadcrumbs */
+  .farm-page-nav {
+    @apply flex items-center gap-3 mb-5 text-sm text-muted-foreground;
+  }
+
+  .farm-page-nav-item {
+    @apply hover:text-foreground transition-colors cursor-pointer;
+  }
+
+  .farm-page-nav-separator {
+    @apply text-muted-foreground/50;
+  }
+
+  /* Page actions with better alignment */
+  .farm-page-actions {
+    @apply flex flex-wrap items-center gap-3;
+  }
+
+  .farm-page-actions-primary {
+    @apply farm-page-actions gap-4;
   }
 
   /* === ANIMATION SYSTEM === */
@@ -485,5 +621,172 @@
   .nav-mobile {
     @apply fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 z-50;
     @apply lg:relative lg:bottom-auto lg:border-t-0;
+  }
+
+  /* === ENHANCED SPACING UTILITIES === */
+
+  /* Content spacing */
+  .content-spacing {
+    @apply space-y-6 sm:space-y-7 lg:space-y-8;
+  }
+
+  .content-spacing-tight {
+    @apply space-y-4 sm:space-y-5;
+  }
+
+  .content-spacing-relaxed {
+    @apply space-y-8 sm:space-y-10 lg:space-y-12;
+  }
+
+  /* Section spacing */
+  .section-spacing {
+    @apply py-8 sm:py-10 lg:py-12;
+  }
+
+  .section-spacing-sm {
+    @apply py-6 sm:py-7 lg:py-8;
+  }
+
+  .section-spacing-lg {
+    @apply py-12 sm:py-16 lg:py-20;
+  }
+
+  /* === ENHANCED ALIGNMENT UTILITIES === */
+
+  /* Flex alignment helpers */
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+
+  .flex-between {
+    @apply flex items-center justify-between;
+  }
+
+  .flex-start {
+    @apply flex items-center justify-start;
+  }
+
+  .flex-end {
+    @apply flex items-center justify-end;
+  }
+
+  .flex-col-center {
+    @apply flex flex-col items-center justify-center;
+  }
+
+  .flex-col-start {
+    @apply flex flex-col items-start justify-start;
+  }
+
+  /* Gap utilities for consistent spacing */
+  .gap-content {
+    @apply gap-4 sm:gap-5 lg:gap-6;
+  }
+
+  .gap-elements {
+    @apply gap-3 sm:gap-4;
+  }
+
+  .gap-tight {
+    @apply gap-2 sm:gap-3;
+  }
+
+  /* === ENHANCED CONTAINER UTILITIES === */
+
+  /* Detail page containers */
+  .detail-container {
+    @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .detail-content {
+    @apply space-y-6 sm:space-y-8;
+  }
+
+  .detail-section {
+    @apply bg-card rounded-xl border border-border p-6 sm:p-7 lg:p-8;
+  }
+
+  .detail-header {
+    @apply flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-6;
+    @apply mb-6 sm:mb-8;
+  }
+
+  /* Stats and metrics containers */
+  .stats-container {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6;
+  }
+
+  .stat-card {
+    @apply bg-card rounded-lg border border-border p-5 sm:p-6;
+    @apply hover:shadow-md transition-shadow duration-200;
+  }
+
+  .stat-value {
+    @apply text-2xl sm:text-3xl font-bold text-foreground mb-1;
+  }
+
+  .stat-label {
+    @apply text-sm text-muted-foreground font-medium;
+  }
+
+  /* === ENHANCED INTERACTIVE ELEMENTS === */
+
+  /* Action buttons with consistent spacing */
+  .action-buttons {
+    @apply flex flex-wrap items-center gap-3 sm:gap-4;
+  }
+
+  .action-buttons-sm {
+    @apply action-buttons gap-2 sm:gap-3;
+  }
+
+  .action-buttons-lg {
+    @apply action-buttons gap-4 sm:gap-5;
+  }
+
+  /* Icon with text alignment */
+  .icon-text {
+    @apply flex items-center gap-2;
+  }
+
+  .icon-text-sm {
+    @apply icon-text gap-1.5 text-sm;
+  }
+
+  .icon-text-lg {
+    @apply icon-text gap-3 text-base sm:text-lg;
+  }
+
+  /* Status indicators with proper spacing */
+  .status-indicator {
+    @apply flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium;
+  }
+
+  /* === RESPONSIVE PADDING UTILITIES === */
+
+  /* Responsive padding for different screen sizes */
+  .padding-responsive {
+    @apply p-4 sm:p-6 lg:p-8;
+  }
+
+  .padding-responsive-sm {
+    @apply p-3 sm:p-4 lg:p-5;
+  }
+
+  .padding-responsive-lg {
+    @apply p-6 sm:p-8 lg:p-10;
+  }
+
+  /* Responsive margin utilities */
+  .margin-responsive {
+    @apply m-4 sm:m-6 lg:m-8;
+  }
+
+  .margin-responsive-y {
+    @apply my-4 sm:my-6 lg:my-8;
+  }
+
+  .margin-responsive-x {
+    @apply mx-4 sm:mx-6 lg:mx-8;
   }
 }

@@ -1,5 +1,12 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import {
+  PageHeader,
+  FarmCard,
+  FarmCardHeader,
+  FarmCardContent,
+} from "@/components/ui/farm-theme";
+import { User, Mail, Calendar, Shield } from "lucide-react";
 
 export default async function ProfilePage() {
   const { userId } = await auth();
@@ -10,29 +17,25 @@ export default async function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 dark:from-slate-900 dark:to-gray-800">
-      <div className="content-container py-8">
-        <div className="mb-8">
-          <div className="flex items-center mb-6">
-            <div className="w-12 h-12 bg-gradient-to-br from-slate-500 to-gray-600 rounded-xl flex items-center justify-center mr-4 shadow-lg">
-              <span className="text-white text-2xl">👤</span>
-            </div>
-            <div>
-              <h1 className="text-display text-gray-900 dark:text-gray-100">
-                User Profile
-              </h1>
-              <p className="text-gray-600 dark:text-gray-300 mt-1">
-                Manage your account information and preferences
-              </p>
-            </div>
-          </div>
+    <div className="page-container">
+      <div className="content-container padding-responsive-lg mobile-header-spacing content-spacing">
+        <PageHeader
+          title="User Profile"
+          description="Manage your account information and preferences"
+          icon={<User className="w-6 h-6" />}
+        />
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Profile Card */}
-            <div className="lg:col-span-2">
-              <div className="card-enhanced p-8">
+        <div className="farm-grid grid-cols-1 lg:grid-cols-3">
+          {/* Profile Card */}
+          <div className="lg:col-span-2">
+            <FarmCard>
+              <FarmCardHeader
+                title="Profile Information"
+                description="Your account details and personal information"
+              />
+              <FarmCardContent>
                 <div className="flex items-center mb-8">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mr-6">
+                  <div className="w-16 h-16 bg-gradient-to-br from-success to-success/80 rounded-full flex items-center justify-center mr-6">
                     <span className="text-white text-2xl font-bold">
                       {(
                         user?.firstName?.[0] ||
@@ -42,129 +45,117 @@ export default async function ProfilePage() {
                     </span>
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    <h2 className="text-2xl font-bold text-foreground">
                       {user?.firstName} {user?.lastName}
                     </h2>
-                    <p className="text-gray-600 dark:text-gray-300">
+                    <p className="text-muted-foreground">
                       {user?.primaryEmailAddress?.emailAddress}
                     </p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="metric-card">
-                    <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
-                      Full Name
-                    </label>
-                    <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                <div className="farm-card-content">
+                  <div className="flex-between py-3">
+                    <div className="icon-text-sm">
+                      <User className="w-4 h-4 text-muted-foreground" />
+                      <span className="farm-text-muted">Full Name</span>
+                    </div>
+                    <span className="farm-text-body font-semibold">
                       {user?.firstName} {user?.lastName || "Not set"}
-                    </div>
+                    </span>
                   </div>
 
-                  <div className="metric-card">
-                    <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
-                      Username
-                    </label>
-                    <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  <div className="flex-between py-3">
+                    <div className="icon-text-sm">
+                      <User className="w-4 h-4 text-muted-foreground" />
+                      <span className="farm-text-muted">Username</span>
+                    </div>
+                    <span className="farm-text-body font-semibold">
                       {user?.username || "Not set"}
-                    </div>
+                    </span>
                   </div>
 
-                  <div className="metric-card md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
-                      Email Address
-                    </label>
-                    <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  <div className="flex-between py-3">
+                    <div className="icon-text-sm">
+                      <Mail className="w-4 h-4 text-muted-foreground" />
+                      <span className="farm-text-muted">Email Address</span>
+                    </div>
+                    <span className="farm-text-body font-semibold">
                       {user?.primaryEmailAddress?.emailAddress}
-                    </div>
+                    </span>
                   </div>
 
-                  <div className="metric-card">
-                    <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
-                      Account Created
-                    </label>
-                    <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  <div className="flex-between py-3">
+                    <div className="icon-text-sm">
+                      <Calendar className="w-4 h-4 text-muted-foreground" />
+                      <span className="farm-text-muted">Member Since</span>
+                    </div>
+                    <span className="farm-text-body font-semibold">
                       {user?.createdAt
                         ? new Date(user.createdAt).toLocaleDateString()
-                        : "Not available"}
-                    </div>
-                  </div>
-
-                  <div className="metric-card">
-                    <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
-                      Last Updated
-                    </label>
-                    <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                      {user?.updatedAt
-                        ? new Date(user.updatedAt).toLocaleDateString()
-                        : "Not available"}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-8 flex space-x-4">
-                  <button className="btn-enhanced btn-primary">
-                    <span className="mr-2">✏️</span>
-                    Edit Profile
-                  </button>
-                  <button className="btn-enhanced bg-gray-500 text-white hover:bg-gray-600 focus:ring-gray-500">
-                    <span className="mr-2">⚙️</span>
-                    Account Settings
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Stats Sidebar */}
-            <div className="space-y-6">
-              <div className="card-enhanced p-6">
-                <h3 className="text-heading text-gray-900 dark:text-gray-100 mb-4">
-                  Quick Stats
-                </h3>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
-                      Account Status
+                        : "Unknown"}
                     </span>
-                    <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200">
+                  </div>
+
+                  <div className="flex-between py-3">
+                    <div className="icon-text-sm">
+                      <Shield className="w-4 h-4 text-muted-foreground" />
+                      <span className="farm-text-muted">Account Status</span>
+                    </div>
+                    <span className="farm-text-body font-semibold text-success">
                       Active
                     </span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
-                      User ID
-                    </span>
-                    <span className="text-xs font-mono text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
-                      {userId?.slice(-8)}...
-                    </span>
-                  </div>
                 </div>
-              </div>
+              </FarmCardContent>
+            </FarmCard>
+          </div>
 
-              <div className="card-enhanced p-6">
-                <h3 className="text-heading text-gray-900 dark:text-gray-100 mb-4">
-                  Farm Overview
-                </h3>
-                <div className="space-y-3">
-                  <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                    <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-                      0
+          {/* Account Actions */}
+          <div>
+            <FarmCard>
+              <FarmCardHeader
+                title="Account Actions"
+                description="Manage your account settings"
+              />
+              <FarmCardContent>
+                <div className="farm-card-content">
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Account management is handled through Clerk. Use the user
+                    menu in the top right to access account settings.
+                  </p>
+
+                  <div className="space-y-3">
+                    <div className="p-3 bg-muted/50 rounded-lg">
+                      <h4 className="font-medium text-sm text-foreground">
+                        Profile Settings
+                      </h4>
+                      <p className="text-xs text-muted-foreground">
+                        Update your name, email, and profile picture
+                      </p>
                     </div>
-                    <div className="text-sm text-green-600 dark:text-green-400">
-                      Active Crops
+
+                    <div className="p-3 bg-muted/50 rounded-lg">
+                      <h4 className="font-medium text-sm text-foreground">
+                        Security
+                      </h4>
+                      <p className="text-xs text-muted-foreground">
+                        Change password and manage 2FA
+                      </p>
                     </div>
-                  </div>
-                  <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                    <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                      0
-                    </div>
-                    <div className="text-sm text-blue-600 dark:text-blue-400">
-                      Pending Tasks
+
+                    <div className="p-3 bg-muted/50 rounded-lg">
+                      <h4 className="font-medium text-sm text-foreground">
+                        Privacy
+                      </h4>
+                      <p className="text-xs text-muted-foreground">
+                        Control your data and privacy settings
+                      </p>
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
+              </FarmCardContent>
+            </FarmCard>
           </div>
         </div>
       </div>

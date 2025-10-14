@@ -5,6 +5,7 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import {
   PageContainer,
+  PageHeader,
   FarmCard,
   FarmCardHeader,
   FarmCardContent,
@@ -65,7 +66,9 @@ export default function EquipmentPage() {
       const data = await response.json();
 
       if (data.success) {
-        setEquipment(data.data || []);
+        // The API returns { data: { equipment, stats, maintenanceAlerts } }
+        const equipmentData = data.data?.equipment;
+        setEquipment(Array.isArray(equipmentData) ? equipmentData : []);
       } else {
         setError(data.error || "Failed to fetch equipment");
       }
@@ -142,30 +145,22 @@ export default function EquipmentPage() {
 
   return (
     <PageContainer>
-      <div className="farm-page-header">
-        <div className="farm-page-title-section">
-          <div className="farm-page-title-group">
-            <div className="farm-page-icon bg-gradient-to-br from-warning to-warning/80">
-              <Wrench className="w-6 h-6 text-white" />
-            </div>
-            <div className="farm-page-title-text">
-              <h1 className="farm-heading-display">Equipment Management</h1>
-              <p className="farm-text-muted mt-1">
-                Track and manage your farm equipment, maintenance, and usage
-              </p>
-            </div>
-          </div>
+      <PageHeader
+        title="Equipment Management"
+        description="Track and manage your farm equipment, maintenance, and usage"
+        icon={<Wrench className="w-6 h-6" />}
+        actions={
           <FarmButton
             variant="primary"
             onClick={() => router.push("/equipment/add")}
           >
-            <Plus className="w-4 h-4 mr-2" />
+            <Plus className="w-4 h-4" />
             Add Equipment
           </FarmButton>
-        </div>
-      </div>
+        }
+      />
 
-      {equipment.length === 0 ? (
+      {!Array.isArray(equipment) || equipment.length === 0 ? (
         <EmptyState
           icon={<Wrench className="text-4xl" />}
           title="No Equipment Found"
@@ -181,105 +176,106 @@ export default function EquipmentPage() {
           }
         />
       ) : (
-        <div className="farm-grid farm-grid-responsive">
-          {equipment.map((item) => (
-            <FarmCard
-              key={item.id}
-              interactive
-              onClick={() => router.push(`/equipment/${item.id}`)}
-            >
-              <FarmCardHeader
-                title={item.name}
-                description={
-                  `${item.brand || ""} ${item.model || ""}`.trim() ||
-                  "Equipment"
-                }
-                badge={getStatusBadge(item.status)}
-              />
-              <FarmCardContent>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="farm-text-muted">Type</span>
-                    <span className="farm-text-body font-medium">
-                      {item.equipmentType}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between items-center">
-                    <span className="farm-text-muted">Category</span>
-                    <span className="farm-text-body font-medium">
-                      {item.category}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between items-center">
-                    <span className="farm-text-muted">Condition</span>
-                    {getConditionBadge(item.condition)}
-                  </div>
-
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <Gauge className="w-4 h-4 text-muted-foreground" />
-                      <span className="farm-text-muted">Hours Used</span>
-                    </div>
-                    <span className="farm-text-body font-medium">
-                      {item.hoursUsed.toLocaleString()}
-                    </span>
-                  </div>
-
-                  {item.nextServiceDue && (
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-muted-foreground" />
-                        <span className="farm-text-muted">Next Service</span>
-                      </div>
-                      <span className="farm-text-body font-medium">
-                        {formatDate(item.nextServiceDue)}
+        <div className="farm-grid-auto">
+          {Array.isArray(equipment) &&
+            equipment.map((item) => (
+              <FarmCard
+                key={item.id}
+                interactive
+                onClick={() => router.push(`/equipment/${item.id}`)}
+              >
+                <FarmCardHeader
+                  title={item.name}
+                  description={
+                    `${item.brand || ""} ${item.model || ""}`.trim() ||
+                    "Equipment"
+                  }
+                  badge={getStatusBadge(item.status)}
+                />
+                <FarmCardContent>
+                  <div className="farm-card-content">
+                    <div className="flex-between py-2">
+                      <span className="farm-text-muted">Type</span>
+                      <span className="farm-text-body font-semibold">
+                        {item.equipmentType}
                       </span>
                     </div>
-                  )}
 
-                  {item.currentValue && (
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <DollarSign className="w-4 h-4 text-muted-foreground" />
-                        <span className="farm-text-muted">Current Value</span>
-                      </div>
-                      <span className="farm-text-body font-medium">
-                        {formatCurrency(item.currentValue)}
+                    <div className="flex-between py-2">
+                      <span className="farm-text-muted">Category</span>
+                      <span className="farm-text-body font-semibold">
+                        {item.category}
                       </span>
                     </div>
-                  )}
-                </div>
 
-                <div className="mt-4 pt-4 border-t border-border">
-                  <div className="flex gap-2">
-                    <FarmButton
-                      variant="outline"
-                      size="sm"
-                      className="flex-1"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        router.push(`/equipment/${item.id}`);
-                      }}
-                    >
-                      View Details
-                    </FarmButton>
-                    <FarmButton
-                      variant="outline"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        router.push(`/equipment/${item.id}?tab=maintenance`);
-                      }}
-                    >
-                      Maintenance
-                    </FarmButton>
+                    <div className="flex-between py-2">
+                      <span className="farm-text-muted">Condition</span>
+                      {getConditionBadge(item.condition)}
+                    </div>
+
+                    <div className="flex-between py-2">
+                      <div className="icon-text-sm">
+                        <Gauge className="w-4 h-4 text-muted-foreground" />
+                        <span className="farm-text-muted">Hours Used</span>
+                      </div>
+                      <span className="farm-text-body font-semibold">
+                        {item.hoursUsed.toLocaleString()}
+                      </span>
+                    </div>
+
+                    {item.nextServiceDue && (
+                      <div className="flex-between py-2">
+                        <div className="icon-text-sm">
+                          <Calendar className="w-4 h-4 text-muted-foreground" />
+                          <span className="farm-text-muted">Next Service</span>
+                        </div>
+                        <span className="farm-text-body font-semibold">
+                          {formatDate(item.nextServiceDue)}
+                        </span>
+                      </div>
+                    )}
+
+                    {item.currentValue && (
+                      <div className="flex-between py-2">
+                        <div className="icon-text-sm">
+                          <DollarSign className="w-4 h-4 text-muted-foreground" />
+                          <span className="farm-text-muted">Current Value</span>
+                        </div>
+                        <span className="farm-text-body font-semibold">
+                          {formatCurrency(item.currentValue)}
+                        </span>
+                      </div>
+                    )}
                   </div>
-                </div>
-              </FarmCardContent>
-            </FarmCard>
-          ))}
+
+                  <div className="farm-card-section">
+                    <div className="action-buttons-sm">
+                      <FarmButton
+                        variant="outline"
+                        size="sm"
+                        className="flex-1"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(`/equipment/${item.id}`);
+                        }}
+                      >
+                        View Details
+                      </FarmButton>
+                      <FarmButton
+                        variant="outline"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(`/equipment/${item.id}?tab=maintenance`);
+                        }}
+                      >
+                        Maintenance
+                      </FarmButton>
+                    </div>
+                  </div>
+                </FarmCardContent>
+              </FarmCard>
+            ))}
         </div>
       )}
     </PageContainer>

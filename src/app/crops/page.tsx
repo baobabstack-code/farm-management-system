@@ -6,6 +6,17 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Crop, CropStatus } from "@/types";
 import { usePullToRefresh, useIsMobile } from "@/hooks/useMobileGestures";
+import {
+  PageHeader,
+  FarmCard,
+  FarmCardHeader,
+  FarmCardContent,
+  FarmButton,
+  FarmBadge,
+  LoadingState,
+  EmptyState,
+} from "@/components/ui/farm-theme";
+import { Sprout, Plus, Calendar, MapPin } from "lucide-react";
 
 export default function CropsPage() {
   const { user, isLoaded } = useUser();
@@ -123,22 +134,22 @@ export default function CropsPage() {
     }
   };
 
-  const getStatusColor = (status: CropStatus) => {
+  const getStatusBadge = (status: CropStatus) => {
     switch (status) {
       case CropStatus.PLANTED:
-        return "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200";
+        return <FarmBadge variant="info">Planted</FarmBadge>;
       case CropStatus.GROWING:
-        return "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200";
+        return <FarmBadge variant="success">Growing</FarmBadge>;
       case CropStatus.FLOWERING:
-        return "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200";
+        return <FarmBadge variant="warning">Flowering</FarmBadge>;
       case CropStatus.FRUITING:
-        return "bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-200";
+        return <FarmBadge variant="warning">Fruiting</FarmBadge>;
       case CropStatus.HARVESTED:
-        return "bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200";
+        return <FarmBadge variant="success">Harvested</FarmBadge>;
       case CropStatus.COMPLETED:
-        return "bg-gray-100 dark:bg-gray-700/30 text-gray-800 dark:text-gray-200";
+        return <FarmBadge variant="neutral">Completed</FarmBadge>;
       default:
-        return "bg-gray-100 dark:bg-gray-700/30 text-gray-800 dark:text-gray-200";
+        return <FarmBadge variant="neutral">{status}</FarmBadge>;
     }
   };
 
@@ -151,72 +162,53 @@ export default function CropsPage() {
   };
 
   if (!isLoaded || loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          <div className="px-4 py-6 sm:px-0">
-            <div className="text-center text-gray-900 dark:text-gray-100">
-              Loading...
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingState message="Loading crops..." />;
   }
 
   return (
     <div
       ref={isMobile ? pullToRefresh.elementRef : null}
-      className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-slate-900 dark:to-gray-800 overflow-auto"
+      className="page-container"
     >
       {isMobile && pullToRefresh.refreshIndicator}
-      <div className="content-container py-4 sm:py-6 lg:py-8 mobile-header-spacing">
-        <div className="mb-6 lg:mb-8">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6">
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mr-4 shadow-lg">
-                <span className="text-white text-2xl">🌱</span>
-              </div>
-              <div>
-                <h1 className="text-display text-gray-900 dark:text-gray-100">
-                  Crop Management
-                </h1>
-                <p className="text-gray-600 dark:text-gray-300 mt-1">
-                  Monitor and manage your crops from planting to harvest
-                </p>
-              </div>
-            </div>
-            <button
+      <div className="content-container padding-responsive-lg mobile-header-spacing content-spacing">
+        <PageHeader
+          title="Crop Management"
+          description="Monitor and manage your crops from planting to harvest"
+          icon={<Sprout className="w-6 h-6" />}
+          actions={
+            <FarmButton
+              variant="success"
               onClick={() => setShowCreateForm(true)}
-              className="btn-enhanced bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 shadow-lg hover:shadow-xl"
             >
-              <span className="mr-2">➕</span>
+              <Plus className="w-4 h-4" />
               Add New Crop
-            </button>
-          </div>
+            </FarmButton>
+          }
+        />
 
-          {error && (
-            <div className="mb-4 p-4 bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-400 rounded">
-              {error}
-            </div>
-          )}
-
-          {showCreateForm && (
-            <div className="mb-6 lg:mb-8 card-mobile fade-in">
-              <div className="flex items-center mb-6">
-                <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center mr-3">
-                  <span className="text-white text-sm">🌱</span>
-                </div>
-                <h2 className="text-heading text-gray-900 dark:text-gray-100">
-                  Add New Crop
-                </h2>
+        {error && (
+          <div className="farm-card border-destructive/20 bg-destructive/5">
+            <div className="flex-center gap-content padding-responsive">
+              <div className="flex-center w-10 h-10 bg-destructive/10 rounded-full">
+                <span className="text-destructive text-lg">⚠️</span>
               </div>
-              <form onSubmit={handleCreateCrop} className="form-mobile">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+              <span className="text-destructive font-medium">{error}</span>
+            </div>
+          </div>
+        )}
+
+        {showCreateForm && (
+          <FarmCard>
+            <FarmCardHeader
+              title="Add New Crop"
+              description="Create a new crop entry for tracking"
+            />
+            <FarmCardContent>
+              <form onSubmit={handleCreateCrop} className="farm-form">
+                <div className="farm-grid grid-cols-1 md:grid-cols-2">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Crop Name *
-                    </label>
+                    <label className="farm-label">Crop Name *</label>
                     <Input
                       type="text"
                       required
@@ -228,9 +220,7 @@ export default function CropsPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Variety
-                    </label>
+                    <label className="farm-label">Variety</label>
                     <Input
                       type="text"
                       value={formData.variety}
@@ -241,9 +231,7 @@ export default function CropsPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Planting Date *
-                    </label>
+                    <label className="farm-label">Planting Date *</label>
                     <Input
                       type="date"
                       required
@@ -257,7 +245,7 @@ export default function CropsPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label className="farm-label">
                       Expected Harvest Date *
                     </label>
                     <Input
@@ -273,9 +261,7 @@ export default function CropsPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Area (square meters)
-                    </label>
+                    <label className="farm-label">Area (square meters)</label>
                     <Input
                       type="number"
                       step="0.01"
@@ -287,139 +273,129 @@ export default function CropsPage() {
                     />
                   </div>
                 </div>
-                <div className="flex flex-col sm:flex-row gap-3 sm:space-x-3">
-                  <button
+                <div className="action-buttons">
+                  <FarmButton
                     type="submit"
+                    variant="success"
                     disabled={formLoading}
-                    className="btn-enhanced bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 shadow-sm hover:shadow disabled:opacity-50"
                   >
                     {formLoading ? "Creating..." : "Create Crop"}
-                  </button>
-                  <button
+                  </FarmButton>
+                  <FarmButton
                     type="button"
+                    variant="outline"
                     onClick={() => setShowCreateForm(false)}
-                    className="btn-enhanced bg-gray-500 text-white hover:bg-gray-600 focus:ring-gray-500 shadow-sm hover:shadow"
                   >
                     Cancel
-                  </button>
+                  </FarmButton>
                 </div>
               </form>
-            </div>
-          )}
+            </FarmCardContent>
+          </FarmCard>
+        )}
 
-          {crops.length === 0 ? (
-            <div className="card-enhanced p-8 sm:p-12 text-center">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl sm:text-3xl">🌱</span>
-              </div>
-              <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-                No crops found
-              </h3>
-              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
-                Add your first crop to get started with farm management!
-              </p>
-            </div>
-          ) : (
-            <div className="grid-mobile-adaptive">
-              {crops.map((crop) => {
-                const daysToHarvest = getDaysToHarvest(
-                  crop.expectedHarvestDate
-                );
-                return (
-                  <div
-                    key={crop.id}
-                    className={`card-mobile stagger-item fade-in hover:scale-105 transition-transform duration-200 cursor-pointer touch-target`}
-                    onClick={() => router.push(`/crops/${crop.id}`)}
-                  >
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-600 rounded-xl flex items-center justify-center">
-                          <span className="text-white text-xl">🌱</span>
+        {crops.length === 0 ? (
+          <EmptyState
+            icon={<Sprout className="text-4xl" />}
+            title="No Crops Found"
+            description="Add your first crop to get started with farm management!"
+            action={
+              <FarmButton
+                variant="success"
+                onClick={() => setShowCreateForm(true)}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add Your First Crop
+              </FarmButton>
+            }
+          />
+        ) : (
+          <div className="farm-grid-auto">
+            {crops.map((crop) => {
+              const daysToHarvest = getDaysToHarvest(crop.expectedHarvestDate);
+              return (
+                <FarmCard
+                  key={crop.id}
+                  interactive
+                  onClick={() => router.push(`/crops/${crop.id}`)}
+                >
+                  <FarmCardHeader
+                    title={crop.name}
+                    description={crop.variety || "Crop"}
+                    badge={getStatusBadge(crop.status)}
+                  />
+                  <FarmCardContent>
+                    <div className="farm-card-content">
+                      <div className="flex-between py-2">
+                        <div className="icon-text-sm">
+                          <Calendar className="w-4 h-4 text-muted-foreground" />
+                          <span className="farm-text-muted">Planted</span>
                         </div>
-                        <div>
-                          <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 truncate">
-                            {crop.name}
-                          </h3>
-                          {crop.variety && (
-                            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">
-                              {crop.variety}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                      <span
-                        className={`inline-flex px-3 py-1 text-xs font-medium rounded-full ${getStatusColor(crop.status)}`}
-                      >
-                        {crop.status}
-                      </span>
-                    </div>
-
-                    <div className="space-y-3 mb-6">
-                      <div className="flex justify-between items-center">
-                        <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                          Planted
-                        </span>
-                        <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">
+                        <span className="farm-text-body font-semibold">
                           {new Date(crop.plantingDate).toLocaleDateString()}
                         </span>
                       </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                          Harvest in
-                        </span>
+                      <div className="flex-between py-2">
+                        <div className="icon-text-sm">
+                          <Calendar className="w-4 h-4 text-muted-foreground" />
+                          <span className="farm-text-muted">Harvest in</span>
+                        </div>
                         <span
-                          className={`text-xs sm:text-sm font-medium ${
+                          className={`farm-text-body font-semibold ${
                             daysToHarvest <= 7
-                              ? "text-orange-600 dark:text-orange-400"
+                              ? "text-warning"
                               : daysToHarvest <= 30
-                                ? "text-yellow-600 dark:text-yellow-400"
-                                : "text-green-600 dark:text-green-400"
+                                ? "text-warning"
+                                : "text-success"
                           }`}
                         >
                           {daysToHarvest} days
                         </span>
                       </div>
                       {crop.area && (
-                        <div className="flex justify-between items-center">
-                          <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                            Area
-                          </span>
-                          <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100">
+                        <div className="flex-between py-2">
+                          <div className="icon-text-sm">
+                            <MapPin className="w-4 h-4 text-muted-foreground" />
+                            <span className="farm-text-muted">Area</span>
+                          </div>
+                          <span className="farm-text-body font-semibold">
                             {crop.area} m²
                           </span>
                         </div>
                       )}
                     </div>
 
-                    <div className="flex gap-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          router.push(`/crops/${crop.id}`);
-                        }}
-                        className="flex-1 btn-enhanced bg-blue-600 text-white hover:bg-blue-700 dark:hover:bg-blue-600 focus:ring-blue-500 text-xs sm:text-sm py-2 touch-target"
-                      >
-                        <span className="mr-1 text-sm">👁️</span>
-                        <span className="hidden sm:inline">View Details</span>
-                        <span className="sm:hidden">View</span>
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteCrop(crop.id);
-                        }}
-                        className="btn-enhanced bg-red-500 text-white hover:bg-red-600 dark:hover:bg-red-500 focus:ring-red-500 text-sm py-2 px-3 touch-target"
-                        aria-label="Delete crop"
-                      >
-                        <span className="text-sm">🗑️</span>
-                      </button>
+                    <div className="farm-card-section">
+                      <div className="action-buttons-sm">
+                        <FarmButton
+                          variant="outline"
+                          size="sm"
+                          className="flex-1"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            router.push(`/crops/${crop.id}`);
+                          }}
+                        >
+                          View Details
+                        </FarmButton>
+                        <FarmButton
+                          variant="destructive"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteCrop(crop.id);
+                          }}
+                        >
+                          Delete
+                        </FarmButton>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+                  </FarmCardContent>
+                </FarmCard>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

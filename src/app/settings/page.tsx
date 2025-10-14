@@ -1,7 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  PageHeader,
+  FarmCard,
+  FarmCardContent,
+} from "@/components/ui/farm-theme";
 import {
   Settings,
   Plug,
@@ -54,49 +58,38 @@ export default function SettingsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-slate-900 dark:to-gray-800 overflow-auto">
-      <div className="content-container py-4 sm:py-6 lg:py-8 mobile-header-spacing max-w-4xl mx-auto">
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <Settings className="w-8 h-8 text-green-600 dark:text-green-400" />
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-              Settings
-            </h1>
-          </div>
-          <p className="text-gray-600 dark:text-gray-300">
-            Manage your account settings, integrations, and preferences.
-          </p>
-        </div>
+    <div className="page-container">
+      <div className="content-container padding-responsive-lg mobile-header-spacing content-spacing max-w-4xl mx-auto">
+        <PageHeader
+          title="Settings"
+          description="Manage your account settings, integrations, and preferences"
+          icon={<Settings className="w-6 h-6" />}
+        />
 
-        <div className="grid gap-4">
+        <div className="farm-grid grid-cols-1">
           {settingSections.map((section, index) => (
-            <Card
-              key={index}
-              className="hover:shadow-md transition-shadow dark:bg-slate-800 dark:border-gray-600"
-            >
-              <Link href={section.href}>
-                <CardContent className="p-6">
+            <Link key={index} href={section.href}>
+              <FarmCard interactive>
+                <FarmCardContent>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                        <div className="text-green-600 dark:text-green-400">
-                          {section.icon}
-                        </div>
+                      <div className="p-3 bg-success/10 rounded-lg">
+                        <div className="text-success">{section.icon}</div>
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
+                        <h3 className="text-lg font-semibold text-foreground mb-1">
                           {section.title}
                         </h3>
-                        <p className="text-gray-600 dark:text-gray-300 text-sm">
+                        <p className="text-muted-foreground text-sm">
                           {section.description}
                         </p>
                       </div>
                     </div>
-                    <ChevronRight className="w-5 h-5 text-gray-400 dark:text-gray-500" />
+                    <ChevronRight className="w-5 h-5 text-muted-foreground" />
                   </div>
-                </CardContent>
-              </Link>
-            </Card>
+                </FarmCardContent>
+              </FarmCard>
+            </Link>
           ))}
         </div>
       </div>

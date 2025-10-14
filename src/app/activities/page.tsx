@@ -4,9 +4,18 @@ import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Crop, PestDiseaseType, Severity } from "@/types";
+import {
+  PageHeader,
+  FarmCard,
+  FarmCardHeader,
+  FarmCardContent,
+  FarmButton,
+  FarmBadge,
+  LoadingState,
+} from "@/components/ui/farm-theme";
+import { Activity, Plus, Droplets, Sprout, Bug, Wheat } from "lucide-react";
 
 type ActivityType = "irrigation" | "fertilizer" | "pest-disease" | "harvest";
 
@@ -60,10 +69,10 @@ export default function ActivitiesPage() {
 
   const [harvestForm, setHarvestForm] = useState({
     cropId: "",
-    harvestDate: "",
+    date: "",
     quantity: "",
     unit: "",
-    qualityGrade: "",
+    quality: "",
     notes: "",
   });
 
@@ -75,9 +84,7 @@ export default function ActivitiesPage() {
       return;
     }
 
-    if (user) {
-      fetchCrops();
-    }
+    fetchCrops();
   }, [user, isLoaded, router]);
 
   const fetchCrops = async () => {
@@ -86,7 +93,6 @@ export default function ActivitiesPage() {
       const data = await response.json();
 
       if (data.success) {
-        console.log("Fetched crops:", data.data);
         setCrops(data.data);
       } else {
         setError("Failed to fetch crops");
@@ -104,56 +110,23 @@ export default function ActivitiesPage() {
     setError("");
     setSuccess("");
 
-    // Validate form before submission
-    if (!irrigationForm.cropId) {
-      setError("Please select a crop");
-      setFormLoading(false);
-      return;
-    }
-
-    if (!irrigationForm.date) {
-      setError("Please select a date");
-      setFormLoading(false);
-      return;
-    }
-
-    if (!irrigationForm.duration || isNaN(parseInt(irrigationForm.duration))) {
-      setError("Please enter a valid duration");
-      setFormLoading(false);
-      return;
-    }
-
-    if (
-      !irrigationForm.waterAmount ||
-      isNaN(parseFloat(irrigationForm.waterAmount))
-    ) {
-      setError("Please enter a valid water amount");
-      setFormLoading(false);
-      return;
-    }
-
     try {
-      const requestData = {
-        cropId: irrigationForm.cropId,
-        date: irrigationForm.date,
-        duration: parseInt(irrigationForm.duration),
-        waterAmount: parseFloat(irrigationForm.waterAmount),
-        method: irrigationForm.method || "SPRINKLER", // Default to SPRINKLER if not selected
-        notes: irrigationForm.notes || undefined,
-      };
-
-      console.log("Submitting irrigation data:", requestData);
-
       const response = await fetch("/api/irrigation", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestData),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...irrigationForm,
+          duration: parseFloat(irrigationForm.duration),
+          waterAmount: parseFloat(irrigationForm.waterAmount),
+        }),
       });
 
       const data = await response.json();
 
       if (data.success) {
-        setSuccess("Irrigation log created successfully!");
+        setSuccess("Irrigation activity logged successfully!");
         setIrrigationForm({
           cropId: "",
           date: "",
@@ -163,10 +136,10 @@ export default function ActivitiesPage() {
           notes: "",
         });
       } else {
-        setError(data.error || "Failed to create irrigation log");
+        setError(data.error || "Failed to log irrigation activity");
       }
     } catch {
-      setError("Error creating irrigation log");
+      setError("Error logging irrigation activity");
     } finally {
       setFormLoading(false);
     }
@@ -178,37 +151,22 @@ export default function ActivitiesPage() {
     setError("");
     setSuccess("");
 
-    // Validate form before submission
-    if (!fertilizerForm.cropId) {
-      setError("Please select a crop");
-      setFormLoading(false);
-      return;
-    }
-
-    if (!fertilizerForm.applicationMethod) {
-      setError("Please select an application method");
-      setFormLoading(false);
-      return;
-    }
-
     try {
       const response = await fetch("/api/fertilizer", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
-          cropId: fertilizerForm.cropId,
-          date: fertilizerForm.date,
-          fertilizerType: fertilizerForm.fertilizerType,
+          ...fertilizerForm,
           amount: parseFloat(fertilizerForm.amount),
-          applicationMethod: fertilizerForm.applicationMethod,
-          notes: fertilizerForm.notes || undefined,
         }),
       });
 
       const data = await response.json();
 
       if (data.success) {
-        setSuccess("Fertilizer log created successfully!");
+        setSuccess("Fertilizer application logged successfully!");
         setFertilizerForm({
           cropId: "",
           date: "",
@@ -218,10 +176,10 @@ export default function ActivitiesPage() {
           notes: "",
         });
       } else {
-        setError(data.error || "Failed to create fertilizer log");
+        setError(data.error || "Failed to log fertilizer application");
       }
     } catch {
-      setError("Error creating fertilizer log");
+      setError("Error logging fertilizer application");
     } finally {
       setFormLoading(false);
     }
@@ -233,33 +191,22 @@ export default function ActivitiesPage() {
     setError("");
     setSuccess("");
 
-    // Validate form before submission
-    if (!pestDiseaseForm.cropId) {
-      setError("Please select a crop");
-      setFormLoading(false);
-      return;
-    }
-
     try {
       const response = await fetch("/api/pest-disease", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
-          cropId: pestDiseaseForm.cropId,
-          date: pestDiseaseForm.date,
-          type: pestDiseaseForm.type,
-          name: pestDiseaseForm.name,
-          severity: pestDiseaseForm.severity,
+          ...pestDiseaseForm,
           affectedArea: parseFloat(pestDiseaseForm.affectedArea),
-          treatment: pestDiseaseForm.treatment,
-          notes: pestDiseaseForm.notes || undefined,
         }),
       });
 
       const data = await response.json();
 
       if (data.success) {
-        setSuccess("Pest/Disease log created successfully!");
+        setSuccess("Pest/Disease issue logged successfully!");
         setPestDiseaseForm({
           cropId: "",
           date: "",
@@ -271,10 +218,10 @@ export default function ActivitiesPage() {
           notes: "",
         });
       } else {
-        setError(data.error || "Failed to create pest/disease log");
+        setError(data.error || "Failed to log pest/disease issue");
       }
     } catch {
-      setError("Error creating pest/disease log");
+      setError("Error logging pest/disease issue");
     } finally {
       setFormLoading(false);
     }
@@ -286,86 +233,68 @@ export default function ActivitiesPage() {
     setError("");
     setSuccess("");
 
-    // Validate form before submission
-    if (!harvestForm.cropId) {
-      setError("Please select a crop");
-      setFormLoading(false);
-      return;
-    }
-
-    if (!harvestForm.qualityGrade) {
-      setError("Please select a quality grade");
-      setFormLoading(false);
-      return;
-    }
-
     try {
       const response = await fetch("/api/harvest", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
-          cropId: harvestForm.cropId,
-          harvestDate: harvestForm.harvestDate,
+          ...harvestForm,
           quantity: parseFloat(harvestForm.quantity),
-          unit: harvestForm.unit,
-          qualityGrade: harvestForm.qualityGrade,
-          notes: harvestForm.notes || undefined,
         }),
       });
 
       const data = await response.json();
 
       if (data.success) {
-        setSuccess("Harvest log created successfully!");
+        setSuccess("Harvest logged successfully!");
         setHarvestForm({
           cropId: "",
-          harvestDate: "",
+          date: "",
           quantity: "",
           unit: "",
-          qualityGrade: "",
+          quality: "",
           notes: "",
         });
       } else {
-        setError(data.error || "Failed to create harvest log");
+        setError(data.error || "Failed to log harvest");
       }
     } catch {
-      setError("Error creating harvest log");
+      setError("Error logging harvest");
     } finally {
       setFormLoading(false);
     }
   };
 
   if (!isLoaded || loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          <div className="px-4 py-6 sm:px-0">
-            <div className="text-center text-gray-900 dark:text-gray-100">
-              Loading...
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingState message="Loading activities..." />;
   }
 
   // Show message if no crops are available
   if (crops.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          <div className="px-4 py-6 sm:px-0">
-            <div className="text-center">
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-                Farm Activities
-              </h1>
-              <div className="bg-yellow-100 dark:bg-yellow-900/20 border border-yellow-400 dark:border-yellow-700 text-yellow-700 dark:text-yellow-400 px-4 py-3 rounded">
-                <p className="font-medium">No crops available</p>
-                <p className="text-sm mt-1">
+      <div className="page-container">
+        <div className="content-container padding-responsive-lg mobile-header-spacing content-spacing">
+          <PageHeader
+            title="Farm Activities"
+            description="Log and track your farming activities"
+            icon={<Activity className="w-6 h-6" />}
+          />
+          <div className="farm-card border-warning/20 bg-warning/5">
+            <div className="flex-center gap-content padding-responsive">
+              <div className="flex-center w-10 h-10 bg-warning/10 rounded-full">
+                <span className="text-warning text-lg">⚠️</span>
+              </div>
+              <div className="flex-1">
+                <span className="text-warning font-medium">
+                  No crops available
+                </span>
+                <p className="text-sm mt-1 text-muted-foreground">
                   You need to create crops first before logging activities.{" "}
                   <Link
                     href="/crops"
-                    className="underline font-medium hover:text-yellow-800 dark:hover:text-yellow-300"
+                    className="underline font-medium hover:text-warning"
                   >
                     Go to Crops Management
                   </Link>
@@ -378,97 +307,98 @@ export default function ActivitiesPage() {
     );
   }
 
+  const tabs = [
+    {
+      key: "irrigation",
+      label: "Irrigation",
+      icon: <Droplets className="w-4 h-4" />,
+      color: "from-blue-500 to-cyan-600",
+    },
+    {
+      key: "fertilizer",
+      label: "Fertilizer",
+      icon: <Sprout className="w-4 h-4" />,
+      color: "from-green-500 to-emerald-600",
+    },
+    {
+      key: "pest-disease",
+      label: "Pest & Disease",
+      icon: <Bug className="w-4 h-4" />,
+      color: "from-red-500 to-pink-600",
+    },
+    {
+      key: "harvest",
+      label: "Harvest",
+      icon: <Wheat className="w-4 h-4" />,
+      color: "from-yellow-500 to-orange-600",
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-slate-900 dark:to-gray-800">
-      <div className="content-container py-4 sm:py-6 lg:py-8 mobile-header-spacing">
-        <div className="mb-6 lg:mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center mb-4 sm:mb-6 gap-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mr-4 shadow-lg">
-              <span className="text-white text-2xl">📋</span>
-            </div>
-            <div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
-                Activity Logging
-              </h1>
-              <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 mt-1">
-                Record and track all your farming activities
-              </p>
+    <div className="page-container">
+      <div className="content-container padding-responsive-lg mobile-header-spacing content-spacing">
+        <PageHeader
+          title="Activity Logging"
+          description="Record and track all your farming activities"
+          icon={<Activity className="w-6 h-6" />}
+        />
+
+        {error && (
+          <div className="farm-card border-destructive/20 bg-destructive/5">
+            <div className="flex-center gap-content padding-responsive">
+              <div className="flex-center w-10 h-10 bg-destructive/10 rounded-full">
+                <span className="text-destructive text-lg">⚠️</span>
+              </div>
+              <span className="text-destructive font-medium">{error}</span>
             </div>
           </div>
+        )}
 
-          {error && (
-            <div className="mb-4 p-4 bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-400 rounded">
-              {error}
-            </div>
-          )}
-
-          {success && (
-            <div className="mb-4 p-4 bg-green-100 dark:bg-green-900/20 border border-green-400 dark:border-green-700 text-green-700 dark:text-green-400 rounded">
-              {success}
-            </div>
-          )}
-
-          {/* Tab Navigation */}
-          <div className="mb-6 lg:mb-8">
-            <div className="card-mobile overflow-x-auto">
-              <nav className="flex space-x-1 sm:space-x-2 min-w-max">
-                {[
-                  {
-                    key: "irrigation",
-                    label: "💧 Irrigation",
-                    color: "from-blue-500 to-cyan-600",
-                  },
-                  {
-                    key: "fertilizer",
-                    label: "🌿 Fertilizer",
-                    color: "from-green-500 to-emerald-600",
-                  },
-                  {
-                    key: "pest-disease",
-                    label: "🐛 Pest & Disease",
-                    color: "from-red-500 to-pink-600",
-                  },
-                  {
-                    key: "harvest",
-                    label: "🌾 Harvest",
-                    color: "from-yellow-500 to-orange-600",
-                  },
-                ].map((tab) => (
-                  <button
-                    key={tab.key}
-                    onClick={() => setActiveTab(tab.key as ActivityType)}
-                    className={`flex-1 py-3 px-2 sm:px-4 rounded-lg font-medium text-xs sm:text-sm whitespace-nowrap transition-all duration-200 ${
-                      activeTab === tab.key
-                        ? `bg-gradient-to-r ${tab.color} text-white shadow-md transform scale-105`
-                        : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-slate-700"
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </nav>
+        {success && (
+          <div className="farm-card border-success/20 bg-success/5">
+            <div className="flex-center gap-content padding-responsive">
+              <div className="flex-center w-10 h-10 bg-success/10 rounded-full">
+                <span className="text-success text-lg">✅</span>
+              </div>
+              <span className="text-success font-medium">{success}</span>
             </div>
           </div>
+        )}
 
-          <div className="card-mobile fade-in">
+        {/* Tab Navigation */}
+        <FarmCard>
+          <FarmCardContent>
+            <div className="flex flex-wrap gap-2">
+              {tabs.map((tab) => (
+                <FarmButton
+                  key={tab.key}
+                  variant={activeTab === tab.key ? "success" : "outline"}
+                  onClick={() => setActiveTab(tab.key as ActivityType)}
+                  className="flex-1 min-w-[120px]"
+                >
+                  {tab.icon}
+                  {tab.label}
+                </FarmButton>
+              ))}
+            </div>
+          </FarmCardContent>
+        </FarmCard>
+
+        {/* Activity Forms */}
+        <FarmCard>
+          <FarmCardHeader
+            title={`Log ${tabs.find((t) => t.key === activeTab)?.label} Activity`}
+            description={`Record ${activeTab} activities for your crops`}
+          />
+          <FarmCardContent>
             {/* Irrigation Form */}
             {activeTab === "irrigation" && (
-              <form onSubmit={handleIrrigationSubmit} className="form-mobile">
-                <div className="flex items-center mb-6">
-                  <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-cyan-600 rounded-lg flex items-center justify-center mr-3">
-                    <span className="text-white text-lg">💧</span>
-                  </div>
-                  <h2 className="text-heading text-gray-900 dark:text-gray-100">
-                    Log Irrigation Activity
-                  </h2>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+              <form onSubmit={handleIrrigationSubmit} className="farm-form">
+                <div className="farm-grid grid-cols-1 md:grid-cols-2">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Crop *
-                    </label>
+                    <label className="farm-label">Crop *</label>
                     <select
+                      required
                       value={irrigationForm.cropId}
                       onChange={(e) =>
                         setIrrigationForm({
@@ -476,24 +406,21 @@ export default function ActivitiesPage() {
                           cropId: e.target.value,
                         })
                       }
-                      required
-                      className="input-mobile"
+                      className="farm-input"
                     >
-                      <option value="">Select Crop</option>
+                      <option value="">Select a crop</option>
                       {crops.map((crop) => (
                         <option key={crop.id} value={crop.id}>
-                          {crop.name} {crop.variety && `(${crop.variety})`}
+                          {crop.name}
                         </option>
                       ))}
                     </select>
                   </div>
-
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Date *
-                    </label>
+                    <label className="farm-label">Date *</label>
                     <Input
-                      type="datetime-local"
+                      type="date"
+                      required
                       value={irrigationForm.date}
                       onChange={(e) =>
                         setIrrigationForm({
@@ -501,16 +428,13 @@ export default function ActivitiesPage() {
                           date: e.target.value,
                         })
                       }
-                      required
                     />
                   </div>
-
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Duration (minutes) *
-                    </label>
+                    <label className="farm-label">Duration (hours)</label>
                     <Input
                       type="number"
+                      step="0.1"
                       value={irrigationForm.duration}
                       onChange={(e) =>
                         setIrrigationForm({
@@ -518,15 +442,11 @@ export default function ActivitiesPage() {
                           duration: e.target.value,
                         })
                       }
-                      required
-                      min="1"
+                      placeholder="e.g., 2.5"
                     />
                   </div>
-
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Water Amount (liters) *
-                    </label>
+                    <label className="farm-label">Water Amount (liters)</label>
                     <Input
                       type="number"
                       step="0.1"
@@ -537,15 +457,11 @@ export default function ActivitiesPage() {
                           waterAmount: e.target.value,
                         })
                       }
-                      required
-                      min="0"
+                      placeholder="e.g., 100"
                     />
                   </div>
-
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Method
-                    </label>
+                    <label className="farm-label">Method</label>
                     <select
                       value={irrigationForm.method}
                       onChange={(e) =>
@@ -554,65 +470,51 @@ export default function ActivitiesPage() {
                           method: e.target.value,
                         })
                       }
-                      className="input-mobile"
+                      className="farm-input"
                     >
-                      <option value="">Select Method</option>
-                      <option value="SPRINKLER">Sprinkler</option>
-                      <option value="DRIP">Drip</option>
-                      <option value="FLOOD">Flood</option>
-                      <option value="MANUAL">Manual</option>
+                      <option value="">Select method</option>
+                      <option value="sprinkler">Sprinkler</option>
+                      <option value="drip">Drip Irrigation</option>
+                      <option value="flood">Flood Irrigation</option>
+                      <option value="manual">Manual Watering</option>
                     </select>
                   </div>
+                  <div className="md:col-span-2">
+                    <label className="farm-label">Notes</label>
+                    <textarea
+                      value={irrigationForm.notes}
+                      onChange={(e) =>
+                        setIrrigationForm({
+                          ...irrigationForm,
+                          notes: e.target.value,
+                        })
+                      }
+                      placeholder="Additional notes..."
+                      className="farm-input min-h-[100px]"
+                    />
+                  </div>
                 </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Notes
-                  </label>
-                  <textarea
-                    value={irrigationForm.notes}
-                    onChange={(e) =>
-                      setIrrigationForm({
-                        ...irrigationForm,
-                        notes: e.target.value,
-                      })
-                    }
-                    rows={3}
-                    className="input-mobile"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={formLoading}
-                  className="btn-enhanced bg-blue-600 text-white hover:bg-blue-700 dark:hover:bg-blue-600 focus:ring-blue-500 shadow-lg hover:shadow-xl disabled:opacity-50 w-full sm:w-auto touch-target"
-                >
-                  <span className="mr-2 text-base sm:text-lg">💧</span>
-                  <span className="text-sm sm:text-base">
+                <div className="action-buttons">
+                  <FarmButton
+                    type="submit"
+                    variant="success"
+                    disabled={formLoading}
+                  >
+                    <Droplets className="w-4 h-4" />
                     {formLoading ? "Logging..." : "Log Irrigation Activity"}
-                  </span>
-                </button>
+                  </FarmButton>
+                </div>
               </form>
             )}
 
             {/* Fertilizer Form */}
             {activeTab === "fertilizer" && (
-              <form onSubmit={handleFertilizerSubmit} className="form-mobile">
-                <div className="flex items-center mb-6">
-                  <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-emerald-600 rounded-lg flex items-center justify-center mr-3">
-                    <span className="text-white text-lg">🌿</span>
-                  </div>
-                  <h2 className="text-heading text-gray-900 dark:text-gray-100">
-                    Log Fertilizer Application
-                  </h2>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+              <form onSubmit={handleFertilizerSubmit} className="farm-form">
+                <div className="farm-grid grid-cols-1 md:grid-cols-2">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Crop *
-                    </label>
+                    <label className="farm-label">Crop *</label>
                     <select
+                      required
                       value={fertilizerForm.cropId}
                       onChange={(e) =>
                         setFertilizerForm({
@@ -620,24 +522,21 @@ export default function ActivitiesPage() {
                           cropId: e.target.value,
                         })
                       }
-                      required
-                      className="input-mobile"
+                      className="farm-input"
                     >
-                      <option value="">Select Crop</option>
+                      <option value="">Select a crop</option>
                       {crops.map((crop) => (
                         <option key={crop.id} value={crop.id}>
-                          {crop.name} {crop.variety && `(${crop.variety})`}
+                          {crop.name}
                         </option>
                       ))}
                     </select>
                   </div>
-
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Date *
-                    </label>
+                    <label className="farm-label">Date *</label>
                     <Input
-                      type="datetime-local"
+                      type="date"
+                      required
                       value={fertilizerForm.date}
                       onChange={(e) =>
                         setFertilizerForm({
@@ -645,16 +544,13 @@ export default function ActivitiesPage() {
                           date: e.target.value,
                         })
                       }
-                      required
                     />
                   </div>
-
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Fertilizer Type *
-                    </label>
+                    <label className="farm-label">Fertilizer Type *</label>
                     <Input
                       type="text"
+                      required
                       value={fertilizerForm.fertilizerType}
                       onChange={(e) =>
                         setFertilizerForm({
@@ -662,15 +558,11 @@ export default function ActivitiesPage() {
                           fertilizerType: e.target.value,
                         })
                       }
-                      required
                       placeholder="e.g., NPK 10-10-10"
                     />
                   </div>
-
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Amount (kg) *
-                    </label>
+                    <label className="farm-label">Amount (kg)</label>
                     <Input
                       type="number"
                       step="0.1"
@@ -681,15 +573,11 @@ export default function ActivitiesPage() {
                           amount: e.target.value,
                         })
                       }
-                      required
-                      min="0"
+                      placeholder="e.g., 5"
                     />
                   </div>
-
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Application Method *
-                    </label>
+                    <label className="farm-label">Application Method</label>
                     <select
                       value={fertilizerForm.applicationMethod}
                       onChange={(e) =>
@@ -698,66 +586,51 @@ export default function ActivitiesPage() {
                           applicationMethod: e.target.value,
                         })
                       }
-                      required
-                      className="input-mobile"
+                      className="farm-input"
                     >
-                      <option value="">Select Method</option>
-                      <option value="BROADCAST">Broadcast</option>
-                      <option value="BAND">Band</option>
-                      <option value="FOLIAR">Foliar</option>
-                      <option value="FERTIGATION">Fertigation</option>
+                      <option value="">Select method</option>
+                      <option value="broadcast">Broadcast</option>
+                      <option value="side-dress">Side Dress</option>
+                      <option value="foliar">Foliar Spray</option>
+                      <option value="fertigation">Fertigation</option>
                     </select>
                   </div>
+                  <div className="md:col-span-2">
+                    <label className="farm-label">Notes</label>
+                    <textarea
+                      value={fertilizerForm.notes}
+                      onChange={(e) =>
+                        setFertilizerForm({
+                          ...fertilizerForm,
+                          notes: e.target.value,
+                        })
+                      }
+                      placeholder="Additional notes..."
+                      className="farm-input min-h-[100px]"
+                    />
+                  </div>
                 </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Notes
-                  </label>
-                  <textarea
-                    value={fertilizerForm.notes}
-                    onChange={(e) =>
-                      setFertilizerForm({
-                        ...fertilizerForm,
-                        notes: e.target.value,
-                      })
-                    }
-                    rows={3}
-                    className="input-mobile"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={formLoading}
-                  className="btn-enhanced bg-green-600 text-white hover:bg-green-700 dark:hover:bg-green-600 focus:ring-green-500 shadow-lg hover:shadow-xl disabled:opacity-50 w-full sm:w-auto touch-target"
-                >
-                  <span className="mr-2 text-base sm:text-lg">🌿</span>
-                  <span className="text-sm sm:text-base">
+                <div className="action-buttons">
+                  <FarmButton
+                    type="submit"
+                    variant="success"
+                    disabled={formLoading}
+                  >
+                    <Sprout className="w-4 h-4" />
                     {formLoading ? "Logging..." : "Log Fertilizer Application"}
-                  </span>
-                </button>
+                  </FarmButton>
+                </div>
               </form>
             )}
 
-            {/* Pest/Disease Form */}
+            {/* Pest & Disease Form */}
             {activeTab === "pest-disease" && (
-              <form onSubmit={handlePestDiseaseSubmit} className="form-mobile">
-                <div className="flex items-center mb-6">
-                  <div className="w-10 h-10 bg-gradient-to-br from-red-400 to-pink-600 rounded-lg flex items-center justify-center mr-3">
-                    <span className="text-white text-lg">🐛</span>
-                  </div>
-                  <h2 className="text-heading text-gray-900 dark:text-gray-100">
-                    Log Pest/Disease Issue
-                  </h2>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+              <form onSubmit={handlePestDiseaseSubmit} className="farm-form">
+                <div className="farm-grid grid-cols-1 md:grid-cols-2">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Crop *
-                    </label>
+                    <label className="farm-label">Crop *</label>
                     <select
+                      required
                       value={pestDiseaseForm.cropId}
                       onChange={(e) =>
                         setPestDiseaseForm({
@@ -765,24 +638,21 @@ export default function ActivitiesPage() {
                           cropId: e.target.value,
                         })
                       }
-                      required
-                      className="input-mobile"
+                      className="farm-input"
                     >
-                      <option value="">Select Crop</option>
+                      <option value="">Select a crop</option>
                       {crops.map((crop) => (
                         <option key={crop.id} value={crop.id}>
-                          {crop.name} {crop.variety && `(${crop.variety})`}
+                          {crop.name}
                         </option>
                       ))}
                     </select>
                   </div>
-
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Date *
-                    </label>
+                    <label className="farm-label">Date *</label>
                     <Input
-                      type="datetime-local"
+                      type="date"
+                      required
                       value={pestDiseaseForm.date}
                       onChange={(e) =>
                         setPestDiseaseForm({
@@ -790,40 +660,30 @@ export default function ActivitiesPage() {
                           date: e.target.value,
                         })
                       }
-                      required
                     />
                   </div>
-
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Type *
-                    </label>
+                    <label className="farm-label">Type *</label>
                     <select
+                      required
                       value={pestDiseaseForm.type}
-                      onChange={(e) => {
-                        const value = e.target.value as PestDiseaseType;
+                      onChange={(e) =>
                         setPestDiseaseForm({
                           ...pestDiseaseForm,
-                          type: value,
-                        });
-                      }}
-                      required
-                      className="input-mobile"
+                          type: e.target.value as PestDiseaseType,
+                        })
+                      }
+                      className="farm-input"
                     >
-                      {Object.values(PestDiseaseType).map((type) => (
-                        <option key={type} value={type}>
-                          {type.replace("_", " ")}
-                        </option>
-                      ))}
+                      <option value={PestDiseaseType.PEST}>Pest</option>
+                      <option value={PestDiseaseType.DISEASE}>Disease</option>
                     </select>
                   </div>
-
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Name *
-                    </label>
+                    <label className="farm-label">Name *</label>
                     <Input
                       type="text"
+                      required
                       value={pestDiseaseForm.name}
                       onChange={(e) =>
                         setPestDiseaseForm({
@@ -831,39 +691,29 @@ export default function ActivitiesPage() {
                           name: e.target.value,
                         })
                       }
-                      required
                       placeholder="e.g., Aphids, Blight"
                     />
                   </div>
-
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Severity *
-                    </label>
+                    <label className="farm-label">Severity *</label>
                     <select
+                      required
                       value={pestDiseaseForm.severity}
-                      onChange={(e) => {
-                        const value = e.target.value as keyof typeof Severity;
+                      onChange={(e) =>
                         setPestDiseaseForm({
                           ...pestDiseaseForm,
-                          severity: Severity[value],
-                        });
-                      }}
-                      required
-                      className="input-mobile"
+                          severity: e.target.value as Severity,
+                        })
+                      }
+                      className="farm-input"
                     >
-                      {Object.values(Severity).map((severity) => (
-                        <option key={severity} value={severity}>
-                          {severity}
-                        </option>
-                      ))}
+                      <option value={Severity.LOW}>Low</option>
+                      <option value={Severity.MEDIUM}>Medium</option>
+                      <option value={Severity.HIGH}>High</option>
                     </select>
                   </div>
-
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Affected Area (m²) *
-                    </label>
+                    <label className="farm-label">Affected Area (m²)</label>
                     <Input
                       type="number"
                       step="0.1"
@@ -874,15 +724,11 @@ export default function ActivitiesPage() {
                           affectedArea: e.target.value,
                         })
                       }
-                      required
-                      min="0"
+                      placeholder="e.g., 10"
                     />
                   </div>
-
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Treatment *
-                    </label>
+                    <label className="farm-label">Treatment</label>
                     <Input
                       type="text"
                       value={pestDiseaseForm.treatment}
@@ -892,60 +738,45 @@ export default function ActivitiesPage() {
                           treatment: e.target.value,
                         })
                       }
-                      required
                       placeholder="e.g., Neem oil spray"
                     />
                   </div>
+                  <div className="md:col-span-2">
+                    <label className="farm-label">Notes</label>
+                    <textarea
+                      value={pestDiseaseForm.notes}
+                      onChange={(e) =>
+                        setPestDiseaseForm({
+                          ...pestDiseaseForm,
+                          notes: e.target.value,
+                        })
+                      }
+                      placeholder="Additional notes..."
+                      className="farm-input min-h-[100px]"
+                    />
+                  </div>
                 </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Notes
-                  </label>
-                  <textarea
-                    value={pestDiseaseForm.notes}
-                    onChange={(e) =>
-                      setPestDiseaseForm({
-                        ...pestDiseaseForm,
-                        notes: e.target.value,
-                      })
-                    }
-                    rows={3}
-                    className="input-mobile"
-                  />
-                </div>
-
-                <Button
-                  type="submit"
-                  disabled={formLoading}
-                  className="bg-red-600 text-white hover:bg-red-700 dark:hover:bg-red-600 focus:ring-red-500 w-full sm:w-auto touch-target"
-                >
-                  <span className="mr-2 text-base sm:text-lg">🐛</span>
-                  <span className="text-sm sm:text-base">
+                <div className="action-buttons">
+                  <FarmButton
+                    type="submit"
+                    variant="success"
+                    disabled={formLoading}
+                  >
+                    <Bug className="w-4 h-4" />
                     {formLoading ? "Logging..." : "Log Issue"}
-                  </span>
-                </Button>
+                  </FarmButton>
+                </div>
               </form>
             )}
 
             {/* Harvest Form */}
             {activeTab === "harvest" && (
-              <form onSubmit={handleHarvestSubmit} className="form-mobile">
-                <div className="flex items-center mb-6">
-                  <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-600 rounded-lg flex items-center justify-center mr-3">
-                    <span className="text-white text-lg">🌾</span>
-                  </div>
-                  <h2 className="text-heading text-gray-900 dark:text-gray-100">
-                    Log Harvest
-                  </h2>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+              <form onSubmit={handleHarvestSubmit} className="farm-form">
+                <div className="farm-grid grid-cols-1 md:grid-cols-2">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Crop *
-                    </label>
+                    <label className="farm-label">Crop *</label>
                     <select
+                      required
                       value={harvestForm.cropId}
                       onChange={(e) =>
                         setHarvestForm({
@@ -953,42 +784,33 @@ export default function ActivitiesPage() {
                           cropId: e.target.value,
                         })
                       }
-                      required
-                      className="input-mobile"
+                      className="farm-input"
                     >
-                      <option value="">Select Crop</option>
+                      <option value="">Select a crop</option>
                       {crops.map((crop) => (
                         <option key={crop.id} value={crop.id}>
-                          {crop.name} {crop.variety && `(${crop.variety})`}
+                          {crop.name}
                         </option>
                       ))}
                     </select>
                   </div>
-
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Harvest Date *
-                    </label>
+                    <label className="farm-label">Date *</label>
                     <Input
-                      type="datetime-local"
-                      value={harvestForm.harvestDate}
-                      onChange={(e) =>
-                        setHarvestForm({
-                          ...harvestForm,
-                          harvestDate: e.target.value,
-                        })
-                      }
+                      type="date"
                       required
+                      value={harvestForm.date}
+                      onChange={(e) =>
+                        setHarvestForm({ ...harvestForm, date: e.target.value })
+                      }
                     />
                   </div>
-
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Quantity *
-                    </label>
+                    <label className="farm-label">Quantity *</label>
                     <Input
                       type="number"
                       step="0.1"
+                      required
                       value={harvestForm.quantity}
                       onChange={(e) =>
                         setHarvestForm({
@@ -996,78 +818,74 @@ export default function ActivitiesPage() {
                           quantity: e.target.value,
                         })
                       }
-                      required
-                      min="0"
+                      placeholder="e.g., 50"
                     />
                   </div>
-
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Unit *
-                    </label>
-                    <Input
-                      type="text"
+                    <label className="farm-label">Unit *</label>
+                    <select
+                      required
                       value={harvestForm.unit}
                       onChange={(e) =>
                         setHarvestForm({ ...harvestForm, unit: e.target.value })
                       }
-                      required
-                      placeholder="e.g., kg, lbs, pieces"
-                    />
+                      className="farm-input"
+                    >
+                      <option value="">Select unit</option>
+                      <option value="kg">Kilograms (kg)</option>
+                      <option value="lbs">Pounds (lbs)</option>
+                      <option value="tons">Tons</option>
+                      <option value="pieces">Pieces</option>
+                    </select>
                   </div>
-
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Quality Grade *
-                    </label>
+                    <label className="farm-label">Quality</label>
                     <select
-                      value={harvestForm.qualityGrade}
+                      value={harvestForm.quality}
                       onChange={(e) =>
                         setHarvestForm({
                           ...harvestForm,
-                          qualityGrade: e.target.value,
+                          quality: e.target.value,
                         })
                       }
-                      required
-                      className="input-mobile"
+                      className="farm-input"
                     >
-                      <option value="">Select Grade</option>
-                      <option value="EXCELLENT">Excellent</option>
-                      <option value="GOOD">Good</option>
-                      <option value="FAIR">Fair</option>
-                      <option value="POOR">Poor</option>
+                      <option value="">Select quality</option>
+                      <option value="excellent">Excellent</option>
+                      <option value="good">Good</option>
+                      <option value="fair">Fair</option>
+                      <option value="poor">Poor</option>
                     </select>
                   </div>
+                  <div className="md:col-span-2">
+                    <label className="farm-label">Notes</label>
+                    <textarea
+                      value={harvestForm.notes}
+                      onChange={(e) =>
+                        setHarvestForm({
+                          ...harvestForm,
+                          notes: e.target.value,
+                        })
+                      }
+                      placeholder="Additional notes..."
+                      className="farm-input min-h-[100px]"
+                    />
+                  </div>
                 </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Notes
-                  </label>
-                  <textarea
-                    value={harvestForm.notes}
-                    onChange={(e) =>
-                      setHarvestForm({ ...harvestForm, notes: e.target.value })
-                    }
-                    rows={3}
-                    className="input-mobile"
-                  />
-                </div>
-
-                <Button
-                  type="submit"
-                  disabled={formLoading}
-                  className="bg-yellow-600 text-white hover:bg-yellow-700 dark:hover:bg-yellow-600 focus:ring-yellow-500 w-full sm:w-auto touch-target"
-                >
-                  <span className="mr-2 text-base sm:text-lg">🌾</span>
-                  <span className="text-sm sm:text-base">
+                <div className="action-buttons">
+                  <FarmButton
+                    type="submit"
+                    variant="success"
+                    disabled={formLoading}
+                  >
+                    <Wheat className="w-4 h-4" />
                     {formLoading ? "Logging..." : "Log Harvest"}
-                  </span>
-                </Button>
+                  </FarmButton>
+                </div>
               </form>
             )}
-          </div>
-        </div>
+          </FarmCardContent>
+        </FarmCard>
       </div>
     </div>
   );

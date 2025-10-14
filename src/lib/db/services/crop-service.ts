@@ -1,5 +1,6 @@
 import { CropStatus } from "@prisma/client";
 import { prisma } from "../connection";
+import DatabaseService from "../database-service";
 
 export interface CropCreateData {
   userId: string;
@@ -21,25 +22,37 @@ export interface CropUpdateData {
 
 export class CropService {
   static async create(data: CropCreateData) {
-    return prisma.crop.create({
-      data: {
-        ...data,
-        status: "PLANTED",
-      },
-    });
+    return DatabaseService.execute(
+      () =>
+        prisma.crop.create({
+          data: {
+            ...data,
+            status: "PLANTED",
+          },
+        }),
+      "create crop"
+    );
   }
 
   static async findAllByUser(userId: string) {
-    return prisma.crop.findMany({
-      where: { userId },
-      orderBy: { createdAt: "desc" },
-    });
+    return DatabaseService.execute(
+      () =>
+        prisma.crop.findMany({
+          where: { userId },
+          orderBy: { createdAt: "desc" },
+        }),
+      "find crops by user"
+    );
   }
 
   static async findById(id: string, userId: string) {
-    return prisma.crop.findFirst({
-      where: { id, userId },
-    });
+    return DatabaseService.execute(
+      () =>
+        prisma.crop.findFirst({
+          where: { id, userId },
+        }),
+      "find crop by id"
+    );
   }
 
   static async update(id: string, userId: string, data: CropUpdateData) {
