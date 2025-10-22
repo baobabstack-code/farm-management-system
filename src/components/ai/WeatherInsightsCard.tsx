@@ -174,46 +174,46 @@ export default function WeatherInsightsCard() {
   }
 
   return (
-    <div className="bg-gradient-to-br from-sky-50 to-indigo-100 border border-sky-200 rounded-lg p-4 mb-4">
+    <div className="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-lg p-4 mb-4">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-lg font-semibold text-sky-900 flex items-center">
+        <h3 className="text-lg font-semibold text-white flex items-center">
           🌤️ Weather-Aware Insights
-          <span className="ml-2 text-xs bg-sky-100 text-sky-800 px-2 py-1 rounded-full">
+          <span className="ml-2 text-xs bg-blue-600 text-green px-2 py-1 rounded-full">
             Beta
           </span>
         </h3>
         <button
           onClick={fetchWeatherInsights}
           disabled={loading || !location}
-          className="text-sm text-sky-600 hover:text-sky-800 disabled:opacity-50"
+          className="text-sm text-blue-400 hover:text-blue-300 disabled:opacity-50"
         >
           {loading ? "Analyzing..." : "Refresh"}
         </button>
       </div>
 
       {error && (
-        <div className="mb-3 p-2 bg-red-50 border border-red-200 rounded text-sm text-red-600">
+        <div className="mb-3 p-2 bg-red-900/20 border border-red-700 rounded text-sm text-red-400">
           {error}
         </div>
       )}
 
       {loading ? (
         <div className="animate-pulse space-y-3">
-          <div className="h-4 bg-sky-200 rounded"></div>
-          <div className="h-4 bg-sky-200 rounded w-3/4"></div>
-          <div className="h-16 bg-sky-200 rounded"></div>
+          <div className="h-4 bg-slate-700 rounded"></div>
+          <div className="h-4 bg-slate-700 rounded w-3/4"></div>
+          <div className="h-16 bg-slate-700 rounded"></div>
         </div>
       ) : weatherData ? (
         <div className="space-y-4">
           {/* Current Weather Display */}
-          <div className="bg-white rounded-lg p-3 border border-sky-100">
+          <div className="bg-slate-700 rounded-lg p-3 border border-slate-600">
             <div className="flex items-center justify-between mb-2">
-              <h4 className="font-medium text-gray-900">Current Conditions</h4>
+              <h4 className="font-medium text-white">Current Conditions</h4>
               <span className="text-2xl">
                 {getWeatherIcon(weatherData.weather.current.condition)}
               </span>
             </div>
-            <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
+            <div className="grid grid-cols-2 gap-2 text-sm text-slate-300">
               <div>
                 🌡️ {Math.round(weatherData.weather.current.temperature)}°C
               </div>
@@ -225,19 +225,19 @@ export default function WeatherInsightsCard() {
                 ☔ {Math.round(weatherData.weather.current.precipitation)}mm
               </div>
             </div>
-            <div className="mt-2 text-sm text-gray-700 capitalize">
+            <div className="mt-2 text-sm text-slate-200 capitalize">
               {weatherData.weather.current.condition}
             </div>
           </div>
 
           {/* Weather Alerts */}
           {weatherData.weather.alerts.length > 0 && (
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-              <h4 className="font-medium text-amber-900 mb-2 flex items-center">
+            <div className="bg-amber-900/20 border border-amber-700 rounded-lg p-3">
+              <h4 className="font-medium text-amber-400 mb-2 flex items-center">
                 ⚠️ Weather Alerts
               </h4>
               {weatherData.weather.alerts.map((alert, index) => (
-                <div key={index} className="text-sm text-amber-800 mb-1">
+                <div key={index} className="text-sm text-amber-300 mb-1">
                   <strong>{alert.title}:</strong> {alert.description}
                 </div>
               ))}

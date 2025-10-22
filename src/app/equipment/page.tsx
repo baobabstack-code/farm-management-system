@@ -182,6 +182,7 @@ export default function EquipmentPage() {
               <FarmCard
                 key={item.id}
                 interactive
+                variant="dark-enhanced"
                 onClick={() => router.push(`/equipment/${item.id}`)}
               >
                 <FarmCardHeader

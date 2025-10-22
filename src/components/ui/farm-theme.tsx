@@ -54,7 +54,7 @@ PageHeader.displayName = "PageHeader";
 
 interface FarmCardProps extends React.HTMLAttributes<HTMLDivElement> {
   interactive?: boolean;
-  variant?: "default" | "metric";
+  variant?: "default" | "metric" | "dark-enhanced" | "glass" | "elevated";
 }
 
 export const FarmCard = React.forwardRef<HTMLDivElement, FarmCardProps>(
@@ -66,6 +66,9 @@ export const FarmCard = React.forwardRef<HTMLDivElement, FarmCardProps>(
         {
           "farm-card-interactive": interactive,
           "metric-card": variant === "metric",
+          "farm-card-dark-enhanced": variant === "dark-enhanced",
+          "farm-card-glass": variant === "glass",
+          "farm-card-elevated": variant === "elevated",
         },
         className
       )}

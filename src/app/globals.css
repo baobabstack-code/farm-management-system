@@ -186,27 +186,39 @@
     @apply bg-card text-card-foreground rounded-xl shadow-sm border border-border;
     @apply hover:shadow-md hover:border-border/80 transition-all duration-200;
     @apply p-5 sm:p-6 lg:p-7;
+    /* Enhanced dark theme support */
+    @apply dark:bg-slate-800/90 dark:border-slate-700/50 dark:shadow-slate-900/20;
+    @apply dark:hover:bg-slate-800 dark:hover:border-slate-600/60 dark:hover:shadow-slate-900/30;
   }
 
   .farm-card-interactive {
     @apply farm-card cursor-pointer;
     @apply hover:scale-[1.01] active:scale-[0.99] touch-manipulation;
     @apply hover:shadow-lg transition-all duration-300 ease-out;
+    /* Enhanced dark theme interactivity */
+    @apply dark:hover:shadow-slate-900/40 dark:hover:bg-slate-700/80;
+    @apply dark:active:bg-slate-800/90;
   }
 
   .farm-card-header {
     @apply flex items-start justify-between mb-5 pb-4 border-b border-border/50;
     @apply gap-4;
+    /* Enhanced dark theme header */
+    @apply dark:border-slate-600/40;
   }
 
   .farm-card-title {
     @apply text-lg sm:text-xl font-semibold text-foreground leading-tight;
     @apply mb-1;
+    /* Enhanced dark theme title */
+    @apply dark:text-slate-100;
   }
 
   .farm-card-description {
     @apply text-sm text-muted-foreground leading-relaxed;
     @apply mt-1;
+    /* Enhanced dark theme description */
+    @apply dark:text-slate-300;
   }
 
   /* Enhanced metric cards for dashboard */
@@ -214,6 +226,9 @@
     @apply farm-card-interactive;
     @apply bg-gradient-to-br from-card to-muted/20;
     @apply p-6 sm:p-7 lg:p-8;
+    /* Enhanced dark theme metric cards */
+    @apply dark:from-slate-800/90 dark:to-slate-700/30;
+    @apply dark:hover:from-slate-700/90 dark:hover:to-slate-600/40;
   }
 
   /* Card content spacing */
@@ -225,10 +240,67 @@
   .farm-card-section {
     @apply py-4 first:pt-0 last:pb-0;
     @apply border-b border-border/30 last:border-b-0;
+    /* Enhanced dark theme sections */
+    @apply dark:border-slate-600/30;
   }
 
   .farm-card-section-title {
     @apply text-base font-medium text-foreground mb-3;
+    /* Enhanced dark theme section titles */
+    @apply dark:text-slate-200;
+  }
+
+  /* === DARK THEME CARD VARIANTS === */
+
+  /* Dark theme enhanced card with subtle glow */
+  .farm-card-dark-enhanced {
+    @apply farm-card;
+    @apply dark:bg-slate-800/95 dark:border-slate-600/50;
+    @apply dark:shadow-lg dark:shadow-slate-900/30;
+    @apply dark:hover:shadow-xl dark:hover:shadow-slate-900/40;
+    @apply dark:hover:border-slate-500/60;
+  }
+
+  /* Dark theme glass effect card */
+  .farm-card-glass {
+    @apply farm-card;
+    @apply dark:bg-slate-800/60 dark:backdrop-blur-sm;
+    @apply dark:border-slate-600/40 dark:shadow-slate-900/20;
+    @apply dark:hover:bg-slate-800/80 dark:hover:border-slate-500/50;
+  }
+
+  /* Dark theme elevated card */
+  .farm-card-elevated {
+    @apply farm-card;
+    @apply dark:bg-slate-700/90 dark:border-slate-600/60;
+    @apply dark:shadow-xl dark:shadow-slate-900/50;
+    @apply dark:hover:shadow-2xl dark:hover:shadow-slate-900/60;
+    @apply dark:hover:bg-slate-700;
+  }
+
+  /* === DARK THEME TEXT UTILITIES === */
+
+  /* Enhanced text readability in dark theme */
+  .farm-text-body {
+    @apply dark:text-slate-200;
+  }
+
+  .farm-text-muted {
+    @apply text-muted-foreground;
+    @apply dark:text-slate-400;
+  }
+
+  .farm-text-accent {
+    @apply dark:text-slate-100;
+  }
+
+  /* Card content text improvements */
+  .farm-card-content .farm-text-body {
+    @apply dark:text-slate-200;
+  }
+
+  .farm-card-content .farm-text-muted {
+    @apply dark:text-slate-400;
   }
 
   /* === ENHANCED BUTTON SYSTEM === */
@@ -432,26 +504,32 @@
   /* === STATUS BADGES === */
   .farm-badge {
     @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+    @apply transition-colors duration-200;
   }
 
   .farm-badge-success {
     @apply farm-badge bg-success/10 text-success border border-success/20;
+    @apply dark:bg-green-500/20 dark:text-green-400 dark:border-green-500/30;
   }
 
   .farm-badge-warning {
     @apply farm-badge bg-warning/10 text-warning border border-warning/20;
+    @apply dark:bg-amber-500/20 dark:text-amber-400 dark:border-amber-500/30;
   }
 
   .farm-badge-error {
     @apply farm-badge bg-destructive/10 text-destructive border border-destructive/20;
+    @apply dark:bg-red-500/20 dark:text-red-400 dark:border-red-500/30;
   }
 
   .farm-badge-info {
     @apply farm-badge bg-info/10 text-info border border-info/20;
+    @apply dark:bg-blue-500/20 dark:text-blue-400 dark:border-blue-500/30;
   }
 
   .farm-badge-neutral {
     @apply farm-badge bg-muted text-muted-foreground border border-border;
+    @apply dark:bg-slate-700/50 dark:text-slate-300 dark:border-slate-600/50;
   }
 
   /* === ENHANCED PAGE HEADER SYSTEM === */
