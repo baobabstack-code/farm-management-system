@@ -7,6 +7,7 @@ import AIInsightsCard from "@/components/ai/AIInsightsCard";
 import WeatherInsightsCard from "@/components/ai/WeatherInsightsCard";
 import CropRecommendationsCard from "@/components/ai/CropRecommendationsCard";
 import FinancialInsightsCard from "@/components/ai/FinancialInsightsCard";
+import { useAnalytics } from "@/hooks/use-analytics";
 import {
   PageHeader,
   LoadingState,
@@ -19,6 +20,7 @@ import { Bot, Palette, Moon, Sun } from "lucide-react";
 export default function AICompanionPage() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
+  const { trackAIUsage, trackUserAction } = useAnalytics();
 
   useEffect(() => {
     if (!isLoaded) return;

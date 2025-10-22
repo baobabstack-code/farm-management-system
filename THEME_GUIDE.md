@@ -1,11 +1,13 @@
 # Farm Management System - Theme Consistency Guide
 
 ## Overview
+
 This guide ensures consistent theming across all pages, forms, and components in the farming app. All components should follow these standardized patterns for a cohesive user experience.
 
 ## Core Theme System
 
 ### Color Palette
+
 - **Primary**: Green theme for farming/agriculture (`--primary`)
 - **Secondary**: Earth tones for supporting elements (`--secondary`)
 - **Success**: Green for positive actions (`--success`)
@@ -16,6 +18,7 @@ This guide ensures consistent theming across all pages, forms, and components in
 ### Component Usage
 
 #### 1. Page Structure
+
 ```tsx
 import { PageContainer, PageHeader } from "@/components/ui/farm-theme";
 
@@ -40,12 +43,13 @@ export default function MyPage() {
 ```
 
 #### 2. Cards
+
 ```tsx
 import { FarmCard, FarmCardHeader, FarmCardContent } from "@/components/ui/farm-theme";
 
 // Standard card
 <FarmCard>
-  <FarmCardHeader 
+  <FarmCardHeader
     title="Card Title"
     description="Card description"
     badge={<FarmBadge variant="success">Active</FarmBadge>}
@@ -67,6 +71,7 @@ import { FarmCard, FarmCardHeader, FarmCardContent } from "@/components/ui/farm-
 ```
 
 #### 3. Buttons
+
 ```tsx
 import { FarmButton } from "@/components/ui/farm-theme";
 
@@ -98,15 +103,22 @@ import { FarmButton } from "@/components/ui/farm-theme";
 ```
 
 #### 4. Forms
+
 ```tsx
-import { FarmForm, FarmFormGroup, FarmInput, FarmSelect, FarmTextarea } from "@/components/ui/farm-theme";
+import {
+  FarmForm,
+  FarmFormGroup,
+  FarmInput,
+  FarmSelect,
+  FarmTextarea,
+} from "@/components/ui/farm-theme";
 
 <FarmForm onSubmit={handleSubmit}>
   <FarmFormGroup label="Crop Name" required>
     <FarmInput
       type="text"
       value={formData.name}
-      onChange={(e) => setFormData({...formData, name: e.target.value})}
+      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
       placeholder="e.g., Tomatoes"
     />
   </FarmFormGroup>
@@ -114,7 +126,7 @@ import { FarmForm, FarmFormGroup, FarmInput, FarmSelect, FarmTextarea } from "@/
   <FarmFormGroup label="Category">
     <FarmSelect
       value={formData.category}
-      onChange={(e) => setFormData({...formData, category: e.target.value})}
+      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
     >
       <option value="">Select category</option>
       <option value="vegetables">Vegetables</option>
@@ -125,19 +137,26 @@ import { FarmForm, FarmFormGroup, FarmInput, FarmSelect, FarmTextarea } from "@/
   <FarmFormGroup label="Description">
     <FarmTextarea
       value={formData.description}
-      onChange={(e) => setFormData({...formData, description: e.target.value})}
+      onChange={(e) =>
+        setFormData({ ...formData, description: e.target.value })
+      }
       placeholder="Enter description..."
     />
   </FarmFormGroup>
 
   <div className="flex gap-3">
-    <FarmButton type="submit" variant="primary">Create Crop</FarmButton>
-    <FarmButton type="button" variant="outline" onClick={onCancel}>Cancel</FarmButton>
+    <FarmButton type="submit" variant="primary">
+      Create Crop
+    </FarmButton>
+    <FarmButton type="button" variant="outline" onClick={onCancel}>
+      Cancel
+    </FarmButton>
   </div>
-</FarmForm>
+</FarmForm>;
 ```
 
 #### 5. Grids
+
 ```tsx
 import { FarmGrid } from "@/components/ui/farm-theme";
 
@@ -158,6 +177,7 @@ import { FarmGrid } from "@/components/ui/farm-theme";
 ```
 
 #### 6. Status Badges
+
 ```tsx
 import { FarmBadge } from "@/components/ui/farm-theme";
 
@@ -169,8 +189,13 @@ import { FarmBadge } from "@/components/ui/farm-theme";
 ```
 
 #### 7. Loading & Error States
+
 ```tsx
-import { LoadingState, ErrorState, EmptyState } from "@/components/ui/farm-theme";
+import {
+  LoadingState,
+  ErrorState,
+  EmptyState,
+} from "@/components/ui/farm-theme";
 
 // Loading state
 if (loading) {
@@ -207,6 +232,7 @@ if (items.length === 0) {
 ```
 
 ### Typography Classes
+
 - `farm-heading-display`: Main page titles
 - `farm-heading-page`: Page section titles
 - `farm-heading-section`: Section headings
@@ -216,12 +242,14 @@ if (items.length === 0) {
 - `farm-text-caption`: Small caption text
 
 ### Animation Classes
+
 - `farm-fade-in`: Fade in animation
 - `farm-stagger-item`: Staggered animation for grid items
 
 ## Migration Checklist
 
 ### For Each Page:
+
 1. ✅ Replace page container with `PageContainer`
 2. ✅ Replace page header with `PageHeader` component
 3. ✅ Replace custom cards with `FarmCard` components
@@ -234,6 +262,7 @@ if (items.length === 0) {
 10. ✅ Test dark mode compatibility
 
 ### Pages to Update:
+
 - [ ] Dashboard (`/dashboard`)
 - [ ] Crops (`/crops`)
 - [ ] Tasks (`/tasks`)
@@ -248,6 +277,7 @@ if (items.length === 0) {
 - [ ] Land Preparation (`/land-preparation`)
 
 ### Components to Update:
+
 - [ ] Navigation
 - [ ] AI Chat Assistant
 - [ ] Weather Dashboard
@@ -267,6 +297,7 @@ if (items.length === 0) {
 ## Color Usage Guidelines
 
 ### When to Use Each Color:
+
 - **Primary (Green)**: Main actions, active states, farming-related content
 - **Secondary**: Supporting actions, neutral states
 - **Success**: Completed tasks, successful operations, healthy crops
@@ -275,6 +306,7 @@ if (items.length === 0) {
 - **Info**: Informational content, tips, neutral notifications
 
 ### Status Color Mapping:
+
 - **Crop Status**: Growing (success), Planted (info), Harvested (success), Failed (destructive)
 - **Task Status**: Completed (success), In Progress (info), Overdue (warning), Cancelled (destructive)
 - **Field Status**: Active (success), Inactive (neutral), Maintenance (warning)

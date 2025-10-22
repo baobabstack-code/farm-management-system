@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { usePullToRefresh, useIsMobile } from "@/hooks/useMobileGestures";
 import WeatherDashboard from "@/components/weather/WeatherDashboard";
 import { PageHeader, LoadingState } from "@/components/ui/farm-theme";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 interface DashboardStats {
   totalCrops: number;
@@ -47,6 +48,7 @@ export default function DashboardPage() {
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const { trackEvent, trackUserAction } = useAnalytics();
 
   const fetchAnalytics = useCallback(async () => {
     try {
@@ -254,35 +256,60 @@ export default function DashboardPage() {
               <div className="farm-card-content">
                 <div className="farm-grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
                   <button
-                    onClick={() => router.push("/ai-companion")}
+                    onClick={() => {
+                      trackUserAction("quick_action_clicked", "dashboard", {
+                        action: "ai_companion",
+                      });
+                      router.push("/ai-companion");
+                    }}
                     className="farm-btn farm-btn-success w-full"
                   >
                     <span className="text-lg">🤖</span>
                     AI Companion
                   </button>
                   <button
-                    onClick={() => router.push("/crops")}
+                    onClick={() => {
+                      trackUserAction("quick_action_clicked", "dashboard", {
+                        action: "manage_crops",
+                      });
+                      router.push("/crops");
+                    }}
                     className="farm-btn farm-btn-success w-full"
                   >
                     <span className="text-lg">🌱</span>
                     Manage Crops
                   </button>
                   <button
-                    onClick={() => router.push("/tasks")}
+                    onClick={() => {
+                      trackUserAction("quick_action_clicked", "dashboard", {
+                        action: "view_tasks",
+                      });
+                      router.push("/tasks");
+                    }}
                     className="farm-btn farm-btn-success w-full"
                   >
                     <span className="text-lg">✅</span>
                     View Tasks
                   </button>
                   <button
-                    onClick={() => router.push("/activities")}
+                    onClick={() => {
+                      trackUserAction("quick_action_clicked", "dashboard", {
+                        action: "log_activity",
+                      });
+                      router.push("/activities");
+                    }}
                     className="farm-btn farm-btn-success w-full"
                   >
                     <span className="text-lg">📋</span>
                     Log Activity
                   </button>
                   <button
-                    onClick={() => router.push("/reports")}
+                    onClick={() => {
+                      trackUserAction("quick_action_clicked", "dashboard", {
+                        action: "view_reports",
+                      });
+                      router.push("/reports");
+                    }}
                     className="farm-btn farm-btn-success w-full"
                   >
                     <span className="text-lg">📈</span>
