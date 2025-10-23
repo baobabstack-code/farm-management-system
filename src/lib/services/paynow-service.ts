@@ -221,7 +221,7 @@ export function convertUSDToZWL(usdAmount: number): number {
   return usdAmount * exchangeRate;
 }
 
-export default {
+const paynowService = {
   createPayment,
   checkPaymentStatus,
   verifyPaymentHash,
@@ -230,3 +230,5 @@ export default {
   convertUSDToZWL,
   FARM_PAYMENT_PACKAGES,
 };
+
+export default paynowService;

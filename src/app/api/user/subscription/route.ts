@@ -20,13 +20,13 @@ export async function GET() {
     const activePayments = await getUserActiveSubscriptions(user.id);
 
     // Find the highest tier active subscription
-    const activePlan = activePayments.find((payment) =>
+    const activePlan = activePayments.find((payment: any) =>
       ["BASIC_PLAN", "PREMIUM_PLAN", "ENTERPRISE_PLAN"].includes(
         payment.packageType
       )
     );
 
-    let subscription = {
+    let subscription: any = {
       isActive: false,
       features: [] as string[],
     };

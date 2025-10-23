@@ -1292,3 +1292,28 @@ enum ActivityType {
   PLANTED
   TREATED
 }
+// Payment Management for Paynow Integration
+model Payment {
+  id              String    @id @default(cuid())
+  userId          String
+  reference       String    @unique
+  paynowReference String?
+  amount          Decimal   @db.Decimal(10,2)
+  currency        String    @default("USD")
+  status          String    @default("pending")
+  packageType     String
+  email           String
+  phone           String?
+  pollUrl         String?
+  redirectUrl     String?
+  hash            String?
+  paidAt          DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([reference])
+  @@index([status])
+  @@index([createdAt])
+  @@map("payments")
+}
