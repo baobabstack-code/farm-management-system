@@ -35,14 +35,18 @@ export async function POST(request: NextRequest) {
     }
 
     // Update payment status in database
-    // You should implement this based on your database schema
-    // await updatePaymentStatus({
-    //   reference,
-    //   paynowReference,
-    //   amount,
-    //   status,
-    //   paidAt: status === "Paid" ? new Date() : null
-    // });
+    try {
+      const { updatePaymentStatus } = await import("@/lib/db/payments");
+      await updatePaymentStatus(reference, {
+        status: status.toLowerCase(),
+        paynowReference,
+        hash,
+        paidAt: status === "Paid" ? new Date() : undefined,
+      });
+    } catch (dbError) {
+      console.error("Database update error:", dbError);
+      // Continue processing even if DB update fails
+    }
 
     // Track successful payment
     if (status === "Paid") {

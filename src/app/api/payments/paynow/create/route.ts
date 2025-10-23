@@ -94,14 +94,24 @@ export async function POST(request: NextRequest) {
         }
       );
 
-      // Store payment record in database (you may want to add this)
-      // await storePaymentRecord({
-      //   userId,
-      //   reference,
-      //   amount: paymentItems.reduce((sum, item) => sum + item.amount, 0),
-      //   packageType: packageType || "custom",
-      //   status: "pending"
-      // });
+      // Store payment record in database
+      try {
+        const { createPaymentRecord } = await import("@/lib/db/payments");
+        await createPaymentRecord({
+          userId: user.id,
+          reference,
+          amount: paymentItems.reduce((sum, item) => sum + item.amount, 0),
+          packageType: packageType || "custom",
+          status: "pending",
+          email,
+          phone,
+          pollUrl: paymentResponse.pollUrl,
+          redirectUrl: paymentResponse.redirectUrl,
+        });
+      } catch (dbError) {
+        console.error("Database error:", dbError);
+        // Continue with payment even if DB fails
+      }
 
       return NextResponse.json({
         success: true,

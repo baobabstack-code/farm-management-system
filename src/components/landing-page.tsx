@@ -452,6 +452,180 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Pricing Section */}
+      <section className="py-20 bg-white dark:bg-slate-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+              Choose Your Plan
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+              Select the perfect plan for your farm management needs. All plans
+              include secure payment processing through Paynow Zimbabwe.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {/* Basic Plan */}
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 p-8 relative">
+              <div className="text-center">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                  Basic Plan
+                </h3>
+                <div className="text-4xl font-bold text-green-600 dark:text-green-400 mb-2">
+                  $25
+                  <span className="text-lg font-normal text-gray-500">
+                    /month
+                  </span>
+                </div>
+                <p className="text-gray-600 dark:text-gray-300 mb-6">
+                  Perfect for small farms
+                </p>
+              </div>
+
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-center text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500 mr-3">✓</span>
+                  Up to 5 fields
+                </li>
+                <li className="flex items-center text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500 mr-3">✓</span>
+                  Basic crop tracking
+                </li>
+                <li className="flex items-center text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500 mr-3">✓</span>
+                  Weather updates
+                </li>
+                <li className="flex items-center text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500 mr-3">✓</span>
+                  Mobile access
+                </li>
+              </ul>
+
+              <Link href="/sign-up?plan=basic" className="block">
+                <Button className="w-full bg-green-600 hover:bg-green-700 text-white py-3">
+                  Get Started
+                </Button>
+              </Link>
+            </div>
+
+            {/* Premium Plan - Most Popular */}
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border-2 border-green-500 p-8 relative transform scale-105">
+              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                <span className="bg-green-500 text-white px-4 py-2 rounded-full text-sm font-semibold">
+                  Most Popular
+                </span>
+              </div>
+
+              <div className="text-center">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                  Premium Plan
+                </h3>
+                <div className="text-4xl font-bold text-green-600 dark:text-green-400 mb-2">
+                  $50
+                  <span className="text-lg font-normal text-gray-500">
+                    /month
+                  </span>
+                </div>
+                <p className="text-gray-600 dark:text-gray-300 mb-6">
+                  For growing operations
+                </p>
+              </div>
+
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-center text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500 mr-3">✓</span>
+                  Unlimited fields
+                </li>
+                <li className="flex items-center text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500 mr-3">✓</span>
+                  Advanced analytics
+                </li>
+                <li className="flex items-center text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500 mr-3">✓</span>
+                  AI recommendations
+                </li>
+                <li className="flex items-center text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500 mr-3">✓</span>
+                  Equipment tracking
+                </li>
+                <li className="flex items-center text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500 mr-3">✓</span>
+                  Priority support
+                </li>
+              </ul>
+
+              <Link href="/sign-up?plan=premium" className="block">
+                <Button className="w-full bg-green-600 hover:bg-green-700 text-white py-3">
+                  Get Started
+                </Button>
+              </Link>
+            </div>
+
+            {/* Enterprise Plan */}
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 p-8 relative">
+              <div className="text-center">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                  Enterprise
+                </h3>
+                <div className="text-4xl font-bold text-green-600 dark:text-green-400 mb-2">
+                  $100
+                  <span className="text-lg font-normal text-gray-500">
+                    /month
+                  </span>
+                </div>
+                <p className="text-gray-600 dark:text-gray-300 mb-6">
+                  For large operations
+                </p>
+              </div>
+
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-center text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500 mr-3">✓</span>
+                  Everything in Premium
+                </li>
+                <li className="flex items-center text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500 mr-3">✓</span>
+                  Multi-farm management
+                </li>
+                <li className="flex items-center text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500 mr-3">✓</span>
+                  Custom integrations
+                </li>
+                <li className="flex items-center text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500 mr-3">✓</span>
+                  Dedicated support
+                </li>
+                <li className="flex items-center text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500 mr-3">✓</span>
+                  API access
+                </li>
+              </ul>
+
+              <Link href="/sign-up?plan=enterprise" className="block">
+                <Button className="w-full bg-green-600 hover:bg-green-700 text-white py-3">
+                  Get Started
+                </Button>
+              </Link>
+            </div>
+          </div>
+
+          {/* Payment Info */}
+          <div className="mt-12 text-center">
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6 max-w-2xl mx-auto">
+              <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                🔒 Secure Payment with Paynow
+              </h4>
+              <p className="text-blue-700 dark:text-blue-300 text-sm">
+                Pay securely using EcoCash, OneMoney, or Visa/Mastercard through
+                Paynow Zimbabwe. All transactions are encrypted and secure.
+                Start with a 7-day free trial!
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Call to Action */}
       <section className="bg-gradient-to-r from-green-600 to-blue-600 py-20">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
@@ -460,15 +634,16 @@ export default function LandingPage() {
           </h2>
           <p className="text-xl text-green-100 mb-8">
             Join thousands of farmers who are already using FarmFlow to increase
-            productivity and reduce costs. Start your free trial today!
+            productivity and reduce costs. Choose your plan and get started
+            today!
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/sign-up">
+            <Link href="/sign-up?plan=premium">
               <Button
                 size="lg"
                 className="bg-white text-green-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold"
               >
-                Start Your Free Trial
+                Start Premium Trial
               </Button>
             </Link>
             <Link href="/sign-in">
