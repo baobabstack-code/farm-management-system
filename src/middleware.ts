@@ -1,6 +1,5 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { isSubscriptionProtectedRoute } from "@/lib/middleware/subscription-middleware";
 
 const isProtectedRoute = createRouteMatcher([
   "/dashboard(.*)",
@@ -25,6 +24,21 @@ const isProtectedRoute = createRouteMatcher([
   "/api/payments(.*)",
 ]);
 
+// Lightweight subscription check - just route matching
+const subscriptionProtectedRoutes = [
+  "/ai-companion",
+  "/reports",
+  "/settings/integrations",
+  "/planning",
+  "/weather",
+];
+
+function isSubscriptionProtectedRoute(pathname: string): boolean {
+  return subscriptionProtectedRoutes.some((route) =>
+    pathname.startsWith(route)
+  );
+}
+
 export default clerkMiddleware(async (auth, req) => {
   const { pathname } = req.nextUrl;
 
@@ -33,41 +47,21 @@ export default clerkMiddleware(async (auth, req) => {
     auth().protect();
   }
 
-  // Skip subscription checks for certain routes
-  const skipSubscriptionCheck = [
-    "/payments",
-    "/api/payments",
-    "/api/user/subscription",
-    "/sign-in",
-    "/sign-up",
-  ].some((route) => pathname.startsWith(route));
-
-  if (skipSubscriptionCheck) {
-    return NextResponse.next();
-  }
-
-  // Check subscription for premium features
+  // For subscription-protected routes, redirect to a server-side check
+  // This avoids importing heavy dependencies in the middleware
   if (isSubscriptionProtectedRoute(pathname)) {
-    try {
-      const { currentUser } = await import("@clerk/nextjs/server");
-      const { SubscriptionService } = await import(
-        "@/lib/services/subscription-service"
-      );
+    const user = auth();
 
-      const user = await currentUser();
+    if (user.userId) {
+      // Add a header to indicate this route needs subscription check
+      const requestHeaders = new Headers(req.headers);
+      requestHeaders.set("x-subscription-check", "true");
 
-      if (user) {
-        const hasAccess = await SubscriptionService.hasAccess(user.id);
-
-        if (!hasAccess) {
-          return NextResponse.redirect(
-            new URL("/payments?expired=true", req.url)
-          );
-        }
-      }
-    } catch (error) {
-      console.error("Subscription check error:", error);
-      // Continue on error to prevent blocking users
+      return NextResponse.next({
+        request: {
+          headers: requestHeaders,
+        },
+      });
     }
   }
 

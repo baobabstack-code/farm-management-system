@@ -23,9 +23,13 @@ export async function GET() {
       SubscriptionPlan.BASIC
     );
 
+    // Check if user has access
+    const hasAccess = await SubscriptionService.hasAccess(user.id);
+
     return NextResponse.json({
       success: true,
       subscription,
+      hasAccess,
     });
   } catch (error) {
     console.error("Subscription check error:", error);
