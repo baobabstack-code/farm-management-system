@@ -12,7 +12,7 @@ export default function LandingPage() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <span className="text-2xl font-bold text-green-600 dark:text-green-400">
-                🌱 FarmFlow
+                🌱 FarmerFlow AI
               </span>
             </div>
             <div className="flex items-center space-x-4">
@@ -186,7 +186,7 @@ export default function LandingPage() {
             </h2>
             <p className="text-xl text-green-100 max-w-3xl mx-auto">
               Join thousands of farmers who have transformed their operations
-              with FarmFlow
+              with FarmerFlow AI
             </p>
           </div>
 
@@ -203,7 +203,7 @@ export default function LandingPage() {
                 </p>
               </div>
               <p className="text-gray-700 dark:text-gray-300 italic">
-                &quot;FarmFlow has revolutionized how I manage my 50-acre
+                &quot;FarmerFlow AI has revolutionized how I manage my 50-acre
                 vegetable farm. The task scheduling and crop tracking features
                 have increased my productivity by 40%!&quot;
               </p>
@@ -246,7 +246,7 @@ export default function LandingPage() {
               </div>
               <p className="text-gray-700 dark:text-gray-300 italic">
                 &quot;Managing multiple crops across 200 acres used to be
-                overwhelming. FarmFlow&apos;s comprehensive system keeps
+                overwhelming. FarmerFlow AI&apos;s comprehensive system keeps
                 everything organized and efficient!&quot;
               </p>
               <div className="flex justify-center mt-4">
@@ -332,7 +332,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-              How FarmFlow Works
+              How FarmerFlow AI Works
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
               Simple, powerful tools designed specifically for modern farming
@@ -633,9 +633,9 @@ export default function LandingPage() {
             Ready to Transform Your Farm?
           </h2>
           <p className="text-xl text-green-100 mb-8">
-            Join thousands of farmers who are already using FarmFlow to increase
-            productivity and reduce costs. Choose your plan and get started
-            today!
+            Join thousands of farmers who are already using FarmerFlow AI to
+            increase productivity and reduce costs. Choose your plan and get
+            started today!
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/payments">
@@ -664,7 +664,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="text-3xl font-bold text-green-400 mb-4">
-              🌱 FarmFlow
+              🌱 FarmerFlow AI
             </div>
             <p className="text-gray-400 mb-6">
               Empowering farmers with smart management solutions
@@ -690,8 +690,8 @@ export default function LandingPage() {
               </Link>
             </div>
             <div className="text-gray-500 text-sm">
-              © 2024 FarmFlow. All rights reserved. | Secure payments powered
-              by Paynow Zimbabwe
+              © 2024 FarmerFlow AI. All rights reserved. | Secure payments
+              powered by Paynow Zimbabwe
             </div>
           </div>
         </div>

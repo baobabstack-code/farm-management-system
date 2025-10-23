@@ -6,7 +6,7 @@ import AnalyticsWrapper from "@/components/analytics";
 import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
-  title: "Farm Management System",
+  title: "FarmerFlow AI",
   description:
     "A comprehensive web-based system for horticulture farm management",
 };
