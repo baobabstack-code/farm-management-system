@@ -57,11 +57,29 @@ export async function POST(request: NextRequest) {
         status: "completed",
       });
 
-      // Here you could also:
-      // 1. Activate user subscription
-      // 2. Send confirmation email
-      // 3. Update user permissions
-      // 4. Log the successful payment
+      // Upgrade user subscription
+      try {
+        const { getPaymentByReference } = await import("@/lib/db/payments");
+        const { SubscriptionService } = await import(
+          "@/lib/services/subscription-service"
+        );
+
+        const payment = await getPaymentByReference(reference);
+
+        if (payment && payment.planType && payment.userId) {
+          await SubscriptionService.upgradeSubscription(
+            payment.userId,
+            payment.planType as any,
+            payment.id
+          );
+
+          console.log(
+            `Subscription upgraded for user ${payment.userId} to ${payment.planType}`
+          );
+        }
+      } catch (subscriptionError) {
+        console.error("Subscription upgrade error:", subscriptionError);
+      }
 
       console.log(`Payment successful: ${reference} - $${amount}`);
     } else {

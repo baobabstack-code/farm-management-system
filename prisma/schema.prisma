@@ -1292,16 +1292,49 @@ enum ActivityType {
   PLANTED
   TREATED
 }
+// Subscription Management
+model UserSubscription {
+  id                String            @id @default(cuid())
+  userId            String            @unique
+  planType          SubscriptionPlan  @default(BASIC)
+  status            SubscriptionStatus @default(TRIAL)
+  trialStartDate    DateTime          @default(now())
+  trialEndDate      DateTime
+  subscriptionStartDate DateTime?
+  subscriptionEndDate   DateTime?
+  currentPeriodStart    DateTime?
+  currentPeriodEnd      DateTime?
+  cancelAtPeriodEnd     Boolean       @default(false)
+  canceledAt            DateTime?
+  isActive              Boolean       @default(true)
+  paymentMethod         String?
+  lastPaymentDate       DateTime?
+  nextBillingDate       DateTime?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+
+  // Relations
+  payments              Payment[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([trialEndDate])
+  @@index([nextBillingDate])
+  @@map("user_subscriptions")
+}
+
 // Payment Management for Paynow Integration
 model Payment {
   id              String    @id @default(cuid())
   userId          String
+  subscriptionId  String?
   reference       String    @unique
   paynowReference String?
   amount          Decimal   @db.Decimal(10,2)
   currency        String    @default("USD")
   status          String    @default("pending")
   packageType     String
+  planType        SubscriptionPlan?
   email           String
   phone           String?
   pollUrl         String?
@@ -1311,9 +1344,28 @@ model Payment {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
+  // Relations
+  subscription    UserSubscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+
   @@index([userId])
+  @@index([subscriptionId])
   @@index([reference])
   @@index([status])
   @@index([createdAt])
   @@map("payments")
+}
+
+// Subscription Plans and Status Enums
+enum SubscriptionPlan {
+  BASIC
+  PROFESSIONAL
+  ENTERPRISE
+}
+
+enum SubscriptionStatus {
+  TRIAL
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  EXPIRED
 }

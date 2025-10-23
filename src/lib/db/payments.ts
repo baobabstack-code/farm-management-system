@@ -9,12 +9,14 @@ const prisma = new PrismaClient();
 export interface PaymentRecord {
   id?: string;
   userId: string;
+  subscriptionId?: string;
   reference: string;
   paynowReference?: string;
   amount: number;
   currency?: string;
   status: "pending" | "paid" | "failed" | "cancelled";
   packageType: string;
+  planType?: "BASIC" | "PROFESSIONAL" | "ENTERPRISE" | null;
   email: string;
   phone?: string;
   pollUrl?: string;
@@ -31,11 +33,13 @@ export async function createPaymentRecord(payment: PaymentRecord) {
     return await prisma.payment.create({
       data: {
         userId: payment.userId,
+        subscriptionId: payment.subscriptionId,
         reference: payment.reference,
         amount: payment.amount,
         currency: payment.currency || "USD",
         status: payment.status,
         packageType: payment.packageType,
+        planType: payment.planType as any,
         email: payment.email,
         phone: payment.phone,
         pollUrl: payment.pollUrl,

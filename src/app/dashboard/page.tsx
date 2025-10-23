@@ -7,6 +7,7 @@ import { usePullToRefresh, useIsMobile } from "@/hooks/useMobileGestures";
 import WeatherDashboard from "@/components/weather/WeatherDashboard";
 import { PageHeader, LoadingState } from "@/components/ui/farm-theme";
 import { useAnalytics } from "@/hooks/use-analytics";
+import SubscriptionStatus from "@/components/subscription/SubscriptionStatus";
 
 interface DashboardStats {
   totalCrops: number;
@@ -100,6 +101,9 @@ export default function DashboardPage() {
           description={`Welcome back, ${user?.firstName || user?.username}! Here's your comprehensive farm overview and key insights.`}
           icon={<span className="text-2xl">📊</span>}
         />
+
+        {/* Subscription Status */}
+        <SubscriptionStatus />
 
         {/* {error && (
           <div className="farm-card border-destructive/20 bg-destructive/5">

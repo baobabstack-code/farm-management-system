@@ -121,9 +121,18 @@ export default function PaymentPlans({
         <h2 className="text-2xl font-bold text-center mb-2">
           Choose Your Plan
         </h2>
-        <p className="text-gray-600 text-center mb-8">
+        <p className="text-gray-600 text-center mb-4">
           Select the perfect plan for your farm management needs
         </p>
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center mb-8">
+          <h3 className="font-semibold text-green-900 mb-1">
+            🎉 7-Day Free Trial Included
+          </h3>
+          <p className="text-green-700 text-sm">
+            All plans include a 7-day free trial. No payment required to start
+            your trial!
+          </p>
+        </div>
 
         <div className="grid md:grid-cols-3 gap-6">
           {plans.map((plan) => (
@@ -144,6 +153,9 @@ export default function PaymentPlans({
                   <span className="text-sm font-normal text-gray-500">
                     /month
                   </span>
+                </div>
+                <div className="text-sm text-green-600 font-medium">
+                  7-day free trial included
                 </div>
                 <p className="text-gray-600">{plan.description}</p>
               </CardHeader>
@@ -172,7 +184,7 @@ export default function PaymentPlans({
                   ) : (
                     <>
                       <CreditCard className="h-4 w-4 mr-2" />
-                      Get Started
+                      Start Free Trial
                     </>
                   )}
                 </Button>

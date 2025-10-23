@@ -1,4 +1,4 @@
-# 💳 **Paynow Payment Integration - FarmFlow**
+# 💳 **Paynow Payment Integration - FarmerFlow**
 
 ## 🎯 **Overview**
 

@@ -97,11 +97,27 @@ export async function POST(request: NextRequest) {
       // Store payment record in database
       try {
         const { createPaymentRecord } = await import("@/lib/db/payments");
+
+        // Map package types to subscription plans
+        const planTypeMapping: {
+          [key: string]: "BASIC" | "PROFESSIONAL" | "ENTERPRISE";
+        } = {
+          BASIC_PLAN: "BASIC",
+          PREMIUM_PLAN: "PROFESSIONAL",
+          ENTERPRISE_PLAN: "ENTERPRISE",
+          PROFESSIONAL_PLAN: "PROFESSIONAL",
+        };
+
         await createPaymentRecord({
           userId: user.id,
           reference,
           amount: paymentItems.reduce((sum, item) => sum + item.amount, 0),
           packageType: packageType || "custom",
+          planType:
+            (planTypeMapping[packageType] as
+              | "BASIC"
+              | "PROFESSIONAL"
+              | "ENTERPRISE") || null,
           status: "pending",
           email,
           phone,
