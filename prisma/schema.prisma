@@ -1308,6 +1308,9 @@ model UserSubscription {
   canceledAt            DateTime?
   isActive              Boolean       @default(true)
   paymentMethod         String?
+  paymentMethodId       String?       // Store payment method reference
+  autoRenew             Boolean       @default(true)
+  requiresPaymentMethod Boolean       @default(true)
   lastPaymentDate       DateTime?
   nextBillingDate       DateTime?
   createdAt             DateTime      @default(now())
@@ -1355,6 +1358,29 @@ model Payment {
   @@map("payments")
 }
 
+// Payment Method Storage
+model UserPaymentMethod {
+  id              String    @id @default(cuid())
+  userId          String
+  type            String    // "card", "mobile_money", etc.
+  provider        String    // "paynow", "stripe", etc.
+  last4           String?   // Last 4 digits for cards
+  expiryMonth     Int?
+  expiryYear      Int?
+  cardBrand       String?   // "visa", "mastercard", etc.
+  phoneNumber     String?   // For mobile money
+  isDefault       Boolean   @default(false)
+  isActive        Boolean   @default(true)
+  providerMethodId String?  // External payment method ID
+  metadata        Json?     // Additional provider-specific data
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([isDefault])
+  @@map("payment_methods")
+}
+
 // Subscription Plans and Status Enums
 enum SubscriptionPlan {
   BASIC
@@ -1368,4 +1394,5 @@ enum SubscriptionStatus {
   PAST_DUE
   CANCELED
   EXPIRED
+  PENDING_PAYMENT_METHOD
 }
