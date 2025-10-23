@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useUser, useClerk } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { ThemeToggle } from "./theme-toggle";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: "📊" },
@@ -44,12 +45,12 @@ export default function Navigation() {
       <div className="lg:hidden fixed top-4 left-4 z-50">
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 active:bg-gray-100 dark:active:bg-gray-600 transition-colors touch-manipulation"
+          className="bg-card p-3 rounded-lg shadow-lg border border-border hover:bg-accent transition-colors touch-manipulation"
           aria-label="Open sidebar"
           aria-expanded={isSidebarOpen}
         >
           <svg
-            className="h-6 w-6 text-gray-600 dark:text-gray-300"
+            className="h-6 w-6 text-foreground"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -75,7 +76,7 @@ export default function Navigation() {
       {/* Sidebar */}
       <div
         className={`
-        fixed inset-y-0 left-0 z-50 w-64 bg-slate-800 shadow-xl border-r border-slate-700 transform transition-transform duration-300 ease-in-out
+        fixed inset-y-0 left-0 z-50 w-64 bg-card shadow-xl border-r border-border transform transition-transform duration-300 ease-in-out
         ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} 
         lg:translate-x-0 lg:static lg:inset-0
       `}
@@ -84,32 +85,35 @@ export default function Navigation() {
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-slate-700">
+          <div className="flex items-center justify-between p-6 border-b border-border">
             <Link href="/dashboard" className="flex items-center space-x-2">
               <span className="text-2xl">🌱</span>
               <div>
-                <h1 className="text-xl font-bold text-white">FarmFlow</h1>
-                <p className="text-sm text-gray-300">Farm Management</p>
+                <h1 className="text-xl font-bold text-foreground">FarmFlow</h1>
+                <p className="text-sm text-muted-foreground">Farm Management</p>
               </div>
             </Link>
-            <button
-              onClick={() => setIsSidebarOpen(false)}
-              className="lg:hidden p-1 rounded-md hover:bg-slate-700"
-            >
-              <svg
-                className="h-5 w-5 text-gray-300"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+            <div className="flex items-center space-x-2">
+              <ThemeToggle />
+              <button
+                onClick={() => setIsSidebarOpen(false)}
+                className="lg:hidden p-1 rounded-md hover:bg-accent"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
+                <svg
+                  className="h-5 w-5 text-muted-foreground"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
 
           {/* Navigation */}
@@ -123,8 +127,8 @@ export default function Navigation() {
                   flex items-center space-x-3 px-4 py-4 rounded-lg text-base font-medium transition-colors touch-manipulation
                   ${
                     pathname === item.href
-                      ? "bg-green-900/20 text-green-300 border-r-4 border-green-600"
-                      : "text-gray-300 hover:bg-slate-700 hover:text-white active:bg-slate-600"
+                      ? "bg-primary/10 text-primary border-r-4 border-primary"
+                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                   }
                 `}
               >
@@ -135,10 +139,10 @@ export default function Navigation() {
           </nav>
 
           {/* User section */}
-          <div className="p-4 border-t border-slate-700">
+          <div className="p-4 border-t border-border">
             <div className="flex items-center space-x-3 mb-4">
-              <div className="w-10 h-10 bg-green-900/20 rounded-full flex items-center justify-center">
-                <span className="text-green-400 font-semibold text-lg">
+              <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                <span className="text-primary font-semibold text-lg">
                   {(
                     user.firstName?.[0] ||
                     user.username?.[0] ||
@@ -147,17 +151,17 @@ export default function Navigation() {
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-white truncate">
+                <p className="text-sm font-medium text-foreground truncate">
                   {user.firstName || user.username || "User"}
                 </p>
-                <p className="text-xs text-gray-300 truncate">
+                <p className="text-xs text-muted-foreground truncate">
                   {user.primaryEmailAddress?.emailAddress}
                 </p>
               </div>
             </div>
             <button
               onClick={handleSignOut}
-              className="w-full flex items-center space-x-2 px-4 py-3 text-base text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 active:bg-gray-200 dark:active:bg-gray-700 rounded-lg transition-colors touch-manipulation"
+              className="w-full flex items-center space-x-2 px-4 py-3 text-base text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-lg transition-colors touch-manipulation"
             >
               <span>🚪</span>
               <span>Sign out</span>

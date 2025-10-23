@@ -3,6 +3,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import LayoutContent from "@/components/layout-content";
 import AnalyticsWrapper from "@/components/analytics";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
   title: "Farm Management System",
@@ -23,17 +24,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className="font-sans antialiased bg-slate-900 text-gray-100">
-        <ClerkProvider
-          signInUrl="/sign-in"
-          signUpUrl="/sign-up"
-          signInForceRedirectUrl="/dashboard"
-          signUpForceRedirectUrl="/dashboard"
-        >
-          <LayoutContent>{children}</LayoutContent>
-          <AnalyticsWrapper />
-        </ClerkProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className="font-sans antialiased bg-background text-foreground">
+        <ThemeProvider defaultTheme="light" storageKey="farmflow-theme">
+          <ClerkProvider
+            signInUrl="/sign-in"
+            signUpUrl="/sign-up"
+            signInForceRedirectUrl="/dashboard"
+            signUpForceRedirectUrl="/dashboard"
+          >
+            <LayoutContent>{children}</LayoutContent>
+            <AnalyticsWrapper />
+          </ClerkProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

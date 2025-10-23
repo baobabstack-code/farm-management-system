@@ -130,11 +130,11 @@
   }
 
   body {
-    @apply bg-slate-900 text-gray-100;
+    @apply bg-background text-foreground;
   }
 
   html {
-    @apply bg-slate-900;
+    @apply bg-background;
   }
 }
 
