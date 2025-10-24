@@ -23,7 +23,7 @@ export default function LandingPage() {
                 Sign In
               </Link>
               <Link href="/payments">
-                <Button className="bg-green-600 hover:bg-green-700 text-white">
+                <Button className="bg-green-600 hover:bg-green-700 text-white flex justify-center items-center px-8 py-3">
                   Get Started
                 </Button>
               </Link>
@@ -52,7 +52,7 @@ export default function LandingPage() {
                 <Link href="/payments">
                   <Button
                     size="lg"
-                    className="btn-enhanced bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 px-8 py-4 text-lg shadow-lg hover:shadow-xl"
+                    className="btn-enhanced bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 flex justify-center items-center px-8 py-3 text-lg shadow-lg hover:shadow-xl"
                   >
                     Start Free Trial
                   </Button>
@@ -61,7 +61,7 @@ export default function LandingPage() {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="btn-enhanced px-8 py-4 text-lg border-green-600 dark:border-green-400 text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-slate-800 focus:ring-green-500"
+                    className="btn-enhanced flex justify-center items-center px-8 py-3 text-lg border-green-600 dark:border-green-400 text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-slate-800 focus:ring-green-500"
                   >
                     Sign In
                   </Button>
@@ -503,7 +503,7 @@ export default function LandingPage() {
               </ul>
 
               <Link href="/payments" className="block">
-                <Button className="w-full bg-green-600 hover:bg-green-700 text-white py-3">
+                <Button className="w-full bg-green-600 hover:bg-green-700 text-white flex justify-center items-center py-3">
                   Get Started
                 </Button>
               </Link>
@@ -549,14 +549,10 @@ export default function LandingPage() {
                   <span className="text-green-500 mr-3">✓</span>
                   Equipment tracking
                 </li>
-                <li className="flex items-center text-gray-700 dark:text-gray-300">
-                  <span className="text-green-500 mr-3">✓</span>
-                  Priority support
-                </li>
               </ul>
 
               <Link href="/payments" className="block">
-                <Button className="w-full bg-green-600 hover:bg-green-700 text-white py-3">
+                <Button className="w-full bg-green-600 hover:bg-green-700 text-white flex justify-center items-center py-3">
                   Get Started
                 </Button>
               </Link>
@@ -603,7 +599,7 @@ export default function LandingPage() {
               </ul>
 
               <Link href="/payments" className="block">
-                <Button className="w-full bg-green-600 hover:bg-green-700 text-white py-3">
+                <Button className="w-full bg-green-600 hover:bg-green-700 text-white flex justify-center items-center py-3">
                   Get Started
                 </Button>
               </Link>
@@ -637,20 +633,20 @@ export default function LandingPage() {
             increase productivity and reduce costs. Choose your plan and get
             started today!
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/payments">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Link href="/payments" className="inline-block">
               <Button
                 size="lg"
-                className="btn-enhanced bg-white text-green-600 hover:bg-gray-100 focus:ring-green-500 px-8 py-4 text-lg shadow-lg hover:shadow-xl"
+                className="bg-white text-green-700 hover:bg-green-50 focus:ring-4 focus:ring-white/50 px-8 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border-2 border-white inline-flex items-center justify-center"
               >
                 Choose Your Plan
               </Button>
             </Link>
-            <Link href="/sign-in">
+            <Link href="/sign-in" className="inline-block">
               <Button
                 size="lg"
                 variant="outline"
-                className="btn-enhanced border-white text-white hover:bg-white hover:text-green-600 px-8 py-4 text-lg"
+                className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-green-700 px-8 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 inline-flex items-center justify-center"
               >
                 Sign In
               </Button>

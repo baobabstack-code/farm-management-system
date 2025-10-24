@@ -203,7 +203,7 @@ export default function AIChatAssistant() {
   return (
     <>
       {/* Chat Trigger Button */}
-      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
+      <div className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-chat-button lg:bottom-6">
         <button
           onClick={() => setIsOpen(!isOpen)}
           className={`bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white rounded-full p-3 sm:p-4 shadow-lg transition-all duration-300 transform hover:scale-110 touch-manipulation ${
@@ -252,7 +252,7 @@ export default function AIChatAssistant() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed inset-4 sm:bottom-24 sm:right-6 sm:inset-auto sm:w-96 sm:h-[32rem] bg-white dark:bg-slate-800 rounded-lg shadow-2xl border border-gray-200 dark:border-slate-600 flex flex-col z-50">
+        <div className="fixed inset-4 bottom-24 sm:bottom-24 sm:right-6 sm:inset-auto sm:w-96 sm:h-[32rem] bg-white dark:bg-slate-800 rounded-lg shadow-2xl border border-gray-200 dark:border-slate-600 flex flex-col z-chat-window">
           {/* Header */}
           <div className="bg-gradient-to-r from-green-500 to-blue-600 text-white p-3 sm:p-4 rounded-t-lg flex items-center justify-between mobile-safe-area">
             <div className="flex items-center space-x-2">

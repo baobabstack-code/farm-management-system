@@ -42,7 +42,7 @@ export default function Navigation() {
   return (
     <>
       {/* Mobile menu button */}
-      <div className="lg:hidden fixed top-4 left-4 z-50">
+      <div className="lg:hidden fixed top-4 left-4 z-nav-button">
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
           className="bg-card p-3 rounded-lg shadow-lg border border-border hover:bg-accent transition-colors touch-manipulation"
@@ -68,7 +68,7 @@ export default function Navigation() {
       {/* Sidebar overlay for mobile */}
       {isSidebarOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-nav-overlay"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
@@ -76,7 +76,7 @@ export default function Navigation() {
       {/* Sidebar */}
       <div
         className={`
-        fixed inset-y-0 left-0 z-50 w-64 bg-card shadow-xl border-r border-border transform transition-transform duration-300 ease-in-out
+        fixed inset-y-0 left-0 z-nav-sidebar w-64 bg-card shadow-xl border-r border-border transform transition-transform duration-300 ease-in-out
         ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} 
         lg:translate-x-0 lg:static lg:inset-0
       `}

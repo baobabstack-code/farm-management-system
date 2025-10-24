@@ -668,7 +668,7 @@
   }
 
   .mobile-header-spacing {
-    @apply pt-16 lg:pt-0;
+    @apply pt-20 lg:pt-0;
   }
 
   /* Mobile form utilities */
@@ -866,5 +866,55 @@
 
   .margin-responsive-x {
     @apply mx-4 sm:mx-6 lg:mx-8;
+  }
+
+  /* === Z-INDEX HIERARCHY === */
+  /* Establish consistent z-index layers to prevent overlapping */
+
+  /* Base layer: 0 - Normal content */
+
+  /* Navigation layer: 40-49 */
+  .z-nav-overlay {
+    z-index: 40;
+  }
+
+  .z-nav-sidebar {
+    z-index: 45;
+  }
+
+  .z-nav-button {
+    z-index: 46;
+  }
+
+  /* UI Elements layer: 50-59 */
+  .z-dropdown {
+    z-index: 50;
+  }
+
+  .z-modal-overlay {
+    z-index: 55;
+  }
+
+  .z-modal {
+    z-index: 56;
+  }
+
+  /* Chat Assistant layer: 60-69 */
+  .z-chat-button {
+    z-index: 60;
+  }
+
+  .z-chat-window {
+    z-index: 61;
+  }
+
+  /* Notifications layer: 70-79 */
+  .z-toast {
+    z-index: 100;
+  }
+
+  /* Critical overlays: 80+ */
+  .z-critical {
+    z-index: 999;
   }
 }
