@@ -19,8 +19,6 @@ const navigation = [
   { name: "Tasks", href: "/tasks", icon: "✅" },
   { name: "Activities", href: "/activities", icon: "📋" },
   { name: "Reports", href: "/reports", icon: "📈" },
-  { name: "Payments", href: "/payments", icon: "💳" },
-  { name: "Subscription", href: "/subscription", icon: "📋" },
   { name: "Settings", href: "/settings", icon: "⚙️" },
   { name: "Profile", href: "/profile", icon: "👤" },
 ];

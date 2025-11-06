@@ -22,7 +22,7 @@ export default function LandingPage() {
               >
                 Sign In
               </Link>
-              <Link href="/payments">
+              <Link href="/dashboard">
                 <Button className="bg-green-600 hover:bg-green-700 text-white flex justify-center items-center px-8 py-3">
                   Get Started
                 </Button>
@@ -49,7 +49,7 @@ export default function LandingPage() {
                 and boost your productivity with data-driven insights.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <Link href="/payments">
+                <Link href="/dashboard">
                   <Button
                     size="lg"
                     className="btn-enhanced bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 flex justify-center items-center px-8 py-3 text-lg shadow-lg hover:shadow-xl"
@@ -460,8 +460,7 @@ export default function LandingPage() {
               Choose Your Plan
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Select the perfect plan for your farm management needs. All plans
-              include secure payment processing through Paynow Zimbabwe.
+              Select the perfect plan for your farm management needs.
             </p>
           </div>
 
@@ -502,7 +501,7 @@ export default function LandingPage() {
                 </li>
               </ul>
 
-              <Link href="/payments" className="block">
+              <Link href="/dashboard" className="block">
                 <Button className="w-full bg-green-600 hover:bg-green-700 text-white flex justify-center items-center py-3">
                   Get Started
                 </Button>
@@ -551,7 +550,7 @@ export default function LandingPage() {
                 </li>
               </ul>
 
-              <Link href="/payments" className="block">
+              <Link href="/dashboard" className="block">
                 <Button className="w-full bg-green-600 hover:bg-green-700 text-white flex justify-center items-center py-3">
                   Get Started
                 </Button>
@@ -598,25 +597,11 @@ export default function LandingPage() {
                 </li>
               </ul>
 
-              <Link href="/payments" className="block">
+              <Link href="/dashboard" className="block">
                 <Button className="w-full bg-green-600 hover:bg-green-700 text-white flex justify-center items-center py-3">
                   Get Started
                 </Button>
               </Link>
-            </div>
-          </div>
-
-          {/* Payment Info */}
-          <div className="mt-12 text-center">
-            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6 max-w-2xl mx-auto">
-              <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
-                🔒 Secure Payment with Paynow
-              </h4>
-              <p className="text-blue-700 dark:text-blue-300 text-sm">
-                Pay securely using EcoCash, OneMoney, or Visa/Mastercard through
-                Paynow Zimbabwe. All transactions are encrypted and secure.
-                Start with a 7-day free trial!
-              </p>
             </div>
           </div>
         </div>
@@ -634,7 +619,7 @@ export default function LandingPage() {
             started today!
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link href="/payments" className="inline-block">
+            <Link href="/dashboard" className="inline-block">
               <Button
                 size="lg"
                 className="bg-white text-green-700 hover:bg-green-50 focus:ring-4 focus:ring-white/50 px-8 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border-2 border-white inline-flex items-center justify-center"
@@ -667,7 +652,7 @@ export default function LandingPage() {
             </p>
             <div className="flex justify-center space-x-6 mb-8">
               <Link
-                href="/payments"
+                href="/dashboard"
                 className="text-gray-400 hover:text-green-400 transition-colors"
               >
                 Pricing
@@ -679,15 +664,14 @@ export default function LandingPage() {
                 Sign In
               </Link>
               <Link
-                href="/payments"
+                href="/dashboard"
                 className="text-gray-400 hover:text-green-400 transition-colors"
               >
                 Get Started
               </Link>
             </div>
             <div className="text-gray-500 text-sm">
-              © 2024 FarmerFlow AI. All rights reserved. | Secure payments
-              powered by Paynow Zimbabwe
+              © 2024 FarmerFlow AI. All rights reserved.
             </div>
           </div>
         </div>

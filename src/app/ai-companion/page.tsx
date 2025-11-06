@@ -8,7 +8,7 @@ import WeatherInsightsCard from "@/components/ai/WeatherInsightsCard";
 import CropRecommendationsCard from "@/components/ai/CropRecommendationsCard";
 import FinancialInsightsCard from "@/components/ai/FinancialInsightsCard";
 import { useAnalytics } from "@/hooks/use-analytics";
-import { useSubscriptionGuard } from "@/lib/hooks/use-subscription-guard";
+
 import {
   PageHeader,
   LoadingState,
@@ -22,7 +22,6 @@ export default function AICompanionPage() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
   const { trackAIUsage, trackUserAction } = useAnalytics();
-  const subscriptionStatus = useSubscriptionGuard();
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -33,7 +32,7 @@ export default function AICompanionPage() {
     }
   }, [user, isLoaded, router]);
 
-  if (!isLoaded || subscriptionStatus.loading) {
+  if (!isLoaded) {
     return <LoadingState message="Loading AI Companion..." />;
   }
 

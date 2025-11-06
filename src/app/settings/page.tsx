@@ -43,12 +43,7 @@ export default function SettingsPage() {
       icon: <Shield className="w-6 h-6" />,
       href: "/settings/security",
     },
-    {
-      title: "Billing & Subscription",
-      description: "Manage your subscription and payment methods",
-      icon: <CreditCard className="w-6 h-6" />,
-      href: "/settings/billing",
-    },
+
     {
       title: "Data & Privacy",
       description: "Export data, privacy settings, and data management",

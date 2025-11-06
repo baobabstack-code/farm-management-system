@@ -19,15 +19,7 @@ export default function IntegrationsPage() {
       status: "available",
       component: <QuickBooksIntegration />,
     },
-    {
-      name: "Stripe",
-      description:
-        "Accept payments and manage financial transactions directly from your farm management system.",
-      logo: "💳",
-      category: "Payments",
-      status: "coming-soon",
-      component: null,
-    },
+
     {
       name: "Weather API",
       description:
