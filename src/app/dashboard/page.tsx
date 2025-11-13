@@ -101,7 +101,7 @@ export default function DashboardPage() {
           icon={<span className="text-2xl">📊</span>}
         />
 
-        {/* {error && (
+        {error && (
           <div className="farm-card border-destructive/20 bg-destructive/5">
             <div className="flex-center gap-content padding-responsive">
               <div className="flex-center w-10 h-10 bg-destructive/10 rounded-full">
@@ -110,7 +110,7 @@ export default function DashboardPage() {
               <span className="text-destructive font-medium">{error}</span>
             </div>
           </div>
-        )} */}
+        )}
 
         {analytics && (
           <React.Fragment>
