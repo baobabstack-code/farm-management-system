@@ -71,7 +71,8 @@ const getHapticInterface = (): HapticFeedback | null => {
 
 // Trigger haptic feedback
 export const triggerHapticFeedback = (
-  type: HapticFeedbackType = "light"
+  type: HapticFeedbackType = "light",
+  notificationType: "success" | "warning" | "error" = "success"
 ): void => {
   if (!isHapticFeedbackAvailable()) return;
 
@@ -122,7 +123,7 @@ export const triggerHapticFeedback = (
 
       case "notification":
         if (hapticInterface.notificationOccurred) {
-          hapticInterface.notificationOccurred("success");
+          hapticInterface.notificationOccurred(notificationType);
         } else if (hapticInterface.vibrate) {
           hapticInterface.vibrate([100, 50, 100, 50, 100]);
         }
@@ -146,13 +147,16 @@ export const hapticFeedback = {
   tap: () => triggerHapticFeedback("selection"),
 
   // For successful actions
-  success: () => triggerHapticFeedback("notification"),
+  success: () => triggerHapticFeedback("notification", "success"),
+
+  // For warnings
+  warning: () => triggerHapticFeedback("notification", "warning"),
+
+  // For errors
+  error: () => triggerHapticFeedback("notification", "error"),
 
   // For confirmations and important actions
   impact: () => triggerHapticFeedback("impact"),
-
-  // For errors and warnings
-  error: () => triggerHapticFeedback("heavy"),
 
   // For subtle feedback
   subtle: () => triggerHapticFeedback("light"),
