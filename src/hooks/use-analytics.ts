@@ -3,9 +3,9 @@
  * Provides easy-to-use analytics functions for React components
  */
 
-import { useEffect, useCallback } from "react";
+import { useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { analytics, FarmAnalyticsEvent } from "@/lib/analytics";
+import analytics, { FarmAnalyticsEvent } from "@/lib/analytics";
 
 /**
  * Hook for tracking analytics events in React components
@@ -24,82 +24,36 @@ export function useAnalytics() {
     }
   }, [pathname]);
 
-  // Memoized tracking functions
-  const trackEvent = useCallback(
-    (event: FarmAnalyticsEvent, properties?: Record<string, any>) => {
-      analytics.track(event, properties);
-    },
-    []
-  );
-
-  const trackUserAction = useCallback(
-    (action: string, category: string, properties?: Record<string, any>) => {
-      analytics.userAction(action, category, properties);
-    },
-    []
-  );
-
-  const trackAIUsage = useCallback(
-    (
-      feature:
-        | "crop_recommendations"
-        | "weather_insights"
-        | "financial_insights"
-        | "chat_assistant",
-      properties?: Record<string, any>
-    ) => {
-      analytics.aiUsage(feature, properties);
-    },
-    []
-  );
-
-  const trackEquipment = useCallback(
-    (
-      eventType: "added" | "maintenance" | "repair" | "usage",
-      equipmentType: string,
-      properties?: Record<string, any>
-    ) => {
-      analytics.equipment(eventType, equipmentType, properties);
-    },
-    []
-  );
-
-  const trackFinancial = useCallback(
-    (
-      transactionType: "income" | "expense" | "investment",
-      amount: number,
-      category: string,
-      properties?: Record<string, any>
-    ) => {
-      analytics.financial(transactionType, amount, category, properties);
-    },
-    []
-  );
-
   return {
-    trackEvent,
-    trackUserAction,
-    trackAIUsage,
-    trackEquipment,
-    trackFinancial,
-    // Convenience methods
+    trackEvent: analytics.track,
+    trackUserAction: analytics.userAction,
+    trackAIUsage: analytics.aiUsage,
+    trackEquipment: analytics.equipment,
+    trackFinancial: analytics.financial,
+    // Convenience methods - these can remain as they provide specific event structures
     trackCropCreated: (cropType: string, fieldId?: string) =>
-      trackEvent("crop_created", { crop_type: cropType, field_id: fieldId }),
+      analytics.track("crop_created", {
+        crop_type: cropType,
+        field_id: fieldId,
+      }),
 
     trackTaskCompleted: (taskType: string, duration?: number) =>
-      trackEvent("task_completed", {
+      analytics.track("task_completed", {
         task_type: taskType,
         duration_minutes: duration,
       }),
 
     trackReportGenerated: (reportType: string, filters?: Record<string, any>) =>
-      trackEvent("report_generated", { report_type: reportType, ...filters }),
+      analytics.track("report_generated", {
+        report_type: reportType,
+        ...filters,
+      }),
 
     trackWeatherViewed: (location?: string) =>
-      trackEvent("weather_viewed", { location }),
+      analytics.track("weather_viewed", { location }),
 
     trackSettingsUpdated: (settingCategory: string) =>
-      trackEvent("settings_updated", { category: settingCategory }),
+      analytics.track("settings_updated", { category: settingCategory }),
   };
 }
 
@@ -107,7 +61,8 @@ export function useAnalytics() {
  * Hook for tracking component mount/unmount and interaction time
  */
 export function useComponentAnalytics(componentName: string) {
-  const { trackUserAction } = useAnalytics();
+  // Directly use analytics.userAction
+  const trackUserAction = analytics.userAction;
 
   useEffect(() => {
     const startTime = Date.now();
@@ -125,16 +80,16 @@ export function useComponentAnalytics(componentName: string) {
     };
   }, [componentName, trackUserAction]);
 
-  const trackInteraction = useCallback(
-    (interactionType: string, details?: Record<string, any>) => {
-      trackUserAction("component_interaction", "ui", {
-        component: componentName,
-        interaction: interactionType,
-        ...details,
-      });
-    },
-    [componentName, trackUserAction]
-  );
+  const trackInteraction = (
+    interactionType: string,
+    details?: Record<string, any>
+  ) => {
+    trackUserAction("component_interaction", "ui", {
+      component: componentName,
+      interaction: interactionType,
+      ...details,
+    });
+  };
 
   return { trackInteraction };
 }
@@ -143,44 +98,39 @@ export function useComponentAnalytics(componentName: string) {
  * Hook for tracking form analytics
  */
 export function useFormAnalytics(formName: string) {
-  const { trackUserAction } = useAnalytics();
+  // Directly use analytics.userAction
+  const trackUserAction = analytics.userAction;
 
-  const trackFormStart = useCallback(() => {
+  const trackFormStart = () => {
     trackUserAction("form_started", "form", { form_name: formName });
-  }, [formName, trackUserAction]);
+  };
 
-  const trackFormSubmit = useCallback(
-    (success: boolean, errors?: string[]) => {
-      trackUserAction("form_submitted", "form", {
-        form_name: formName,
-        success,
-        error_count: errors?.length || 0,
-        errors: errors?.join(", "),
-      });
-    },
-    [formName, trackUserAction]
-  );
+  const trackFormSubmit = (success: boolean, errors?: string[]) => {
+    trackUserAction("form_submitted", "form", {
+      form_name: formName,
+      success,
+      error_count: errors?.length || 0,
+      errors: errors?.join(", "),
+    });
+  };
 
-  const trackFormAbandoned = useCallback(
-    (completionPercentage: number) => {
-      trackUserAction("form_abandoned", "form", {
-        form_name: formName,
-        completion_percentage: completionPercentage,
-      });
-    },
-    [formName, trackUserAction]
-  );
+  const trackFormAbandoned = (completionPercentage: number) => {
+    trackUserAction("form_abandoned", "form", {
+      form_name: formName,
+      completion_percentage: completionPercentage,
+    });
+  };
 
-  const trackFieldInteraction = useCallback(
-    (fieldName: string, action: "focus" | "blur" | "change") => {
-      trackUserAction("form_field_interaction", "form", {
-        form_name: formName,
-        field_name: fieldName,
-        action,
-      });
-    },
-    [formName, trackUserAction]
-  );
+  const trackFieldInteraction = (
+    fieldName: string,
+    action: "focus" | "blur" | "change"
+  ) => {
+    trackUserAction("form_field_interaction", "form", {
+      form_name: formName,
+      field_name: fieldName,
+      action,
+    });
+  };
 
   return {
     trackFormStart,
@@ -194,40 +144,40 @@ export function useFormAnalytics(formName: string) {
  * Hook for tracking search and filter analytics
  */
 export function useSearchAnalytics() {
-  const { trackUserAction } = useAnalytics();
+  // Directly use analytics.userAction
+  const trackUserAction = analytics.userAction;
 
-  const trackSearch = useCallback(
-    (query: string, resultsCount: number, category?: string) => {
-      trackUserAction("search_performed", "search", {
-        query,
-        results_count: resultsCount,
-        category,
-        query_length: query.length,
-      });
-    },
-    [trackUserAction]
-  );
+  const trackSearch = (
+    query: string,
+    resultsCount: number,
+    category?: string
+  ) => {
+    trackUserAction("search_performed", "search", {
+      query,
+      results_count: resultsCount,
+      category,
+      query_length: query.length,
+    });
+  };
 
-  const trackFilter = useCallback(
-    (filterType: string, filterValue: string, resultsCount: number) => {
-      trackUserAction("filter_applied", "search", {
-        filter_type: filterType,
-        filter_value: filterValue,
-        results_count: resultsCount,
-      });
-    },
-    [trackUserAction]
-  );
+  const trackFilter = (
+    filterType: string,
+    filterValue: string,
+    resultsCount: number
+  ) => {
+    trackUserAction("filter_applied", "search", {
+      filter_type: filterType,
+      filter_value: filterValue,
+      results_count: resultsCount,
+    });
+  };
 
-  const trackSort = useCallback(
-    (sortBy: string, sortOrder: "asc" | "desc") => {
-      trackUserAction("sort_applied", "search", {
-        sort_by: sortBy,
-        sort_order: sortOrder,
-      });
-    },
-    [trackUserAction]
-  );
+  const trackSort = (sortBy: string, sortOrder: "asc" | "desc") => {
+    trackUserAction("sort_applied", "search", {
+      sort_by: sortBy,
+      sort_order: sortOrder,
+    });
+  };
 
   return {
     trackSearch,

@@ -32,8 +32,7 @@ export default function CropRecommendationsCard() {
   });
   const [error, setError] = useState("");
 
-  const cropRecommendationsEnabled =
-    useFeatureFlag("aiCropRecommendations") || true;
+  const cropRecommendationsEnabled = useFeatureFlag("aiCropRecommendations");
 
   useEffect(() => {
     if (cropRecommendationsEnabled) {

@@ -5,7 +5,13 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { usePullToRefresh, useIsMobile } from "@/hooks/useMobileGestures";
 import WeatherDashboard from "@/components/weather/WeatherDashboard";
-import { PageHeader, LoadingState } from "@/components/ui/farm-theme";
+import {
+  PageHeader,
+  LoadingState,
+  PageContainer,
+} from "@/components/ui/farm-theme";
+import AIInsightsCard from "@/components/ai/AIInsightsCard";
+import CropRecommendationsCard from "@/components/ai/CropRecommendationsCard";
 import { useAnalytics } from "@/hooks/use-analytics";
 
 interface DashboardStats {
@@ -50,6 +56,15 @@ export default function DashboardPage() {
   const [error, setError] = useState("");
   const { trackEvent, trackUserAction } = useAnalytics();
 
+  // TODO: These values should come from user/farm settings
+  const [farmLatitude, setFarmLatitude] = useState(40.7128); // Example: New York City
+  const [farmLongitude, setFarmLongitude] = useState(-74.006);
+  const [farmLocation, setFarmLocation] = useState("New York, NY");
+
+  useEffect(() => {
+    trackEvent("dashboard_viewed"); // Track dashboard view when component mounts
+  }, [trackEvent]);
+
   const fetchAnalytics = useCallback(async () => {
     try {
       const response = await fetch("/api/analytics");
@@ -89,238 +104,245 @@ export default function DashboardPage() {
   }
 
   return (
-    <div
+    <PageContainer
       ref={isMobile ? pullToRefresh.elementRef : null}
-      className="page-container"
+      className={isMobile ? "pull-to-refresh-container" : ""} // Add a class if needed for mobile specific styling
     >
       {isMobile && pullToRefresh.refreshIndicator}
-      <div className="content-container padding-responsive-lg mobile-header-spacing content-spacing">
-        <PageHeader
-          title="Farm Management Dashboard"
-          description={`Welcome back, ${user?.firstName || user?.username}! Here's your comprehensive farm overview and key insights.`}
-          icon={<span className="text-2xl">📊</span>}
-        />
+      {/* The content-container padding-responsive-lg mobile-header-spacing content-spacing are handled by PageContainer */}
+      <PageHeader
+        title="Farm Management Dashboard"
+        description={`Welcome back, ${user?.firstName || user?.username}! Here's your comprehensive farm overview and key insights.`}
+        icon={<span className="text-2xl">📊</span>}
+      />
 
-        {error && (
-          <div className="farm-card border-destructive/20 bg-destructive/5">
-            <div className="flex-center gap-content padding-responsive">
-              <div className="flex-center w-10 h-10 bg-destructive/10 rounded-full">
-                <span className="text-destructive text-lg">⚠️</span>
+      {error && (
+        <div className="farm-card border-destructive/20 bg-destructive/5">
+          <div className="flex-center gap-content padding-responsive">
+            <div className="flex-center w-10 h-10 bg-destructive/10 rounded-full">
+              <span className="text-destructive text-lg">⚠️</span>
+            </div>
+            <span className="text-destructive font-medium">{error}</span>
+          </div>
+        </div>
+      )}
+
+      {analytics && (
+        <React.Fragment>
+          {/* Key Metrics */}
+          <div className="stats-container">
+            <div className="stat-card">
+              <div className="flex-start gap-content">
+                <div className="w-12 h-12 bg-gradient-to-br from-success to-success/80 rounded-xl flex-center shadow-sm">
+                  <span className="text-white text-xl">🌱</span>
+                </div>
+                <div className="flex-1">
+                  <p className="stat-label">Total Crops</p>
+                  <p className="stat-value">{analytics.dashboard.totalCrops}</p>
+                </div>
               </div>
-              <span className="text-destructive font-medium">{error}</span>
+            </div>
+
+            <div className="stat-card">
+              <div className="flex-start gap-content">
+                <div className="w-12 h-12 bg-gradient-to-br from-info to-info/80 rounded-xl flex-center shadow-sm">
+                  <span className="text-white text-xl">📋</span>
+                </div>
+                <div className="flex-1">
+                  <p className="stat-label">Active Tasks</p>
+                  <p className="stat-value">
+                    {analytics.dashboard.activeTasks}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="stat-card">
+              <div className="flex-start gap-content">
+                <div className="w-12 h-12 bg-gradient-to-br from-warning to-warning/80 rounded-xl flex-center shadow-sm">
+                  <span className="text-white text-xl">⚠️</span>
+                </div>
+                <div className="flex-1">
+                  <p className="stat-label">Overdue Tasks</p>
+                  <p className="stat-value">
+                    {analytics.dashboard.overdueTasks}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="stat-card">
+              <div className="flex-start gap-content">
+                <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary-hover rounded-xl flex-center shadow-sm">
+                  <span className="text-white text-xl">🌾</span>
+                </div>
+                <div className="flex-1">
+                  <p className="stat-label">Total Yield</p>
+                  <p className="stat-value">
+                    {analytics.dashboard.totalYield.toFixed(1)} kg
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
-        )}
 
-        {analytics && (
-          <React.Fragment>
-            {/* Key Metrics */}
-            <div className="stats-container">
-              <div className="stat-card">
-                <div className="flex-start gap-content">
-                  <div className="w-12 h-12 bg-gradient-to-br from-success to-success/80 rounded-xl flex-center shadow-sm">
-                    <span className="text-white text-xl">🌱</span>
-                  </div>
-                  <div className="flex-1">
-                    <p className="stat-label">Total Crops</p>
-                    <p className="stat-value">
-                      {analytics.dashboard.totalCrops}
-                    </p>
-                  </div>
-                </div>
-              </div>
+          {/* AI Insights */}
+          <AIInsightsCard />
 
-              <div className="stat-card">
-                <div className="flex-start gap-content">
-                  <div className="w-12 h-12 bg-gradient-to-br from-info to-info/80 rounded-xl flex-center shadow-sm">
-                    <span className="text-white text-xl">📋</span>
-                  </div>
-                  <div className="flex-1">
-                    <p className="stat-label">Active Tasks</p>
-                    <p className="stat-value">
-                      {analytics.dashboard.activeTasks}
-                    </p>
-                  </div>
-                </div>
-              </div>
+          {/* Crop Recommendations */}
+          <CropRecommendationsCard />
 
-              <div className="stat-card">
-                <div className="flex-start gap-content">
-                  <div className="w-12 h-12 bg-gradient-to-br from-warning to-warning/80 rounded-xl flex-center shadow-sm">
-                    <span className="text-white text-xl">⚠️</span>
-                  </div>
-                  <div className="flex-1">
-                    <p className="stat-label">Overdue Tasks</p>
-                    <p className="stat-value">
-                      {analytics.dashboard.overdueTasks}
-                    </p>
-                  </div>
-                </div>
-              </div>
+          {/* Weather Dashboard */}
+          <WeatherDashboard
+            latitude={farmLatitude}
+            longitude={farmLongitude}
+            location={farmLocation}
+          />
 
-              <div className="stat-card">
-                <div className="flex-start gap-content">
-                  <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary-hover rounded-xl flex-center shadow-sm">
-                    <span className="text-white text-xl">🌾</span>
-                  </div>
-                  <div className="flex-1">
-                    <p className="stat-label">Total Yield</p>
-                    <p className="stat-value">
-                      {analytics.dashboard.totalYield.toFixed(1)} kg
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Weather Dashboard */}
-            <WeatherDashboard />
-
-            {/* Activity Summary */}
-            <div className="farm-grid grid-cols-1 lg:grid-cols-2">
-              <div className="farm-card">
-                <div className="farm-card-header">
-                  <div className="icon-text">
-                    <div className="w-10 h-10 bg-gradient-to-br from-info to-info/80 rounded-lg flex-center">
-                      <span className="text-white text-lg">💧</span>
-                    </div>
-                    <h3 className="farm-heading-card">Resource Usage</h3>
-                  </div>
-                </div>
-                <div className="farm-card-content">
-                  <div className="flex-between py-2">
-                    <span className="farm-text-muted">Water Usage</span>
-                    <span className="farm-text-body font-semibold">
-                      {analytics.water.totalWater.toFixed(1)} L
-                    </span>
-                  </div>
-                  <div className="flex-between py-2">
-                    <span className="farm-text-muted">Irrigation Sessions</span>
-                    <span className="farm-text-body font-semibold">
-                      {analytics.water.sessionCount}
-                    </span>
-                  </div>
-                  <div className="flex-between py-2">
-                    <span className="farm-text-muted">
-                      Fertilizer Applications
-                    </span>
-                    <span className="farm-text-body font-semibold">
-                      {analytics.fertilizer.applicationCount}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="farm-card">
-                <div className="farm-card-header">
-                  <div className="icon-text">
-                    <div className="w-10 h-10 bg-gradient-to-br from-warning to-warning/80 rounded-lg flex-center">
-                      <span className="text-white text-lg">🌡️</span>
-                    </div>
-                    <h3 className="farm-heading-card">Health & Issues</h3>
-                  </div>
-                </div>
-                <div className="farm-card-content">
-                  <div className="flex-between py-2">
-                    <span className="farm-text-muted">Total Incidents</span>
-                    <span className="farm-text-body font-semibold">
-                      {analytics.pestDisease.totalIncidents}
-                    </span>
-                  </div>
-                  <div className="flex-between py-2">
-                    <span className="farm-text-muted">Pest Issues</span>
-                    <span className="farm-text-body font-semibold">
-                      {analytics.pestDisease.pestCount}
-                    </span>
-                  </div>
-                  <div className="flex-between py-2">
-                    <span className="farm-text-muted">Disease Issues</span>
-                    <span className="farm-text-body font-semibold">
-                      {analytics.pestDisease.diseaseCount}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Actions */}
+          {/* Activity Summary */}
+          <div className="farm-grid grid-cols-1 lg:grid-cols-2">
             <div className="farm-card">
               <div className="farm-card-header">
                 <div className="icon-text">
-                  <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary-hover rounded-lg flex-center">
-                    <span className="text-white text-lg">⚡</span>
+                  <div className="w-10 h-10 bg-gradient-to-br from-info to-info/80 rounded-lg flex-center">
+                    <span className="text-white text-lg">💧</span>
                   </div>
-                  <h3 className="farm-heading-card">Quick Actions</h3>
+                  <h3 className="farm-heading-card">Resource Usage</h3>
                 </div>
               </div>
               <div className="farm-card-content">
-                <div className="farm-grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
-                  <button
-                    onClick={() => {
-                      trackUserAction("quick_action_clicked", "dashboard", {
-                        action: "ai_companion",
-                      });
-                      router.push("/ai-companion");
-                    }}
-                    className="farm-btn farm-btn-success w-full"
-                  >
-                    <span className="text-lg">🤖</span>
-                    AI Companion
-                  </button>
-                  <button
-                    onClick={() => {
-                      trackUserAction("quick_action_clicked", "dashboard", {
-                        action: "manage_crops",
-                      });
-                      router.push("/crops");
-                    }}
-                    className="farm-btn farm-btn-success w-full"
-                  >
-                    <span className="text-lg">🌱</span>
-                    Manage Crops
-                  </button>
-                  <button
-                    onClick={() => {
-                      trackUserAction("quick_action_clicked", "dashboard", {
-                        action: "view_tasks",
-                      });
-                      router.push("/tasks");
-                    }}
-                    className="farm-btn farm-btn-success w-full"
-                  >
-                    <span className="text-lg">✅</span>
-                    View Tasks
-                  </button>
-                  <button
-                    onClick={() => {
-                      trackUserAction("quick_action_clicked", "dashboard", {
-                        action: "log_activity",
-                      });
-                      router.push("/activities");
-                    }}
-                    className="farm-btn farm-btn-success w-full"
-                  >
-                    <span className="text-lg">📋</span>
-                    Log Activity
-                  </button>
-                  <button
-                    onClick={() => {
-                      trackUserAction("quick_action_clicked", "dashboard", {
-                        action: "view_reports",
-                      });
-                      router.push("/reports");
-                    }}
-                    className="farm-btn farm-btn-success w-full"
-                  >
-                    <span className="text-lg">📈</span>
-                    View Reports
-                  </button>
+                <div className="flex-between py-2">
+                  <span className="farm-text-muted">Water Usage:</span>
+                  <span className="farm-text-body font-semibold">
+                    {analytics.water.totalWater.toFixed(1)} L
+                  </span>
+                </div>
+                <div className="flex-between py-2">
+                  <span className="farm-text-muted">Irrigation Sessions:</span>
+                  <span className="farm-text-body font-semibold">
+                    {analytics.water.sessionCount}
+                  </span>
+                </div>
+                <div className="flex-between py-2">
+                  <span className="farm-text-muted">
+                    Fertilizer Applications:
+                  </span>
+                  <span className="farm-text-body font-semibold">
+                    {analytics.fertilizer.applicationCount}
+                  </span>
                 </div>
               </div>
             </div>
-          </React.Fragment>
-        )}
-      </div>
-    </div>
+
+            <div className="farm-card">
+              <div className="farm-card-header">
+                <div className="icon-text">
+                  <div className="w-10 h-10 bg-gradient-to-br from-warning to-warning/80 rounded-lg flex-center">
+                    <span className="text-white text-lg">🌡️</span>
+                  </div>
+                  <h3 className="farm-heading-card">Health & Issues</h3>
+                </div>
+              </div>
+              <div className="farm-card-content">
+                <div className="flex-between py-2">
+                  <span className="farm-text-muted">Total Incidents:</span>
+                  <span className="farm-text-body font-semibold">
+                    {analytics.pestDisease.totalIncidents}
+                  </span>
+                </div>
+                <div className="flex-between py-2">
+                  <span className="farm-text-muted">Pest Issues:</span>
+                  <span className="farm-text-body font-semibold">
+                    {analytics.pestDisease.pestCount}
+                  </span>
+                </div>
+                <div className="flex-between py-2">
+                  <span className="farm-text-muted">Disease Issues:</span>
+                  <span className="farm-text-body font-semibold">
+                    {analytics.pestDisease.diseaseCount}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="farm-card">
+            <div className="farm-card-header">
+              <div className="icon-text">
+                <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary-hover rounded-lg flex-center">
+                  <span className="text-white text-lg">⚡</span>
+                </div>
+                <h3 className="farm-heading-card">Quick Actions</h3>
+              </div>
+            </div>
+            <div className="farm-card-content">
+              <div className="farm-grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
+                <button
+                  onClick={() => {
+                    trackUserAction("quick_action_clicked", "dashboard", {
+                      action: "ai_companion",
+                    });
+                    router.push("/ai-companion");
+                  }}
+                  className="farm-btn farm-btn-success w-full"
+                >
+                  <span className="text-lg">🤖</span>
+                  AI Companion
+                </button>
+                <button
+                  onClick={() => {
+                    trackUserAction("quick_action_clicked", "dashboard", {
+                      action: "manage_crops",
+                    });
+                    router.push("/crops");
+                  }}
+                  className="farm-btn farm-btn-success w-full"
+                >
+                  <span className="text-lg">🌱</span>
+                  Manage Crops
+                </button>
+                <button
+                  onClick={() => {
+                    trackUserAction("quick_action_clicked", "dashboard", {
+                      action: "view_tasks",
+                    });
+                    router.push("/tasks");
+                  }}
+                  className="farm-btn farm-btn-success w-full"
+                >
+                  <span className="text-lg">✅</span>
+                  View Tasks
+                </button>
+                <button
+                  onClick={() => {
+                    trackUserAction("quick_action_clicked", "dashboard", {
+                      action: "log_activity",
+                    });
+                    router.push("/activities");
+                  }}
+                  className="farm-btn farm-btn-success w-full"
+                >
+                  <span className="text-lg">📋</span>
+                  Log Activity
+                </button>
+                <button
+                  onClick={() => {
+                    trackUserAction("quick_action_clicked", "dashboard", {
+                      action: "view_reports",
+                    });
+                    router.push("/reports");
+                  }}
+                  className="farm-btn farm-btn-success w-full"
+                >
+                  <span className="text-lg">📈</span>
+                  View Reports
+                </button>
+              </div>
+            </div>
+          </div>
+        </React.Fragment>
+      )}
+    </PageContainer>
   );
 }

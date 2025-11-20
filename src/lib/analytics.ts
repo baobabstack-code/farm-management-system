@@ -21,6 +21,7 @@ export type FarmAnalyticsEvent =
   | "weather_viewed"
   | "ai_insight_viewed"
   | "report_generated"
+  | "page_viewed"
   | "dashboard_viewed"
   | "settings_updated"
   | "profile_updated"
@@ -65,7 +66,7 @@ export function trackPageView(
   pageName: string,
   properties?: AnalyticsEventProperties
 ) {
-  trackFarmEvent("dashboard_viewed", {
+  trackFarmEvent("page_viewed", {
     page: pageName,
     ...properties,
   });

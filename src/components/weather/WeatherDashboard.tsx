@@ -5,15 +5,15 @@ import Image from "next/image";
 import { WeatherData, WeatherAlert, WeatherAlertSeverity } from "@/types";
 
 interface WeatherDashboardProps {
-  latitude?: number;
-  longitude?: number;
-  location?: string;
+  latitude: number;
+  longitude: number;
+  location: string;
 }
 
 export default function WeatherDashboard({
-  latitude = 40.7128,
-  longitude = -74.006,
-  location = "New York, NY",
+  latitude,
+  longitude,
+  location,
 }: WeatherDashboardProps) {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [alerts, setAlerts] = useState<WeatherAlert[]>([]);
@@ -21,8 +21,15 @@ export default function WeatherDashboard({
   const [error, setError] = useState<string | null>(null);
 
   const fetchWeatherData = useCallback(async () => {
+    if (!latitude || !longitude || !location) {
+      setError("Please configure a farm location to view weather data.");
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
+      setError(null);
       const response = await fetch(
         `/api/weather/current?latitude=${latitude}&longitude=${longitude}&location=${encodeURIComponent(location)}`
       );
@@ -34,7 +41,6 @@ export default function WeatherDashboard({
       const result = await response.json();
       setWeatherData(result.data.current);
       setAlerts(result.data.alerts || []);
-      setError(null);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Failed to fetch weather data"
