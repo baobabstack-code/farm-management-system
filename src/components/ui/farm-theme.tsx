@@ -113,13 +113,13 @@ FarmCardContent.displayName = "FarmCardContent";
 interface FarmButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?:
-    | "primary"
-    | "secondary"
-    | "success"
-    | "warning"
-    | "destructive"
-    | "outline"
-    | "ghost";
+  | "primary"
+  | "secondary"
+  | "success"
+  | "warning"
+  | "destructive"
+  | "outline"
+  | "ghost";
   size?: "default" | "sm" | "lg";
   loading?: boolean;
 }
@@ -213,7 +213,7 @@ FarmBadge.displayName = "FarmBadge";
 
 // === FORM COMPONENTS ===
 
-interface FarmFormProps extends React.FormHTMLAttributes<HTMLFormElement> {}
+interface FarmFormProps extends React.FormHTMLAttributes<HTMLFormElement> { }
 
 export const FarmForm = React.forwardRef<HTMLFormElement, FarmFormProps>(
   ({ className, ...props }, ref) => (
@@ -243,7 +243,7 @@ export const FarmFormGroup = React.forwardRef<
 ));
 FarmFormGroup.displayName = "FarmFormGroup";
 
-interface FarmInputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
+interface FarmInputProps extends React.InputHTMLAttributes<HTMLInputElement> { }
 
 export const FarmInput = React.forwardRef<HTMLInputElement, FarmInputProps>(
   ({ className, ...props }, ref) => (
@@ -253,7 +253,7 @@ export const FarmInput = React.forwardRef<HTMLInputElement, FarmInputProps>(
 FarmInput.displayName = "FarmInput";
 
 interface FarmSelectProps
-  extends React.SelectHTMLAttributes<HTMLSelectElement> {}
+  extends React.SelectHTMLAttributes<HTMLSelectElement> { }
 
 export const FarmSelect = React.forwardRef<HTMLSelectElement, FarmSelectProps>(
   ({ className, ...props }, ref) => (
@@ -267,7 +267,7 @@ export const FarmSelect = React.forwardRef<HTMLSelectElement, FarmSelectProps>(
 FarmSelect.displayName = "FarmSelect";
 
 interface FarmTextareaProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}
+  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> { }
 
 export const FarmTextarea = React.forwardRef<
   HTMLTextAreaElement,
@@ -315,16 +315,14 @@ interface LoadingStateProps {
 export const LoadingState: React.FC<LoadingStateProps> = ({
   message = "Loading...",
 }) => (
-  <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-slate-900 dark:to-gray-800">
-    <div className="content-container py-6">
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="farm-text-muted">{message}</p>
-        </div>
-      </div>
-    </div>
-  </div>
+\u003cdiv className = "content-container py-6" >
+\u003cdiv className = "flex items-center justify-center min-h-[400px]" >
+\u003cdiv className = "text-center" >
+\u003cdiv className = "w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-4" >\u003c / div >
+\u003cp className = "farm-text-muted" > { message }\u003c / p >
+\u003c / div >
+\u003c / div >
+\u003c / div >
 );
 
 // === ERROR COMPONENTS ===
