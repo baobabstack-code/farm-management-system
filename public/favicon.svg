@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="leafGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#16a34a;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="50" cy="50" r="48" fill="url(#leafGradient)"/>
+  
+  <!-- Leaf shape -->
+  <path d="M 50 25 Q 65 35, 65 50 Q 65 65, 50 75 Q 35 65, 35 50 Q 35 35, 50 25 Z" 
+        fill="white" opacity="0.95"/>
+  
+  <!-- Leaf vein -->
+  <path d="M 50 30 L 50 70" stroke="url(#leafGradient)" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Tech circuit dots -->
+  <circle cx="42" cy="45" r="2" fill="#22c55e" opacity="0.6"/>
+  <circle cx="58" cy="45" r="2" fill="#22c55e" opacity="0.6"/>
+  <circle cx="42" cy="55" r="2" fill="#22c55e" opacity="0.6"/>
+  <circle cx="58" cy="55" r="2" fill="#22c55e" opacity="0.6"/>
+</svg>

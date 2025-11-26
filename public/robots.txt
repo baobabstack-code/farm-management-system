@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Disallow admin and API routes
+Disallow: /api/
+Disallow: /sign-in
+Disallow: /sign-up
+
+# Sitemap
+Sitemap: https://farmerflow.ai/sitemap.xml
