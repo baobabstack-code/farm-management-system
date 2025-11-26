@@ -89,7 +89,7 @@ export default function FieldForm({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const handleInputChange = (field: keyof Field, value: any) => {
+  const handleInputChange = (field: keyof Field, value: Field[keyof Field]) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,

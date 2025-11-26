@@ -1,5 +1,6 @@
 import { AIDataBridge } from "@/lib/ai-bridge/data-access";
-import { weatherService } from "./weather";
+import { Crop } from "@/types";
+import { weatherService, WeatherConditions } from "./weather";
 
 export interface CropRecommendation {
   cropName: string;
@@ -53,7 +54,7 @@ export class CropRecommendationService {
       const recommendations = this.generateSmartRecommendations(
         factors,
         historicalCrops || [],
-        weatherData
+        weatherData as any
       );
 
       return {
@@ -74,8 +75,8 @@ export class CropRecommendationService {
    */
   private static generateSmartRecommendations(
     factors: RecommendationFactors,
-    historicalCrops: any[],
-    weatherData: any
+    historicalCrops: Crop[],
+    weatherData: WeatherConditions
   ): CropRecommendation[] {
     // Without a crop database, we can only provide basic seasonal recommendations
     // based on general agricultural knowledge
@@ -91,8 +92,8 @@ export class CropRecommendationService {
    */
   private static getBasicSeasonalRecommendations(
     factors: RecommendationFactors,
-    _historicalCrops: any[],
-    _weatherData: any
+    _historicalCrops: Crop[],
+    _weatherData: WeatherConditions
   ): CropRecommendation[] {
     const { currentSeason, experience } = factors;
     const recommendations: CropRecommendation[] = [];

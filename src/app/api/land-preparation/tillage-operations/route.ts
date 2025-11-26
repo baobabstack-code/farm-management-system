@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
 
 const createTillageOperationSchema = z.object({
   fieldId: z.string().optional(),
@@ -38,7 +39,7 @@ const createTillageOperationSchema = z.object({
   temperature: z.number().optional(),
   windSpeed: z.number().min(0).optional(),
   effectiveness: z.number().int().min(1).max(10).optional(),
-  gpsCoordinates: z.any().optional(),
+  gpsCoordinates: z.unknown().optional(),
   notes: z.string().optional(),
 });
 
@@ -62,12 +63,12 @@ export async function GET(request: NextRequest) {
     const endDate = searchParams.get("endDate");
     const includeStats = searchParams.get("includeStats") === "true";
 
-    const whereClause: any = {
+    const whereClause: Prisma.TillageOperationWhereInput = {
       userId,
       ...(fieldId && { fieldId }),
       ...(preparationPlanId && { preparationPlanId }),
-      ...(status && { status }),
-      ...(operationType && { operationType }),
+      ...(status && { status: status as any }),
+      ...(operationType && { operationType: operationType as any }),
       ...(startDate &&
         endDate && {
           operationDate: {
@@ -242,7 +243,7 @@ export async function POST(request: NextRequest) {
       data: {
         ...validatedData,
         userId,
-      },
+      } as any,
       include: {
         field: {
           select: { id: true, name: true, area: true, unit: true },

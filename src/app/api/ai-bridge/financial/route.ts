@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { AIDataBridge } from "@/lib/ai-bridge/data-access";
+import { AIActivityData } from "@/types"; // Import AIActivityData
 
 /**
  * AI Bridge API for ADK Agents - Financial Data Access
@@ -31,14 +32,13 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const activities = financialData.data || [];
+    const activities: AIActivityData[] = financialData.data || [];
     const timeRangeMs = parseInt(timeRange) * 24 * 60 * 60 * 1000;
     const cutoffDate = new Date(Date.now() - timeRangeMs);
 
     // Filter activities by time range
     const recentActivities = activities.filter(
-      (activity: { createdAt: Date }) =>
-        new Date(activity.createdAt) > cutoffDate
+      (activity) => new Date(activity.createdAt) > cutoffDate
     );
 
     // Calculate financial metrics
@@ -91,8 +91,11 @@ export async function POST(request: NextRequest) {
       analysisType,
       timeRange,
       targetMetrics,
-    }: { analysisType: string; timeRange: number; targetMetrics: any } =
-      await request.json();
+    }: {
+      analysisType: string;
+      timeRange: number;
+      targetMetrics: Record<string, unknown>;
+    } = await request.json();
 
     const financialData = await AIDataBridge.getFinancialSummary(userId);
 
@@ -154,9 +157,7 @@ export async function POST(request: NextRequest) {
 }
 
 // Financial calculation functions
-function calculateFinancialMetrics(
-  activities: { cost?: number; type: string }[]
-) {
+function calculateFinancialMetrics(activities: AIActivityData[]) {
   const totalCost = activities.reduce(
     (sum, activity) => sum + (activity.cost || 0),
     0
@@ -192,42 +193,60 @@ function calculateFinancialMetrics(
   };
 }
 
-function getBreakdownByType(activities: any[]) {
-  return activities.reduce((acc: any, activity) => {
-    if (!acc[activity.type]) {
-      acc[activity.type] = {
-        count: 0,
-        totalCost: 0,
-        averageCost: 0,
-      };
-    }
-    acc[activity.type].count += 1;
-    acc[activity.type].totalCost += activity.cost || 0;
-    acc[activity.type].averageCost =
-      acc[activity.type].totalCost / acc[activity.type].count;
-    return acc;
-  }, {});
+function getBreakdownByType(activities: AIActivityData[]) {
+  return activities.reduce(
+    (
+      acc: Record<
+        string,
+        { count: number; totalCost: number; averageCost: number }
+      >,
+      activity
+    ) => {
+      if (!acc[activity.type]) {
+        acc[activity.type] = {
+          count: 0,
+          totalCost: 0,
+          averageCost: 0,
+        };
+      }
+      acc[activity.type].count += 1;
+      acc[activity.type].totalCost += activity.cost || 0;
+      acc[activity.type].averageCost =
+        acc[activity.type].totalCost / acc[activity.type].count;
+      return acc;
+    },
+    {}
+  );
 }
 
-function getBreakdownByCrop(activities: any[]) {
-  return activities.reduce((acc: any, activity) => {
-    const cropName = activity.crop?.name || "Unknown";
-    if (!acc[cropName]) {
-      acc[cropName] = {
-        count: 0,
-        totalCost: 0,
-        activities: [],
-      };
-    }
-    acc[cropName].count += 1;
-    acc[cropName].totalCost += activity.cost || 0;
-    acc[cropName].activities.push(activity.type);
-    return acc;
-  }, {});
+function getBreakdownByCrop(activities: AIActivityData[]) {
+  return activities.reduce(
+    (
+      acc: Record<
+        string,
+        { count: number; totalCost: number; activities: string[] }
+      >,
+      activity
+    ) => {
+      const cropName = activity.crop?.name || "Unknown";
+      if (!acc[cropName]) {
+        acc[cropName] = {
+          count: 0,
+          totalCost: 0,
+          activities: [],
+        };
+      }
+      acc[cropName].count += 1;
+      acc[cropName].totalCost += activity.cost || 0;
+      acc[cropName].activities.push(activity.type);
+      return acc;
+    },
+    {}
+  );
 }
 
-function getDailyBreakdown(activities: any[], timeRange: number) {
-  const dailyData: any = {};
+function getDailyBreakdown(activities: AIActivityData[], timeRange: number) {
+  const dailyData: Record<string, { cost: number; count: number }> = {};
   const endDate = new Date();
 
   for (let i = 0; i < timeRange; i++) {
@@ -245,7 +264,7 @@ function getDailyBreakdown(activities: any[], timeRange: number) {
   });
 
   return Object.entries(dailyData)
-    .map(([date, data]: any) => ({
+    .map(([date, data]: [string, { cost: number; count: number }]) => ({
       date,
       cost: Math.round(data.cost * 100) / 100,
       count: data.count,
@@ -253,7 +272,7 @@ function getDailyBreakdown(activities: any[], timeRange: number) {
     .sort((a, b) => a.date.localeCompare(b.date));
 }
 
-function calculateTrends(allActivities: any[], recentDays: number) {
+function calculateTrends(allActivities: AIActivityData[], recentDays: number) {
   const cutoffDate = new Date(Date.now() - recentDays * 24 * 60 * 60 * 1000);
   const previousCutoffDate = new Date(
     Date.now() - recentDays * 2 * 24 * 60 * 60 * 1000
@@ -295,21 +314,32 @@ function calculateTrends(allActivities: any[], recentDays: number) {
 }
 
 // Analysis functions
-function performCostOptimizationAnalysis(activities: any[]) {
+function performCostOptimizationAnalysis(activities: AIActivityData[]) {
   const costsByType = getBreakdownByType(activities);
-  const optimizations: any[] = [];
+  const optimizations: {
+    activityType: string;
+    currentAverageCost: number;
+    recommendedReduction: number;
+    potentialSavings: number;
+    suggestions: string[];
+  }[] = [];
 
-  Object.entries(costsByType).forEach(([type, data]: any) => {
-    if (data.averageCost > 100) {
-      optimizations.push({
-        activityType: type,
-        currentAverageCost: data.averageCost,
-        recommendedReduction: Math.round(data.averageCost * 0.2), // 20% reduction target
-        potentialSavings: Math.round(data.totalCost * 0.2),
-        suggestions: getCostReductionSuggestions(type),
-      });
+  Object.entries(costsByType).forEach(
+    ([type, data]: [
+      string,
+      { count: number; totalCost: number; averageCost: number },
+    ]) => {
+      if (data.averageCost > 100) {
+        optimizations.push({
+          activityType: type,
+          currentAverageCost: data.averageCost,
+          recommendedReduction: Math.round(data.averageCost * 0.2), // 20% reduction target
+          potentialSavings: Math.round(data.totalCost * 0.2),
+          suggestions: getCostReductionSuggestions(type),
+        });
+      }
     }
-  });
+  );
 
   return {
     optimizationOpportunities: optimizations,
@@ -324,7 +354,7 @@ function performCostOptimizationAnalysis(activities: any[]) {
 }
 
 function performBudgetForecast(
-  allActivities: { createdAt: string | number | Date; cost?: number }[],
+  allActivities: AIActivityData[],
   timeRange: number
 ) {
   const recentCosts = allActivities
@@ -349,7 +379,7 @@ function performBudgetForecast(
   };
 }
 
-function performROIAnalysis(activities: any[]) {
+function performROIAnalysis(activities: AIActivityData[]) {
   // Simplified ROI calculation based on harvest vs costs
   const costs = activities
     .filter((a) => a.type !== "HARVEST")
@@ -374,7 +404,7 @@ function performROIAnalysis(activities: any[]) {
   };
 }
 
-function performExpensePatternAnalysis(activities: any[]) {
+function performExpensePatternAnalysis(activities: AIActivityData[]) {
   const patterns = {
     peakSpendingDays: findPeakSpendingDays(activities),
     regularExpenses: identifyRegularExpenses(activities),
@@ -385,13 +415,7 @@ function performExpensePatternAnalysis(activities: any[]) {
   return patterns;
 }
 
-function performGeneralFinancialAnalysis(
-  activities: {
-    cost?: number;
-    type: string;
-    createdAt: string | number | Date;
-  }[]
-) {
+function performGeneralFinancialAnalysis(activities: AIActivityData[]) {
   const metrics = calculateFinancialMetrics(activities);
   const trends = calculateTrends(activities, 30);
 
@@ -409,7 +433,7 @@ function performGeneralFinancialAnalysis(
 
 // Helper functions
 function getCostReductionSuggestions(activityType: string): string[] {
-  const suggestions: any = {
+  const suggestions: Record<string, string[]> = {
     FERTILIZER: [
       "Consider bulk purchasing",
       "Explore organic alternatives",
@@ -455,7 +479,7 @@ function calculateSeasonalAdjustment(): number {
   return 0.8;
 }
 
-function findPeakSpendingDays(activities: any[]): string[] {
+function findPeakSpendingDays(activities: AIActivityData[]): string[] {
   const dailyTotals = getDailyBreakdown(activities, 30);
   return dailyTotals
     .sort((a, b) => b.cost - a.cost)
@@ -464,7 +488,7 @@ function findPeakSpendingDays(activities: any[]): string[] {
 }
 
 function identifyRegularExpenses(
-  activities: { type: string }[]
+  activities: AIActivityData[]
 ): { type: string; frequency: number }[] {
   const typeFrequency = activities.reduce(
     (acc: Record<string, number>, activity) => {
@@ -479,9 +503,7 @@ function identifyRegularExpenses(
     .map(([type, count]) => ({ type, frequency: count }));
 }
 
-function identifySeasonalPatterns(
-  activities: { createdAt: string | number | Date; cost?: number }[]
-): string {
+function identifySeasonalPatterns(activities: AIActivityData[]): string {
   const monthlyBreakdown = activities.reduce(
     (acc: Record<number, number>, activity) => {
       const month = new Date(activity.createdAt).getMonth();
@@ -491,9 +513,18 @@ function identifySeasonalPatterns(
     {}
   );
 
-  const highestMonth = Object.entries(monthlyBreakdown).sort(
-    ([, a], [, b]) => b - a
-  )[0];
+  const breakdownEntries = Object.entries(monthlyBreakdown);
+  const sortedEntries = breakdownEntries.sort(
+    (aEntry: [string, number], bEntry: [string, number]) =>
+      bEntry[1] - aEntry[1]
+  );
+
+  let highestMonth: [string, number] | undefined;
+  if (sortedEntries.length > 0) {
+    highestMonth = sortedEntries[0];
+  } else {
+    highestMonth = undefined;
+  }
 
   const monthNames = [
     "Jan",
@@ -515,14 +546,7 @@ function identifySeasonalPatterns(
     : "No clear seasonal pattern";
 }
 
-function identifyUnusualExpenses(
-  activities: {
-    cost?: number;
-    createdAt: Date;
-    type: string;
-    crop?: { name: string };
-  }[]
-): {
+function identifyUnusualExpenses(activities: AIActivityData[]): {
   date: Date;
   type: string;
   cost: number;
@@ -546,11 +570,7 @@ function identifyUnusualExpenses(
 }
 
 function generateFinancialRecommendations(
-  activities: {
-    cost?: number;
-    type: string;
-    createdAt: string | number | Date;
-  }[],
+  activities: AIActivityData[],
   analysisType: string
 ): string[] {
   const recommendations = [];

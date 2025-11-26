@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter, useParams } from "next/navigation";
 import {
@@ -107,22 +107,9 @@ export default function EditFieldPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [dependencies, setDependencies] = useState<any[]>([]);
+  const [dependencies, setDependencies] = useState<unknown[]>([]);
 
-  useEffect(() => {
-    if (!isLoaded) return;
-
-    if (!user) {
-      router.push("/sign-in");
-      return;
-    }
-
-    if (fieldId) {
-      fetchField();
-    }
-  }, [user, isLoaded, router, fieldId]);
-
-  const fetchField = async () => {
+  const fetchField = useCallback(async () => {
     try {
       const response = await fetch(`/api/fields/${fieldId}`);
 
@@ -164,17 +151,30 @@ export default function EditFieldPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [fieldId, setField, setFormData, setError, setLoading]);
 
-  const handleInputChange = (
-    field: keyof FieldFormData,
-    value: string | boolean
-  ) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    if (!user) {
+      router.push("/sign-in");
+      return;
+    }
+
+    if (fieldId) {
+      fetchField();
+    }
+  }, [user, isLoaded, router, fieldId, fetchField]);
+
+  const handleInputChange = useCallback(
+    (field: keyof FieldFormData, value: string | boolean) => {
+      setFormData((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
+    },
+    [setFormData]
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -592,7 +592,7 @@ export default function EditFieldPage() {
         entityType="Field"
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}
-        dependencies={dependencies}
+        dependencies={dependencies as any}
         loading={deleting}
       />
     </PageContainer>

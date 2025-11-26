@@ -42,6 +42,9 @@ model Crop {
   transactions    FinancialTransaction[]
   budgetItems     BudgetItem[]
 
+  @@index([userId])
+  @@index([userId, status])
+  @@index([userId, expectedHarvestDate])
   @@map("crops")
 }
 
@@ -63,6 +66,10 @@ model Task {
   // Relations - userId is managed by Clerk
   crop Crop? @relation(fields: [cropId], references: [id], onDelete: SetNull)
 
+  @@index([userId])
+  @@index([userId, status])
+  @@index([userId, status, dueDate])
+  @@index([userId, dueDate])
   @@map("tasks")
 }
 
@@ -81,6 +88,9 @@ model IrrigationLog {
   // Relations - userId is managed by Clerk
   crop Crop @relation(fields: [cropId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
+  @@index([userId, date])
+  @@index([cropId])
   @@map("irrigation_logs")
 }
 
@@ -99,6 +109,9 @@ model FertilizerLog {
   // Relations - userId is managed by Clerk
   crop Crop @relation(fields: [cropId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
+  @@index([userId, date])
+  @@index([cropId])
   @@map("fertilizer_logs")
 }
 
@@ -119,6 +132,9 @@ model PestDiseaseLog {
   // Relations - userId is managed by Clerk
   crop Crop @relation(fields: [cropId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
+  @@index([userId, date])
+  @@index([cropId])
   @@map("pest_disease_logs")
 }
 
@@ -137,6 +153,9 @@ model HarvestLog {
   // Relations - userId is managed by Clerk
   crop Crop @relation(fields: [cropId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
+  @@index([userId, harvestDate])
+  @@index([cropId])
   @@map("harvest_logs")
 }
 
@@ -296,6 +315,8 @@ model Field {
   transactions     FinancialTransaction[]
   budgetItems      BudgetItem[]
 
+  @@index([userId])
+  @@index([userId, isActive])
   @@map("fields")
 }
 
@@ -728,6 +749,8 @@ model Equipment {
   fuelLogs        FuelLog[]
   preparations    LandPreparationPlan[]
 
+  @@index([userId])
+  @@index([userId, status])
   @@map("equipment")
 }
 
@@ -963,6 +986,10 @@ model FinancialTransaction {
   supplier          Supplier?                 @relation(fields: [supplierId], references: [id], onDelete: SetNull)
 
   @@unique([userId, quickbooksId])
+  @@index([userId])
+  @@index([userId, transactionType])
+  @@index([userId, transactionDate])
+  @@index([userId, transactionType, transactionDate])
   @@map("financial_transactions")
 }
 
@@ -1260,6 +1287,9 @@ model Activity {
   timestamp   DateTime     @default(now())
   createdAt   DateTime     @default(now())
 
+  @@index([userId])
+  @@index([userId, timestamp])
+  @@index([entityType, entityId])
   @@map("activities")
 }
 

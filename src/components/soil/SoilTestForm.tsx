@@ -5,8 +5,29 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SoilTestType } from "@/types";
 
+interface SoilFormData {
+  cropId: string;
+  fieldId: string;
+  sampleDate: string;
+  labName: string;
+  testType: SoilTestType;
+  pH: number;
+  organicMatter: number;
+  nitrogen: number;
+  phosphorus: number;
+  potassium: number;
+  calcium: number;
+  magnesium: number;
+  sulfur: number;
+  cationExchangeCapacity: number;
+  soilTexture: string;
+  recommendations: string;
+  cost: number;
+  notes: string;
+}
+
 interface SoilTestFormProps {
-  onSubmit: (data: any) => void;
+  onSubmit: (data: SoilFormData) => void;
   onCancel: () => void;
   loading?: boolean;
 }
@@ -29,7 +50,7 @@ export default function SoilTestForm({
 }: SoilTestFormProps) {
   const [crops, setCrops] = useState<Crop[]>([]);
   const [fields, setFields] = useState<Field[]>([]);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<SoilFormData>({
     cropId: "",
     fieldId: "",
     sampleDate: new Date().toISOString().split("T")[0],
@@ -84,7 +105,10 @@ export default function SoilTestForm({
     onSubmit(formData);
   };
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = (
+    field: keyof SoilFormData,
+    value: SoilFormData[keyof SoilFormData]
+  ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 

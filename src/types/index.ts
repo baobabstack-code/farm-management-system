@@ -16,6 +16,29 @@ import {
   QualityGrade,
 } from "@prisma/client";
 
+// Re-export Prisma types for use in other modules
+export type {
+  PrismaCrop,
+  PrismaTask,
+  PrismaIrrigationLog,
+  PrismaFertilizerLog,
+  PrismaPestDiseaseLog,
+  PrismaHarvestLog,
+};
+
+// Re-export Prisma enums (must use regular export for runtime values)
+export {
+  CropStatus,
+  TaskPriority,
+  TaskCategory,
+  TaskStatus,
+  PestDiseaseType,
+  Severity,
+  IrrigationMethod,
+  ApplicationMethod,
+  QualityGrade,
+};
+
 // Note: User management is handled by Clerk
 
 // Crop types
@@ -475,9 +498,16 @@ export interface Activity {
   entityId: string;
   actionType: ActivityType;
   description: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   timestamp: Date;
   createdAt: Date;
+  // Additional fields for financial analytics
+  type?: string;
+  cost?: number;
+  yield?: number;
+  notes?: string;
+  cropId?: string;
+  crop?: { name: string; id: string };
 }
 
 export enum EntityType {
@@ -510,15 +540,42 @@ export enum ActivityType {
   TREATED = "TREATED",
 }
 
-// Export Prisma enums for convenience
-export {
-  CropStatus,
-  TaskPriority,
-  TaskCategory,
-  TaskStatus,
-  PestDiseaseType,
-  Severity,
-  IrrigationMethod,
-  ApplicationMethod,
-  QualityGrade,
-};
+// AI-specific data structures
+export interface AICropData {
+  id: string;
+  name: string;
+  variety?: string | null;
+  plantingDate: Date;
+  expectedHarvestDate: Date;
+  actualHarvestDate?: Date | null;
+  status: CropStatus;
+  area?: number | null;
+  tasks?: PrismaTask[];
+  irrigationLogs?: PrismaIrrigationLog[];
+  fertilizerLogs?: PrismaFertilizerLog[];
+  pestDiseaseLogs?: PrismaPestDiseaseLog[];
+  harvestLogs?: PrismaHarvestLog[];
+}
+
+export interface AIActivityData {
+  type: string;
+  cost: number;
+  createdAt: Date;
+  crop: { name: string; id: string };
+}
+
+export interface Insight {
+  title: string;
+  description: string;
+  confidence: number;
+  actionable: boolean;
+  priority: "High" | "Medium" | "Low";
+  category: string;
+  source?: string;
+  model?: string;
+}
+
+export interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+}

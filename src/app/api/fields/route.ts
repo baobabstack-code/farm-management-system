@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { ActivityLogger } from "@/lib/activity-logger";
+import { Prisma } from "@prisma/client"; // Import Prisma
 
 const createFieldSchema = z.object({
   name: z.string().min(1, "Field name is required"),
@@ -12,7 +13,7 @@ const createFieldSchema = z.object({
   latitude: z.number().optional(),
   longitude: z.number().optional(),
   address: z.string().optional(),
-  boundaries: z.any().optional(), // GeoJSON polygon
+  boundaries: z.unknown().optional(), // GeoJSON polygon
   soilType: z.string().optional(),
   drainageType: z.string().optional(),
   irrigationType: z.string().optional(),
@@ -31,7 +32,7 @@ export async function GET(request: NextRequest) {
     const includeStats = searchParams.get("includeStats") === "true";
     const isActive = searchParams.get("isActive");
 
-    const where: any = { userId };
+    const where: Prisma.FieldWhereInput = { userId };
     if (isActive !== null) {
       where.isActive = isActive === "true";
     }
@@ -134,7 +135,7 @@ export async function POST(request: NextRequest) {
     const field = await prisma.field.create({
       data: {
         userId,
-        ...validatedData,
+        ...(validatedData as any),
       },
       include: {
         _count: {

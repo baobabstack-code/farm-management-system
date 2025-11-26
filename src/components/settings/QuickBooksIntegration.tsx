@@ -22,7 +22,7 @@ interface QuickBooksConnection {
   isActive: boolean;
   lastSyncAt?: string;
   syncStatus?: string;
-  syncErrors?: any;
+  syncErrors?: Record<string, unknown> | null;
   createdAt: string;
   updatedAt: string;
 }

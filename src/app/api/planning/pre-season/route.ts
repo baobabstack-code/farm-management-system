@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
 
 const createPlanSchema = z.object({
   planName: z.string().min(1, "Plan name is required"),
@@ -36,9 +37,9 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get("status");
     const year = searchParams.get("year");
 
-    const whereClause: any = {
+    const whereClause: Prisma.PreSeasonPlanWhereInput = {
       userId,
-      ...(status && { status }),
+      ...(status && { status: status as any }),
       ...(year && { year: parseInt(year) }),
     };
 

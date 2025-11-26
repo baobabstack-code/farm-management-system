@@ -4,6 +4,12 @@ import {
   isHapticFeedbackAvailable,
 } from "../haptics";
 
+declare global {
+  interface Window {
+    webkit: any;
+  }
+}
+
 // Mocking browser features
 const vibrateMock = jest.fn();
 const postMessageMock = jest.fn();

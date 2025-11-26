@@ -298,7 +298,11 @@ export default function EnhancedWeatherDashboard({
         ].map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
+            onClick={() =>
+              setActiveTab(
+                tab.id as "current" | "forecast" | "insights" | "conditions"
+              )
+            }
             className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
               activeTab === tab.id
                 ? "bg-green-100 text-green-700 border-b-2 border-green-600"

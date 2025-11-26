@@ -19,9 +19,9 @@ interface UseDetailPageErrorReturn {
   isLoading: boolean;
   handleError: (error: unknown, context?: string) => ApiError;
   handleAsyncError: (
-    asyncFn: () => Promise<any>,
+    asyncFn: () => Promise<unknown>,
     context?: string
-  ) => Promise<any>;
+  ) => Promise<unknown>;
   clearError: () => void;
   retry: () => void;
   canRetry: boolean;
@@ -91,7 +91,10 @@ export function useDetailPageError(
   );
 
   const handleAsyncError = useCallback(
-    async (asyncFn: () => Promise<any>, context?: string): Promise<any> => {
+    async (
+      asyncFn: () => Promise<unknown>,
+      context?: string
+    ): Promise<unknown> => {
       try {
         setIsLoading(true);
         clearError();
@@ -135,12 +138,15 @@ export function useDetailPageError(
  * Hook for handling CRUD operations on detail pages with comprehensive error handling
  */
 interface UseDetailPageCrudOptions extends UseDetailPageErrorOptions {
-  onSuccess?: (data: any, operation: "create" | "update" | "delete") => void;
+  onSuccess?: (
+    data: unknown,
+    operation: "create" | "update" | "delete"
+  ) => void;
   onDelete?: () => void;
 }
 
 interface UseDetailPageCrudReturn extends UseDetailPageErrorReturn {
-  updateEntity: (data: any) => Promise<any>;
+  updateEntity: (data: unknown) => Promise<unknown>;
   deleteEntity: () => Promise<void>;
   isUpdating: boolean;
   isDeleting: boolean;
@@ -157,7 +163,7 @@ export function useDetailPageCrud(
   const errorHandler = useDetailPageError(options);
 
   const updateEntity = useCallback(
-    async (data: any): Promise<any> => {
+    async (data: unknown): Promise<unknown> => {
       return errorHandler.handleAsyncError(async () => {
         setIsUpdating(true);
 
@@ -227,7 +233,7 @@ export function useDetailPageCrud(
         const listPath = `/${entityType}s`;
         router.push(listPath);
       }
-    }, "delete");
+    }, "delete") as Promise<void>;
   }, [entityType, entityId, errorHandler, onDelete, router]);
 
   // Clean up loading states when component unmounts or error occurs

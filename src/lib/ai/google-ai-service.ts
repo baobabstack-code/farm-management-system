@@ -1,4 +1,28 @@
-import { GoogleGenerativeAI, GenerativeModel } from "@google/generative-ai";
+import {
+  GoogleGenerativeAI,
+  HarmBlockThreshold,
+  HarmCategory,
+  GenerativeModel,
+  Part,
+  FunctionDeclaration,
+  SafetySetting,
+} from "@google/generative-ai";
+import { Crop, Activity } from "@/types";
+import { WeatherConditions } from "../services/enhanced-weather-service";
+
+// Define interfaces for context handling
+export interface ADKFarmContext {
+  userId: string;
+  crops: Crop[];
+  activities: Activity[];
+  weather: WeatherConditions | null;
+  location: string;
+}
+
+export interface ADKConversationHistory {
+  role: "user" | "model";
+  parts: string[];
+}
 
 export interface GoogleAIConfig {
   apiKey: string;
@@ -23,9 +47,9 @@ export interface GoogleAIResponse {
 
 export interface FarmContext {
   userId: string;
-  crops: any[];
-  activities: any[];
-  weather?: any;
+  crops: Crop[];
+  activities: Activity[];
+  weather?: WeatherConditions;
   location?: string;
 }
 
@@ -91,11 +115,11 @@ export class GoogleAIService {
           totalTokenCount: result.response.usageMetadata?.totalTokenCount,
         },
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Google AI API Error:", error);
 
       // Handle specific error types
-      if (error?.message?.includes("API_KEY")) {
+      if ((error as any)?.message?.includes("API_KEY")) {
         return {
           success: false,
           content: "",
@@ -104,7 +128,7 @@ export class GoogleAIService {
         };
       }
 
-      if (error?.message?.includes("RATE_LIMIT")) {
+      if ((error as any)?.message?.includes("RATE_LIMIT")) {
         return {
           success: false,
           content: "",
@@ -117,7 +141,7 @@ export class GoogleAIService {
         success: false,
         content: "",
         model: this.config.model || "gemini-1.5-flash",
-        error: error?.message || "Unknown Google AI API error",
+        error: (error as any)?.message || "Unknown Google AI API error",
       };
     }
   }
@@ -158,13 +182,13 @@ export class GoogleAIService {
           totalTokenCount: result.response.usageMetadata?.totalTokenCount,
         },
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Google AI Insights Error:", error);
       return {
         success: false,
         content: "",
         model: this.config.model || "gemini-1.5-flash",
-        error: error?.message || "Failed to generate insights",
+        error: (error as any)?.message || "Failed to generate insights",
       };
     }
   }
@@ -283,7 +307,7 @@ Focus on solutions that improve crop yield, reduce costs, and promote sustainabl
   /**
    * Summarize crop data for context
    */
-  private summarizeCrops(crops: any[]): string {
+  private summarizeCrops(crops: Crop[]): string {
     if (!crops || crops.length === 0) return "No crops currently tracked.";
 
     const summary = crops
@@ -304,7 +328,7 @@ Focus on solutions that improve crop yield, reduce costs, and promote sustainabl
   /**
    * Summarize recent activities
    */
-  private summarizeActivities(activities: any[]): string {
+  private summarizeActivities(activities: Activity[]): string {
     if (!activities || activities.length === 0)
       return "No recent activities logged.";
 
@@ -331,10 +355,11 @@ Focus on solutions that improve crop yield, reduce costs, and promote sustainabl
   /**
    * Summarize weather information
    */
-  private summarizeWeather(weather: any): string {
-    if (!weather) return "No weather data available.";
+  private summarizeWeather(weather: WeatherConditions): string {
+    if (!weather || !weather.current) return "No weather data available.";
 
-    return `Temperature: ${weather.temperature}°C, Humidity: ${weather.humidity}%, Conditions: ${weather.description}, Wind: ${weather.windSpeed} km/h`;
+    const { current } = weather;
+    return `Temperature: ${current.temperature}°C, Humidity: ${current.humidity}%, Conditions: ${current.description}, Wind: ${current.windSpeed} km/h`;
   }
 }
 

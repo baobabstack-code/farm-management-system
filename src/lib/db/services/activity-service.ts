@@ -4,6 +4,7 @@ import {
   ApplicationMethod,
   QualityGrade,
   Severity,
+  Prisma,
 } from "@prisma/client";
 import { prisma } from "../connection";
 
@@ -137,7 +138,7 @@ export class ActivityService {
     startDate?: Date,
     endDate?: Date
   ) {
-    const where: any = { userId };
+    const where: Prisma.IrrigationLogWhereInput = { userId };
     if (startDate || endDate) {
       where.date = {};
       if (startDate) where.date.gte = startDate;
@@ -161,7 +162,7 @@ export class ActivityService {
     startDate?: Date,
     endDate?: Date
   ) {
-    const where: any = { userId };
+    const where: Prisma.FertilizerLogWhereInput = { userId };
     if (startDate || endDate) {
       where.date = {};
       if (startDate) where.date.gte = startDate;
@@ -179,7 +180,7 @@ export class ActivityService {
   }
 
   static async getYieldStats(userId: string, startDate?: Date, endDate?: Date) {
-    const where: any = { userId };
+    const where: Prisma.HarvestLogWhereInput = { userId };
     if (startDate || endDate) {
       where.harvestDate = {};
       if (startDate) where.harvestDate.gte = startDate;
@@ -201,7 +202,7 @@ export class ActivityService {
     startDate?: Date,
     endDate?: Date
   ) {
-    const where: any = { userId };
+    const where: Prisma.PestDiseaseLogWhereInput = { userId };
     if (startDate || endDate) {
       where.date = {};
       if (startDate) where.date.gte = startDate;

@@ -7,6 +7,7 @@ import {
   ApiErrorHandler,
   apiRequestWithRetry,
 } from "@/lib/api-error-handler";
+import { Crop, Field } from "@/types";
 
 export interface ApiClientOptions {
   baseUrl?: string;
@@ -40,7 +41,10 @@ export class ApiClient {
   /**
    * Make a GET request
    */
-  async get<T = any>(url: string, options: RequestOptions = {}): Promise<T> {
+  async get<T = unknown>(
+    url: string,
+    options: RequestOptions = {}
+  ): Promise<T> {
     return this.request<T>(url, {
       ...options,
       method: "GET",
@@ -50,9 +54,9 @@ export class ApiClient {
   /**
    * Make a POST request
    */
-  async post<T = any>(
+  async post<T = unknown>(
     url: string,
-    data?: any,
+    data?: unknown,
     options: RequestOptions = {}
   ): Promise<T> {
     return this.request<T>(url, {
@@ -65,9 +69,9 @@ export class ApiClient {
   /**
    * Make a PUT request
    */
-  async put<T = any>(
+  async put<T = unknown>(
     url: string,
-    data?: any,
+    data?: unknown,
     options: RequestOptions = {}
   ): Promise<T> {
     return this.request<T>(url, {
@@ -80,9 +84,9 @@ export class ApiClient {
   /**
    * Make a PATCH request
    */
-  async patch<T = any>(
+  async patch<T = unknown>(
     url: string,
-    data?: any,
+    data?: unknown,
     options: RequestOptions = {}
   ): Promise<T> {
     return this.request<T>(url, {
@@ -95,7 +99,10 @@ export class ApiClient {
   /**
    * Make a DELETE request
    */
-  async delete<T = any>(url: string, options: RequestOptions = {}): Promise<T> {
+  async delete<T = unknown>(
+    url: string,
+    options: RequestOptions = {}
+  ): Promise<T> {
     return this.request<T>(url, {
       ...options,
       method: "DELETE",
@@ -105,7 +112,7 @@ export class ApiClient {
   /**
    * Make a generic request with comprehensive error handling
    */
-  private async request<T = any>(
+  private async request<T = unknown>(
     url: string,
     options: RequestOptions = {}
   ): Promise<T> {
@@ -153,19 +160,19 @@ export class CropApiClient extends ApiClient {
     super({ baseUrl: "/api/crops" });
   }
 
-  async getCrop(id: string): Promise<any> {
+  async getCrop(id: string): Promise<Crop | null> {
     return this.get(`/${id}`, { context: `get-crop-${id}` });
   }
 
-  async updateCrop(id: string, data: any): Promise<any> {
+  async updateCrop(id: string, data: Partial<Crop>): Promise<Crop | null> {
     return this.put(`/${id}`, data, { context: `update-crop-${id}` });
   }
 
-  async deleteCrop(id: string): Promise<any> {
+  async deleteCrop(id: string): Promise<void> {
     return this.delete(`/${id}`, { context: `delete-crop-${id}` });
   }
 
-  async getCropDependencies(id: string): Promise<any> {
+  async getCropDependencies(id: string): Promise<string[]> {
     return this.get(`/${id}/dependencies`, {
       context: `get-crop-dependencies-${id}`,
     });
@@ -177,19 +184,19 @@ export class FieldApiClient extends ApiClient {
     super({ baseUrl: "/api/fields" });
   }
 
-  async getField(id: string): Promise<any> {
+  async getField(id: string): Promise<Field | null> {
     return this.get(`/${id}`, { context: `get-field-${id}` });
   }
 
-  async updateField(id: string, data: any): Promise<any> {
+  async updateField(id: string, data: Partial<Field>): Promise<Field | null> {
     return this.put(`/${id}`, data, { context: `update-field-${id}` });
   }
 
-  async deleteField(id: string): Promise<any> {
+  async deleteField(id: string): Promise<void> {
     return this.delete(`/${id}`, { context: `delete-field-${id}` });
   }
 
-  async getFieldDependencies(id: string): Promise<any> {
+  async getFieldDependencies(id: string): Promise<string[]> {
     return this.get(`/${id}/dependencies`, {
       context: `get-field-dependencies-${id}`,
     });
@@ -201,20 +208,23 @@ export class EquipmentApiClient extends ApiClient {
     super({ baseUrl: "/api/land-preparation/equipment" });
   }
 
-  async getEquipment(id: string, includeDetails: boolean = true): Promise<any> {
+  async getEquipment(
+    id: string,
+    includeDetails: boolean = true
+  ): Promise<any | null> {
     const params = includeDetails ? "?includeDetails=true" : "";
     return this.get(`/${id}${params}`, { context: `get-equipment-${id}` });
   }
 
-  async updateEquipment(id: string, data: any): Promise<any> {
+  async updateEquipment(id: string, data: Partial<any>): Promise<any | null> {
     return this.put(`/${id}`, data, { context: `update-equipment-${id}` });
   }
 
-  async deleteEquipment(id: string): Promise<any> {
+  async deleteEquipment(id: string): Promise<void> {
     return this.delete(`/${id}`, { context: `delete-equipment-${id}` });
   }
 
-  async getEquipmentDependencies(id: string): Promise<any> {
+  async getEquipmentDependencies(id: string): Promise<string[]> {
     return this.get(`/${id}/dependencies`, {
       context: `get-equipment-dependencies-${id}`,
     });
@@ -245,23 +255,24 @@ export class ApiUtils {
   /**
    * Handle API response and extract data
    */
-  static extractData<T>(response: any): T {
+  static extractData<T>(response: unknown): T {
     // Handle different response formats
     if (response && typeof response === "object") {
+      const apiResponse = response as any;
       // Standard API response format
-      if (response.success === true && response.data) {
-        return response.data;
+      if (apiResponse.success === true && apiResponse.data) {
+        return apiResponse.data;
       }
       // Direct data response
-      if (response.success === undefined) {
-        return response;
+      if (apiResponse.success === undefined) {
+        return apiResponse as T;
       }
       // Error response
-      if (response.success === false) {
-        throw new Error(response.error || "API request failed");
+      if (apiResponse.success === false) {
+        throw new Error(apiResponse.error || "API request failed");
       }
     }
-    return response;
+    return response as T;
   }
 
   /**

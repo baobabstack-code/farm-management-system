@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter, useParams } from "next/navigation";
 import {
@@ -82,23 +82,9 @@ export default function EditCropPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [dependencies, setDependencies] = useState<any[]>([]);
+  const [dependencies, setDependencies] = useState<unknown[]>([]);
 
-  useEffect(() => {
-    if (!isLoaded) return;
-
-    if (!user) {
-      router.push("/sign-in");
-      return;
-    }
-
-    if (cropId) {
-      fetchCrop();
-      fetchFields();
-    }
-  }, [user, isLoaded, router, cropId]);
-
-  const fetchCrop = async () => {
+  const fetchCrop = useCallback(async () => {
     try {
       const response = await fetch(`/api/crops/${cropId}`);
 
@@ -143,9 +129,9 @@ export default function EditCropPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [cropId, setCrop, setFormData]);
 
-  const fetchFields = async () => {
+  const fetchFields = useCallback(async () => {
     try {
       const response = await fetch("/api/fields");
       const data = await response.json();
@@ -156,7 +142,21 @@ export default function EditCropPage() {
     } catch (err) {
       console.error("Fields fetch error:", err);
     }
-  };
+  }, [setFields]);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    if (!user) {
+      router.push("/sign-in");
+      return;
+    }
+
+    if (cropId) {
+      fetchCrop();
+      fetchFields();
+    }
+  }, [user, isLoaded, router, cropId, fetchCrop, fetchFields]);
 
   const handleInputChange = (field: keyof CropFormData, value: string) => {
     setFormData((prev) => ({
@@ -566,7 +566,7 @@ export default function EditCropPage() {
         entityType="Crop"
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}
-        dependencies={dependencies}
+        dependencies={dependencies as any}
         loading={deleting}
       />
     </PageContainer>

@@ -764,6 +764,15 @@ export function FieldTreatmentModal({
 }
 
 // Weather Data Refresh Modal (simulated - would integrate with weather API)
+interface WeatherData {
+  temperature: number;
+  humidity: number;
+  precipitation: number;
+  windSpeed: number;
+  description: string;
+  lastUpdated: string;
+}
+
 interface WeatherRefreshModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -784,7 +793,7 @@ export function WeatherRefreshModal({
   onSuccess,
 }: WeatherRefreshModalProps) {
   const [loading, setLoading] = useState(false);
-  const [weatherData, setWeatherData] = useState<any>(null);
+  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
 
   const handleRefresh = async () => {
     if (!latitude || !longitude) {

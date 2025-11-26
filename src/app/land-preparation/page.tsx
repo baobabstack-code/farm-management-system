@@ -402,7 +402,7 @@ export default function LandPreparationDashboard() {
           ].map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={() => setActiveTab(tab.id as "operations" | "equipment")}
               className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
                 activeTab === tab.id
                   ? "bg-green-100 text-green-700 border-b-2 border-green-600"
@@ -668,7 +668,7 @@ export default function LandPreparationDashboard() {
                         Total Value
                       </p>
                       <p className="text-2xl font-bold text-gray-900">
-                        {formatCurrency(equipmentStats.totalValue)}
+                        {formatCurrency(equipmentStats!.totalValue)}
                       </p>
                     </div>
                     <TrendingUp className="w-8 h-8 text-green-500" />
@@ -684,7 +684,7 @@ export default function LandPreparationDashboard() {
                         Total Hours
                       </p>
                       <p className="text-2xl font-bold text-gray-900">
-                        {equipmentStats.totalHours.toLocaleString()}
+                        {equipmentStats!.totalHours.toLocaleString()}
                       </p>
                     </div>
                     <Clock className="w-8 h-8 text-blue-500" />
@@ -700,7 +700,7 @@ export default function LandPreparationDashboard() {
                         Maintenance Costs
                       </p>
                       <p className="text-2xl font-bold text-gray-900">
-                        {formatCurrency(equipmentStats.maintenanceCosts)}
+                        {formatCurrency(equipmentStats!.maintenanceCosts)}
                       </p>
                     </div>
                     <Wrench className="w-8 h-8 text-orange-500" />
@@ -716,7 +716,7 @@ export default function LandPreparationDashboard() {
                         Fuel Costs
                       </p>
                       <p className="text-2xl font-bold text-gray-900">
-                        {formatCurrency(equipmentStats.fuelCosts)}
+                        {formatCurrency(equipmentStats!.fuelCosts)}
                       </p>
                     </div>
                     <Fuel className="w-8 h-8 text-red-500" />

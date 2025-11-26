@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import { Prisma } from "@prisma/client"; // Import Prisma
 
 const createAccountSchema = z.object({
   accountName: z.string().min(1, "Account name is required"),
@@ -35,10 +36,12 @@ export async function GET(request: NextRequest) {
     const accountType = searchParams.get("accountType");
     const isActive = searchParams.get("isActive");
 
-    const where: any = { userId };
+    const where: Prisma.FinancialAccountWhereInput = { userId };
 
     if (accountType) {
-      where.accountType = accountType;
+      where.accountType = accountType as
+        | Prisma.EnumFinancialAccountTypeFilter<"FinancialAccount">
+        | undefined;
     }
 
     if (isActive !== null) {

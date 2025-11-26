@@ -3,13 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { isFeatureEnabled } from "@/lib/feature-flags";
 import { AIDataBridge } from "@/lib/ai-bridge/data-access";
 import { getChatResponseFromADK } from "@/lib/ai/agents";
-
-interface ChatMessage {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-  timestamp: Date;
-}
+import { AICropData, AIActivityData, Insight, ChatMessage } from "@/types"; // Import new types
 
 /**
  * AI Chat Assistant API
@@ -46,7 +40,11 @@ export async function POST(request: NextRequest) {
       AIDataBridge.getFinancialSummary(userId),
     ]);
 
-    const context = {
+    const context: {
+      crops: AICropData[];
+      activities: AIActivityData[];
+      conversationHistory: ChatMessage[];
+    } = {
       crops: (cropData.success ? cropData.data : []) || [],
       activities: (financialData.success ? financialData.data : []) || [],
       conversationHistory: conversationHistory || [],
@@ -63,7 +61,7 @@ export async function POST(request: NextRequest) {
         userId,
         message,
         conversationHistory: (context.conversationHistory || []).map(
-          (m: any) => ({ role: m.role, content: m.content })
+          (m: ChatMessage) => ({ role: m.role, content: m.content })
         ),
         crops: context.crops || [],
         activities: context.activities || [],
@@ -101,15 +99,13 @@ export async function POST(request: NextRequest) {
   }
 }
 
-interface FarmContext {
-  crops: any[];
-  activities: any[];
-  conversationHistory: ChatMessage[];
-}
-
 async function generateChatResponse(
   message: string,
-  context: FarmContext
+  context: {
+    crops: AICropData[];
+    activities: AIActivityData[];
+    conversationHistory: ChatMessage[];
+  }
 ): Promise<string> {
   const { crops, activities } = context;
   const messageLC = message.toLowerCase();
@@ -203,7 +199,7 @@ function handleWeatherQuery(query: string): string {
   return responses[Math.floor(Math.random() * responses.length)];
 }
 
-function handleCropQuery(query: string, crops: any[]): string {
+function handleCropQuery(query: string, crops: AICropData[]): string {
   if (crops.length === 0) {
     return "🌱 I see you haven't added any crops yet! Here's how to get started:\n\n1. Click 'Manage Crops' on your dashboard\n2. Add your first crop with planting details\n3. I'll then be able to provide specific advice for your plants\n\n**Popular starter crops:** Tomatoes, lettuce, herbs, peppers - these are great for beginners!";
   }
@@ -221,7 +217,7 @@ function handleCropQuery(query: string, crops: any[]): string {
   return `🌾 **Your Crop Overview:**\n\n• **Total crops:** ${totalCrops}\n• **Varieties:** ${cropTypes.join(", ")}\n• **Recently planted:** ${recentCrops.length} crop(s)\n\n**Growing Tips:**\n• Monitor your ${cropTypes[0]} for optimal growth conditions\n• Consider succession planting for continuous harvest\n• Rotate crop locations to maintain soil health\n\nWhat specific aspect would you like help with?`;
 }
 
-function handleHarvestQuery(crops: any[]): string {
+function handleHarvestQuery(crops: AICropData[]): string {
   if (crops.length === 0) {
     return "🌾 You don't have any crops tracked yet. Add some crops first, and I'll help you plan your harvests!";
   }
@@ -281,8 +277,8 @@ function handleHarvestQuery(crops: any[]): string {
 
 function handleWateringQuery(
   query: string,
-  crops: any[],
-  activities: any[]
+  crops: AICropData[],
+  activities: AIActivityData[]
 ): string {
   const recentIrrigation = activities.filter(
     (activity) =>
@@ -317,7 +313,7 @@ function handleWateringQuery(
   );
 }
 
-function handleFinancialQuery(activities: any[]): string {
+function handleFinancialQuery(activities: AIActivityData[]): string {
   if (activities.length === 0) {
     return (
       "💰 **Financial Tracking:** No activities recorded yet.\n\n" +
@@ -335,13 +331,16 @@ function handleFinancialQuery(activities: any[]): string {
   );
   const monthlyAvg = totalCost / Math.max(1, Math.ceil(activities.length / 10)); // Rough monthly estimate
 
-  const costByType = activities.reduce((acc: any, activity) => {
-    acc[activity.type] = (acc[activity.type] || 0) + (activity.cost || 0);
-    return acc;
-  }, {});
+  const costByType = activities.reduce(
+    (acc: Record<string, number>, activity: AIActivityData) => {
+      acc[activity.type] = (acc[activity.type] || 0) + (activity.cost || 0);
+      return acc;
+    },
+    {}
+  );
 
   const highestCost = Object.entries(costByType).sort(
-    ([, a]: any, [, b]: any) => b - a
+    ([, a], [, b]) => (b as number) - (a as number)
   )[0];
 
   return (
@@ -356,7 +355,7 @@ function handleFinancialQuery(activities: any[]): string {
   );
 }
 
-function handlePestDiseaseQuery(crops: any[]): string {
+function handlePestDiseaseQuery(crops: AICropData[]): string {
   return (
     "🐛 **Pest & Disease Management:**\n\n" +
     "**Prevention is key:**\n" +
@@ -373,7 +372,7 @@ function handlePestDiseaseQuery(crops: any[]): string {
   );
 }
 
-function handleBestPracticesQuery(crops: any[]): string {
+function handleBestPracticesQuery(crops: AICropData[]): string {
   const season = getCurrentSeason();
 
   return (
@@ -419,7 +418,7 @@ function handleGreetingQuery(cropCount: number): string {
   );
 }
 
-function handleTaskQuery(crops: any[]): string {
+function handleTaskQuery(crops: AICropData[]): string {
   const tasks = [];
   const now = new Date();
 
@@ -451,7 +450,10 @@ function handleTaskQuery(crops: any[]): string {
   );
 }
 
-function generateFarmOverviewResponse(crops: any[], activities: any[]): string {
+function generateFarmOverviewResponse(
+  crops: AICropData[],
+  activities: AIActivityData[]
+): string {
   return (
     `🚜 **Farm Overview:**\n\n` +
     `• **Crops tracked:** ${crops.length}\n` +

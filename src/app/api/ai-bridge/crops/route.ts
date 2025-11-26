@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { AIDataBridge } from "@/lib/ai-bridge/data-access";
+import {
+  AICropData,
+  PrismaTask,
+  PrismaIrrigationLog,
+  PrismaFertilizerLog,
+  PrismaPestDiseaseLog,
+  PrismaHarvestLog,
+} from "@/types"; // Import AICropData and Prisma types
 
 /**
  * AI Bridge API for ADK Agents - Crop Data Access
@@ -35,37 +43,71 @@ export async function GET(request: NextRequest) {
     const formattedData = {
       success: true,
       data: {
-        crops: (cropData.data || []).slice(0, limit).map((crop: any) => ({
-          id: crop.id,
-          name: crop.name,
-          variety: crop.variety,
-          plantingDate: crop.plantingDate,
-          expectedHarvestDate: crop.expectedHarvestDate,
-          actualHarvestDate: crop.actualHarvestDate,
-          status: crop.status,
-          area: crop.area,
-          ...(includeHistory && {
-            recentTasks: crop.tasks || [],
-            recentIrrigation: crop.irrigationLogs || [],
-            recentFertilizer: crop.fertilizerLogs || [],
-            pestDiseaseHistory: crop.pestDiseaseLogs || [],
-            harvestHistory: crop.harvestLogs || [],
-          }),
-        })),
+        crops: ((cropData.data as AICropData[]) || [])
+          .slice(0, limit)
+          .map((crop: AICropData) => ({
+            id: crop.id,
+            name: crop.name,
+            variety: crop.variety,
+            plantingDate: crop.plantingDate,
+            expectedHarvestDate: crop.expectedHarvestDate,
+            actualHarvestDate: crop.actualHarvestDate,
+            status: crop.status,
+            area: crop.area,
+            ...(includeHistory && {
+              recentTasks: (crop.tasks || []).map((task: PrismaTask) => ({
+                id: task.id,
+                title: task.title,
+                status: task.status,
+              })),
+              recentIrrigation: (crop.irrigationLogs || []).map(
+                (log: PrismaIrrigationLog) => ({
+                  id: log.id,
+                  date: log.date,
+                  waterAmount: log.waterAmount,
+                })
+              ),
+              recentFertilizer: (crop.fertilizerLogs || []).map(
+                (log: PrismaFertilizerLog) => ({
+                  id: log.id,
+                  date: log.date,
+                  fertilizerType: log.fertilizerType,
+                  amount: log.amount,
+                })
+              ),
+              pestDiseaseHistory: (crop.pestDiseaseLogs || []).map(
+                (log: PrismaPestDiseaseLog) => ({
+                  id: log.id,
+                  date: log.date,
+                  name: log.name,
+                  severity: log.severity,
+                })
+              ),
+              harvestHistory: (crop.harvestLogs || []).map(
+                (log: PrismaHarvestLog) => ({
+                  id: log.id,
+                  harvestDate: log.harvestDate,
+                  quantity: log.quantity,
+                })
+              ),
+            }),
+          })),
         summary: {
           totalCrops: (cropData.data || []).length,
           cropTypes: [
-            ...new Set((cropData.data || []).map((c: any) => c.name)),
+            ...new Set(
+              ((cropData.data as AICropData[]) || []).map((c) => c.name)
+            ),
           ],
-          statusDistribution: (cropData.data || []).reduce(
-            (acc: any, crop: any) => {
+          statusDistribution: ((cropData.data as AICropData[]) || []).reduce(
+            (acc: Record<string, number>, crop) => {
               acc[crop.status] = (acc[crop.status] || 0) + 1;
               return acc;
             },
             {}
           ),
-          totalArea: (cropData.data || []).reduce(
-            (sum: number, crop: any) => sum + (crop.area || 0),
+          totalArea: ((cropData.data as AICropData[]) || []).reduce(
+            (sum: number, crop) => sum + (crop.area || 0),
             0
           ),
         },
@@ -118,8 +160,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Filter to requested crops
-    const requestedCrops = (cropData.data || []).filter((crop: any) =>
-      cropIds.includes(crop.id)
+    const requestedCrops = ((cropData.data as AICropData[]) || []).filter(
+      (crop: AICropData) => cropIds.includes(crop.id)
     );
 
     // Perform analysis based on type
@@ -159,7 +201,7 @@ export async function POST(request: NextRequest) {
 }
 
 // Analysis helper functions
-function performHealthAssessment(crops: any[]) {
+function performHealthAssessment(crops: AICropData[]) {
   return crops.map((crop) => {
     const daysSincePlanting = Math.floor(
       (new Date().getTime() - new Date(crop.plantingDate).getTime()) /
@@ -180,7 +222,7 @@ function performHealthAssessment(crops: any[]) {
   });
 }
 
-function performProductivityAnalysis(crops: any[]) {
+function performProductivityAnalysis(crops: AICropData[]) {
   return crops.map((crop) => {
     const activitiesPerSqM = (crop.tasks?.length || 0) / (crop.area || 1);
     const irrigationFrequency = crop.irrigationLogs?.length || 0;
@@ -196,10 +238,10 @@ function performProductivityAnalysis(crops: any[]) {
   });
 }
 
-function performCostEfficiencyAnalysis(crops: any[]) {
+function performCostEfficiencyAnalysis(crops: AICropData[]) {
   return crops.map((crop) => {
     const totalCost = (crop.fertilizerLogs || []).reduce(
-      (sum: number, log: any) => sum + log.amount * 10,
+      (sum: number, log: PrismaFertilizerLog) => sum + log.amount * 10,
       0
     );
     const costPerSqM = totalCost / (crop.area || 1);
@@ -209,18 +251,18 @@ function performCostEfficiencyAnalysis(crops: any[]) {
       name: crop.name,
       totalCost,
       costPerSqM,
-      efficiencyRating: calculateEfficiencyRating(totalCost, crop.area),
+      efficiencyRating: calculateEfficiencyRating(totalCost, crop.area ?? 0),
       optimizationOpportunities: identifyOptimizations(crop),
     };
   });
 }
 
-function performGeneralAnalysis(crops: any[]) {
+function performGeneralAnalysis(crops: AICropData[]) {
   return {
     totalCrops: crops.length,
     averageArea:
       crops.reduce((sum, crop) => sum + (crop.area || 0), 0) / crops.length,
-    statusBreakdown: crops.reduce((acc: any, crop) => {
+    statusBreakdown: crops.reduce((acc: Record<string, number>, crop) => {
       acc[crop.status] = (acc[crop.status] || 0) + 1;
       return acc;
     }, {}),
@@ -237,22 +279,23 @@ function performGeneralAnalysis(crops: any[]) {
 }
 
 // Helper calculation functions
-function calculateHealthScore(crop: any): number {
+function calculateHealthScore(crop: AICropData): number {
   let score = 0.7; // Base score
 
   // Adjust based on activities
-  if (crop.irrigationLogs?.length > 0) score += 0.1;
-  if (crop.fertilizerLogs?.length > 0) score += 0.1;
-  if (crop.pestDiseaseLogs?.length === 0) score += 0.1;
+  if ((crop.irrigationLogs?.length ?? 0) > 0) score += 0.1;
+  if ((crop.fertilizerLogs?.length ?? 0) > 0) score += 0.1;
+  if ((crop.pestDiseaseLogs?.length ?? 0) === 0) score += 0.1;
 
   return Math.min(1.0, score);
 }
 
-function identifyHealthConcerns(crop: any): string[] {
+function identifyHealthConcerns(crop: AICropData): string[] {
   const concerns = [];
 
   if (!crop.irrigationLogs?.length) concerns.push("No irrigation records");
-  if (crop.pestDiseaseLogs?.length > 0) concerns.push("Pest/disease history");
+  if ((crop.pestDiseaseLogs?.length ?? 0) > 0)
+    concerns.push("Pest/disease history");
   if (crop.status === "PLANTED" && isOverdue(crop.expectedHarvestDate)) {
     concerns.push("Overdue for harvest");
   }
@@ -261,7 +304,7 @@ function identifyHealthConcerns(crop: any): string[] {
 }
 
 function generateHealthRecommendations(
-  crop: any,
+  crop: AICropData,
   healthScore: number
 ): string[] {
   const recommendations = [];
@@ -278,7 +321,7 @@ function generateHealthRecommendations(
   return recommendations;
 }
 
-function calculateProductivityScore(crop: any): number {
+function calculateProductivityScore(crop: AICropData): number {
   const baseScore = 0.5;
   const activityBonus = Math.min(0.3, (crop.tasks?.length || 0) * 0.05);
   const irrigationBonus = Math.min(
@@ -289,7 +332,7 @@ function calculateProductivityScore(crop: any): number {
   return Math.min(1.0, baseScore + activityBonus + irrigationBonus);
 }
 
-function estimateYield(crop: any): number {
+function estimateYield(crop: AICropData): number {
   // Simple yield estimation based on area and care level
   const baseYield = crop.area || 1;
   const careMultiplier = 1 + (crop.tasks?.length || 0) * 0.1;
@@ -306,7 +349,7 @@ function calculateEfficiencyRating(totalCost: number, area: number): string {
   return "Needs Improvement";
 }
 
-function identifyOptimizations(crop: any): string[] {
+function identifyOptimizations(crop: AICropData): string[] {
   const optimizations = [];
 
   if ((crop.fertilizerLogs?.length || 0) > 5) {
@@ -320,6 +363,6 @@ function identifyOptimizations(crop: any): string[] {
   return optimizations;
 }
 
-function isOverdue(expectedDate: string): boolean {
+function isOverdue(expectedDate: Date): boolean {
   return new Date(expectedDate) < new Date();
 }

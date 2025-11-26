@@ -66,7 +66,7 @@ export function useActivities(
         throw new Error(result.error || "Failed to fetch activities");
       }
 
-      const newActivities = result.data.map((activity: any) => ({
+      const newActivities = result.data.map((activity: Activity) => ({
         ...activity,
         timestamp: new Date(activity.timestamp),
         createdAt: new Date(activity.createdAt),
@@ -99,7 +99,7 @@ export function useActivities(
 
   useEffect(() => {
     fetchActivities(true);
-  }, [entityType, entityId, actionType, limit]);
+  }, [entityType, entityId, actionType, limit, fetchActivities]);
 
   useEffect(() => {
     if (!autoRefresh) return;
@@ -109,7 +109,7 @@ export function useActivities(
     }, refreshInterval);
 
     return () => clearInterval(interval);
-  }, [autoRefresh, refreshInterval]);
+  }, [autoRefresh, refreshInterval, refetch]);
 
   return {
     activities,

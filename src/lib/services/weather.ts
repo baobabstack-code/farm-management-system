@@ -15,6 +15,8 @@ export interface WeatherData {
   timestamp: string;
 }
 
+export type WeatherConditions = WeatherData;
+
 export interface WeatherForecast {
   date: string;
   high: number;
@@ -23,6 +25,29 @@ export interface WeatherForecast {
   precipitationChance: number;
   humidity: number;
   condition: string;
+}
+
+interface OpenWeatherForecastItem {
+  dt_txt: string;
+  main: {
+    temp_max: number;
+    temp_min: number;
+    humidity: number;
+  };
+  weather: Array<{ description: string }>;
+  pop: number;
+  rain?: { "3h"?: number };
+  snow?: { "3h"?: number };
+}
+
+interface DailyForecastData {
+  date: string;
+  highs: number[];
+  lows: number[];
+  precipitation: number[];
+  precipitationChance: number[];
+  humidity: number[];
+  conditions: string[];
 }
 
 export interface WeatherInsights {
@@ -299,8 +324,10 @@ class WeatherService {
   /**
    * Process raw forecast data into daily summaries
    */
-  private processForecastData(forecastList: any[]): WeatherForecast[] {
-    const dailyData: { [key: string]: any } = {};
+  private processForecastData(
+    forecastList: OpenWeatherForecastItem[]
+  ): WeatherForecast[] {
+    const dailyData: { [key: string]: DailyForecastData } = {};
 
     forecastList.forEach((item) => {
       const date = item.dt_txt.split(" ")[0]; // Get just the date part
@@ -327,7 +354,7 @@ class WeatherService {
       dailyData[date].conditions.push(item.weather[0].description);
     });
 
-    return Object.values(dailyData).map((day: any) => ({
+    return Object.values(dailyData).map((day: DailyForecastData) => ({
       date: day.date,
       high: Math.max(...day.highs),
       low: Math.min(...day.lows),

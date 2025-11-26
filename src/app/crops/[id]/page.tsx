@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter, useParams } from "next/navigation";
+import { Prisma } from "@prisma/client";
 import {
   PageContainer,
   FarmCard,
@@ -53,7 +54,9 @@ import { Crop, CropStatus, Field, EntityType } from "@/types";
 
 interface CropDetail extends Crop {
   field?: Field;
-  tasks?: any[];
+  tasks?: Prisma.TaskGetPayload<{
+    select: { id: true; title: true; status: true };
+  }>[];
   irrigationLogs?: any[];
   fertilizerLogs?: any[];
   pestDiseaseLogs?: any[];
@@ -73,7 +76,7 @@ export default function CropDetailPage() {
     "overview" | "timeline" | "activities"
   >("overview");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [dependencies, setDependencies] = useState<any[]>([]);
+  const [dependencies, setDependencies] = useState<unknown[]>([]);
 
   // Quick action modal states
   const [showTreatmentModal, setShowTreatmentModal] = useState(false);
@@ -98,7 +101,7 @@ export default function CropDetailPage() {
     entityId: cropId,
     onSuccess: (data, operation) => {
       if (operation === "update") {
-        setCrop(data);
+        setCrop(data as any);
         refetchActivities();
       }
     },
@@ -128,7 +131,7 @@ export default function CropDetailPage() {
       );
 
       const dataPromise = cropApi.getCrop(cropId);
-      const data = await Promise.race([dataPromise, timeoutPromise]);
+      const data: any = await Promise.race([dataPromise, timeoutPromise]);
 
       setCrop(data.data || data);
       setLoading(false);
@@ -201,7 +204,7 @@ export default function CropDetailPage() {
 
     try {
       // Check dependencies first
-      const data = await cropApi.getCropDependencies(cropId);
+      const data: any = await cropApi.getCropDependencies(cropId);
       setDependencies(data.dependencies || []);
       setShowDeleteDialog(true);
     } catch (err) {
@@ -809,7 +812,7 @@ export default function CropDetailPage() {
         entityType="Crop"
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}
-        dependencies={dependencies}
+        dependencies={dependencies as any}
         loading={isDeleting}
       />
 

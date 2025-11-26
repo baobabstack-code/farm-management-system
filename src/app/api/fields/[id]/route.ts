@@ -13,7 +13,7 @@ const updateFieldSchema = z.object({
   latitude: z.number().optional(),
   longitude: z.number().optional(),
   address: z.string().optional(),
-  boundaries: z.any().optional(), // GeoJSON polygon
+  boundaries: z.unknown().optional(), // GeoJSON polygon
   soilType: z.string().optional(),
   drainageType: z.string().optional(),
   irrigationType: z.string().optional(),
@@ -181,11 +181,14 @@ export const PUT = ApiResponseHandler.withErrorHandling(
     });
 
     // Log activity with changes
-    const changes: Record<string, any> = {};
+    const changes: Record<string, unknown> = {};
     if (validatedData && typeof validatedData === "object") {
       Object.entries(validatedData).forEach(([key, value]) => {
-        if (value !== (existingField as any)[key]) {
-          changes[key] = { from: (existingField as any)[key], to: value };
+        if (value !== (existingField as Record<string, unknown>)[key]) {
+          changes[key] = {
+            from: (existingField as Record<string, unknown>)[key],
+            to: value,
+          };
         }
       });
     }

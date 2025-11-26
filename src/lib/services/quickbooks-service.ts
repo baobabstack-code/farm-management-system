@@ -15,6 +15,131 @@ export interface QuickBooksTokens {
   expiresAt: Date;
 }
 
+type QuickBooksError = any;
+
+interface QuickBooksCompanyInfo {
+  Name?: string;
+  CompanyName?: string;
+  LegalName?: string;
+  [key: string]: unknown;
+}
+
+interface QuickBooksInstance {
+  requestToken: (
+    code: string,
+    callback: (
+      err: QuickBooksError | null,
+      tokens: QuickBooksTokens | null
+    ) => void
+  ) => void;
+  getCompanyInfo: (
+    realmId: string,
+    callback: (
+      err: QuickBooksError | null,
+      companyInfo: QuickBooksCompanyInfo | null
+    ) => void
+  ) => void;
+  refreshAccessToken: (
+    refreshToken: string,
+    callback: (
+      err: QuickBooksError | null,
+      tokens: QuickBooksTokens | null
+    ) => void
+  ) => void;
+  findAccounts: (
+    callback: (
+      err: QuickBooksError | null,
+      accounts: QuickBooksAccountsResponse | null
+    ) => void
+  ) => void;
+  findVendors: (
+    callback: (
+      err: QuickBooksError | null,
+      vendors: QuickBooksVendorsResponse | null
+    ) => void
+  ) => void;
+  createPurchase: (
+    expense: QuickBooksExpense,
+    callback: (
+      err: QuickBooksError | null,
+      result: QuickBooksExpenseResult | null
+    ) => void
+  ) => void;
+  realmId: string;
+}
+
+interface QuickBooksAccountsResponse {
+  QueryResponse?: {
+    Account?: QuickBooksAccount[];
+  };
+}
+
+interface QuickBooksAccount {
+  Id: string;
+  Name: string;
+  AccountType: string;
+  AccountSubType?: string;
+  CurrentBalance?: number;
+  Active?: boolean;
+  [key: string]: unknown;
+}
+
+interface QuickBooksVendorsResponse {
+  QueryResponse?: {
+    Vendor?: QuickBooksVendor[];
+  };
+}
+
+interface QuickBooksVendor {
+  Id: string;
+  DisplayName: string;
+  CompanyName?: string;
+  GivenName?: string;
+  FamilyName?: string;
+  PrimaryEmailAddr?: { Address?: string };
+  PrimaryPhone?: { FreeFormNumber?: string };
+  BillAddr?: QuickBooksAddress;
+  Active?: boolean;
+  [key: string]: unknown;
+}
+
+interface QuickBooksAddress {
+  Line1?: string;
+  Line2?: string;
+  City?: string;
+  CountrySubDivisionCode?: string;
+  PostalCode?: string;
+  [key: string]: unknown;
+}
+
+interface QuickBooksExpense {
+  AccountRef: {
+    value: string;
+  };
+  PaymentType: string;
+  EntityRef?: {
+    value: string;
+    type: string;
+  };
+  TotalAmt: number;
+  PrivateNote?: string;
+  Line: Array<{
+    Amount: number;
+    DetailType: string;
+    AccountBasedExpenseLineDetail: {
+      AccountRef: {
+        value: string;
+      };
+    };
+  }>;
+  [key: string]: unknown;
+}
+
+interface QuickBooksExpenseResult {
+  Id: string;
+  [key: string]: unknown;
+}
+
 export class QuickBooksService {
   private static getConfig(): QuickBooksConfig {
     return {
@@ -68,10 +193,10 @@ export class QuickBooksService {
         realmId
       );
 
-      const tokens = await this.exchangeCodeForTokens(qbo, code);
+      const tokens = await this.exchangeCodeForTokens(qbo as any, code);
 
       // Get company info
-      const companyInfo = await this.getCompanyInfo(qbo);
+      const companyInfo = await this.getCompanyInfo(qbo as any);
 
       // Store connection in database
       await this.storeConnection(
@@ -91,34 +216,52 @@ export class QuickBooksService {
     }
   }
 
-  private static exchangeCodeForTokens(qbo: any, code: string): Promise<any> {
+  private static exchangeCodeForTokens(
+    qbo: QuickBooksInstance,
+    code: string
+  ): Promise<QuickBooksTokens> {
     return new Promise((resolve, reject) => {
-      qbo.requestToken(code, (err: any, tokens: any) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(tokens);
+      qbo.requestToken(
+        code,
+        (err: QuickBooksError | null, tokens: QuickBooksTokens | null) => {
+          if (err) {
+            reject(err);
+          } else if (tokens) {
+            resolve(tokens);
+          } else {
+            reject(new Error("No tokens received"));
+          }
         }
-      });
+      );
     });
   }
 
-  private static getCompanyInfo(qbo: any): Promise<any> {
+  private static getCompanyInfo(
+    qbo: QuickBooksInstance
+  ): Promise<QuickBooksCompanyInfo> {
     return new Promise((resolve, reject) => {
-      qbo.getCompanyInfo(qbo.realmId, (err: any, companyInfo: any) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(companyInfo);
+      qbo.getCompanyInfo(
+        qbo.realmId,
+        (
+          err: QuickBooksError | null,
+          companyInfo: QuickBooksCompanyInfo | null
+        ) => {
+          if (err) {
+            reject(err);
+          } else if (companyInfo) {
+            resolve(companyInfo);
+          } else {
+            reject(new Error("No company info received"));
+          }
         }
-      });
+      );
     });
   }
 
   private static async storeConnection(
     userId: string,
     tokens: QuickBooksTokens,
-    companyInfo: any
+    companyInfo: QuickBooksCompanyInfo
   ): Promise<void> {
     await prisma.quickBooksConnection.upsert({
       where: { userId },
@@ -173,16 +316,18 @@ export class QuickBooksService {
         );
 
         const newTokens = await this.refreshTokens(
-          qbo,
+          qbo as any,
           connection.refreshToken
         );
 
         await prisma.quickBooksConnection.update({
           where: { userId },
           data: {
-            accessToken: newTokens.access_token,
-            refreshToken: newTokens.refresh_token,
-            tokenExpiresAt: new Date(Date.now() + newTokens.expires_in * 1000),
+            accessToken: (newTokens as any).access_token,
+            refreshToken: (newTokens as any).refresh_token,
+            tokenExpiresAt: new Date(
+              Date.now() + (newTokens as any).expires_in * 1000
+            ),
             updatedAt: new Date(),
           },
         });
@@ -197,15 +342,23 @@ export class QuickBooksService {
     return true;
   }
 
-  private static refreshTokens(qbo: any, refreshToken: string): Promise<any> {
+  private static refreshTokens(
+    qbo: QuickBooksInstance,
+    refreshToken: string
+  ): Promise<QuickBooksTokens> {
     return new Promise((resolve, reject) => {
-      qbo.refreshAccessToken(refreshToken, (err: any, tokens: any) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(tokens);
+      qbo.refreshAccessToken(
+        refreshToken,
+        (err: QuickBooksError | null, tokens: QuickBooksTokens | null) => {
+          if (err) {
+            reject(err);
+          } else if (tokens) {
+            resolve(tokens);
+          } else {
+            reject(new Error("No tokens received"));
+          }
         }
-      });
+      );
     });
   }
 
@@ -230,7 +383,7 @@ export class QuickBooksService {
         connection.realmId
       );
 
-      const accounts = await this.getAccounts(qbo);
+      const accounts = await this.getAccounts(qbo as any);
       let syncedCount = 0;
 
       for (const account of accounts) {
@@ -252,21 +405,28 @@ export class QuickBooksService {
     }
   }
 
-  private static getAccounts(qbo: any): Promise<any[]> {
+  private static getAccounts(
+    qbo: QuickBooksInstance
+  ): Promise<QuickBooksAccount[]> {
     return new Promise((resolve, reject) => {
-      qbo.findAccounts((err: any, accounts: any) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(accounts.QueryResponse?.Account || []);
+      qbo.findAccounts(
+        (
+          err: QuickBooksError | null,
+          accounts: QuickBooksAccountsResponse | null
+        ) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(accounts?.QueryResponse?.Account || []);
+          }
         }
-      });
+      );
     });
   }
 
   private static async syncAccount(
     userId: string,
-    qbAccount: any
+    qbAccount: QuickBooksAccount
   ): Promise<void> {
     const accountType = this.mapAccountType(qbAccount.AccountType);
 
@@ -278,23 +438,23 @@ export class QuickBooksService {
         },
       },
       update: {
-        accountName: qbAccount.Name,
+        accountName: qbAccount.Name as any,
         accountType,
-        accountNumber: qbAccount.AcctNum || null,
-        description: qbAccount.Description || null,
-        isActive: qbAccount.Active,
-        balance: parseFloat(qbAccount.CurrentBalance || "0"),
+        accountNumber: (qbAccount.AcctNum || null) as any,
+        description: (qbAccount.Description || null) as any,
+        isActive: qbAccount.Active as any,
+        balance: parseFloat((qbAccount.CurrentBalance || "0") as any),
         updatedAt: new Date(),
       },
       create: {
         userId,
-        accountName: qbAccount.Name,
+        accountName: qbAccount.Name as any,
         accountType,
-        accountNumber: qbAccount.AcctNum || null,
-        description: qbAccount.Description || null,
-        quickbooksId: qbAccount.Id,
-        isActive: qbAccount.Active,
-        balance: parseFloat(qbAccount.CurrentBalance || "0"),
+        accountNumber: (qbAccount.AcctNum || null) as any,
+        description: (qbAccount.Description || null) as any,
+        quickbooksId: qbAccount.Id as any,
+        isActive: qbAccount.Active as any,
+        balance: parseFloat((qbAccount.CurrentBalance || "0") as any),
       },
     });
   }
@@ -320,7 +480,7 @@ export class QuickBooksService {
         connection.realmId
       );
 
-      const vendors = await this.getVendors(qbo);
+      const vendors = await this.getVendors(qbo as any);
       let syncedCount = 0;
 
       for (const vendor of vendors) {
@@ -342,21 +502,28 @@ export class QuickBooksService {
     }
   }
 
-  private static getVendors(qbo: any): Promise<any[]> {
+  private static getVendors(
+    qbo: QuickBooksInstance
+  ): Promise<QuickBooksVendor[]> {
     return new Promise((resolve, reject) => {
-      qbo.findVendors((err: any, vendors: any) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(vendors.QueryResponse?.Vendor || []);
+      qbo.findVendors(
+        (
+          err: QuickBooksError | null,
+          vendors: QuickBooksVendorsResponse | null
+        ) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(vendors?.QueryResponse?.Vendor || []);
+          }
         }
-      });
+      );
     });
   }
 
   private static async syncVendor(
     userId: string,
-    qbVendor: any
+    qbVendor: QuickBooksVendor
   ): Promise<void> {
     await prisma.supplier.upsert({
       where: {
@@ -366,25 +533,25 @@ export class QuickBooksService {
         },
       },
       update: {
-        name: qbVendor.Name,
-        contactName: qbVendor.ContactInfo?.Name || null,
-        email: qbVendor.PrimaryEmailAddr?.Address || null,
-        phone: qbVendor.PrimaryPhone?.FreeFormNumber || null,
+        name: qbVendor.Name as any,
+        contactName: ((qbVendor.ContactInfo as any)?.Name || null) as any,
+        email: (qbVendor.PrimaryEmailAddr?.Address || null) as any,
+        phone: (qbVendor.PrimaryPhone?.FreeFormNumber || null) as any,
         address: this.formatAddress(qbVendor.BillAddr),
-        taxId: qbVendor.TaxIdentifier || null,
-        isActive: qbVendor.Active,
+        taxId: (qbVendor.TaxIdentifier || null) as any,
+        isActive: qbVendor.Active as any,
         updatedAt: new Date(),
       },
       create: {
         userId,
-        name: qbVendor.Name,
-        contactName: qbVendor.ContactInfo?.Name || null,
-        email: qbVendor.PrimaryEmailAddr?.Address || null,
-        phone: qbVendor.PrimaryPhone?.FreeFormNumber || null,
+        name: qbVendor.Name as any,
+        contactName: ((qbVendor.ContactInfo as any)?.Name || null) as any,
+        email: (qbVendor.PrimaryEmailAddr?.Address || null) as any,
+        phone: (qbVendor.PrimaryPhone?.FreeFormNumber || null) as any,
         address: this.formatAddress(qbVendor.BillAddr),
-        taxId: qbVendor.TaxIdentifier || null,
-        quickbooksId: qbVendor.Id,
-        isActive: qbVendor.Active,
+        taxId: (qbVendor.TaxIdentifier || null) as any,
+        quickbooksId: qbVendor.Id as any,
+        isActive: qbVendor.Active as any,
       },
     });
   }
@@ -398,7 +565,7 @@ export class QuickBooksService {
       vendorId?: string;
       date: Date;
     }
-  ): Promise<any> {
+  ): Promise<QuickBooksExpenseResult> {
     const connection = await this.getConnection(userId);
     if (!connection || !connection.isActive) {
       throw new Error("No active QuickBooks connection");
@@ -419,7 +586,7 @@ export class QuickBooksService {
     );
 
     return new Promise((resolve, reject) => {
-      const expense: any = {
+      const expense: QuickBooksExpense = {
         AccountRef: {
           value: expenseData.accountId,
         },
@@ -429,7 +596,6 @@ export class QuickBooksService {
         Line: [
           {
             Amount: expenseData.amount,
-            Description: expenseData.description,
             DetailType: "AccountBasedExpenseLineDetail",
             AccountBasedExpenseLineDetail: {
               AccountRef: {
@@ -447,13 +613,18 @@ export class QuickBooksService {
         };
       }
 
-      qbo.createPurchase(expense, (err: any, result: any) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result);
+      qbo.createPurchase(
+        expense,
+        (err: QuickBooksError | null, result: any) => {
+          if (err) {
+            reject(err);
+          } else if (result) {
+            resolve(result);
+          } else {
+            reject(new Error("No result received"));
+          }
         }
-      });
+      );
     });
   }
 
@@ -513,7 +684,9 @@ export class QuickBooksService {
     return mapping[qbAccountType] || "ASSET";
   }
 
-  private static formatAddress(address: any): string | null {
+  private static formatAddress(
+    address: QuickBooksAddress | undefined
+  ): string | null {
     if (!address) return null;
 
     const parts = [

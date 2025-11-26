@@ -30,26 +30,22 @@ const getHapticInterface = (): HapticFeedback | null => {
   if (typeof window === "undefined") return null;
 
   // iOS Safari Haptic Feedback
-  const webkit = (window as any).webkit;
-  if (
-    webkit &&
-    webkit.messageHandlers &&
-    webkit.messageHandlers.hapticFeedback
-  ) {
+  const win = window as any;
+  if (win.webkit?.messageHandlers?.hapticFeedback) {
     return {
       selectionChanged: () => {
-        webkit.messageHandlers.hapticFeedback.postMessage({
+        win.webkit.messageHandlers.hapticFeedback.postMessage({
           type: "selection",
         });
       },
       impactOccurred: (style: "light" | "medium" | "heavy") => {
-        webkit.messageHandlers.hapticFeedback.postMessage({
+        win.webkit.messageHandlers.hapticFeedback.postMessage({
           type: "impact",
           style,
         });
       },
       notificationOccurred: (type: "success" | "warning" | "error") => {
-        webkit.messageHandlers.hapticFeedback.postMessage({
+        win.webkit.messageHandlers.hapticFeedback.postMessage({
           type: "notification",
           notificationType: type,
         });

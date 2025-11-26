@@ -19,8 +19,8 @@ export interface BadgeConfig {
 export interface FieldConfig {
   label: string;
   key: string;
-  formatter?: (value: any) => string;
-  badge?: BadgeConfig | ((value: any) => BadgeConfig | null);
+  formatter?: (value: unknown) => string;
+  badge?: BadgeConfig | ((value: unknown) => BadgeConfig | null);
   icon?: React.ComponentType<{ className?: string }>;
   copyable?: boolean;
   clickable?: boolean;
@@ -32,7 +32,7 @@ export interface EntityDetailCardProps
   title: string;
   description?: string;
   badge?: React.ReactNode;
-  data: Record<string, any>;
+  data: Record<string, unknown>;
   fields: FieldConfig[];
   loading?: boolean;
   error?: string;
@@ -83,8 +83,8 @@ const defaultFormatters = {
 };
 
 const formatValue = (
-  value: any,
-  formatter?: (value: any) => string
+  value: unknown,
+  formatter?: (value: unknown) => string
 ): string => {
   if (value === null || value === undefined || value === "") {
     return "N/A";
@@ -98,8 +98,8 @@ const formatValue = (
 };
 
 const getBadgeFromConfig = (
-  value: any,
-  badgeConfig?: BadgeConfig | ((value: any) => BadgeConfig | null)
+  value: unknown,
+  badgeConfig?: BadgeConfig | ((value: unknown) => BadgeConfig | null)
 ): BadgeConfig | null => {
   if (!badgeConfig) return null;
 
@@ -154,7 +154,7 @@ const EmptyState: React.FC<{ message: string }> = ({ message }) => (
 
 interface FieldProps {
   field: FieldConfig;
-  value: any;
+  value: unknown;
   layout: "default" | "compact" | "grid";
 }
 

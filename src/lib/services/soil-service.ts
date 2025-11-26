@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { SoilTest, SoilAmendment, SoilTestType } from "@/types";
+import { Prisma } from "@prisma/client";
 
 export interface SoilAnalysis {
   pH: {
@@ -96,7 +97,7 @@ export class SoilService {
     }
   ): Promise<SoilTest[]> {
     try {
-      const where: any = { userId };
+      const where: Prisma.SoilTestWhereInput = { userId };
 
       if (filters?.cropId) where.cropId = filters.cropId;
       if (filters?.fieldId) where.fieldId = filters.fieldId;
@@ -165,7 +166,7 @@ export class SoilService {
     }
   ): Promise<SoilAmendment[]> {
     try {
-      const where: any = { userId };
+      const where: Prisma.SoilAmendmentWhereInput = { userId };
 
       if (filters?.cropId) where.cropId = filters.cropId;
       if (filters?.fieldId) where.fieldId = filters.fieldId;
@@ -600,7 +601,7 @@ export class SoilService {
           break;
       }
 
-      const where: any = {
+      const where: Prisma.SoilTestWhereInput = {
         userId,
         sampleDate: {
           gte: startDate,

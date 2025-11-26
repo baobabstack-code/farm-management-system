@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { ActivityService, CropService, TaskService } from "@/lib/db";
+import {
+  ActivityService,
+  CropService,
+  TaskService,
+  FieldService,
+} from "@/lib/db";
 
 export async function GET(request: NextRequest) {
   try {
@@ -23,12 +28,13 @@ export async function GET(request: NextRequest) {
     ]);
 
     // Get activity statistics
-    const [waterStats, fertilizerStats, yieldStats, pestStats] =
+    const [waterStats, fertilizerStats, yieldStats, pestStats, field] =
       await Promise.all([
         ActivityService.getWaterUsageStats(userId, start, end),
         ActivityService.getFertilizerUsageStats(userId, start, end),
         ActivityService.getYieldStats(userId, start, end),
         ActivityService.getPestDiseaseStats(userId, start, end),
+        FieldService.findFirstByUser(userId),
       ]);
 
     const analytics = {
@@ -51,6 +57,13 @@ export async function GET(request: NextRequest) {
         plantingDate: crop.plantingDate,
         expectedHarvestDate: crop.expectedHarvestDate,
       })),
+      location: field
+        ? {
+            latitude: field.latitude,
+            longitude: field.longitude,
+            name: field.address || field.name,
+          }
+        : null,
     };
 
     return NextResponse.json({

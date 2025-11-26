@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter, useParams } from "next/navigation";
 import {
@@ -13,7 +13,9 @@ import {
   LoadingState,
   ErrorState,
 } from "@/components/ui/farm-theme";
-import DeleteConfirmationDialog from "@/components/ui/delete-confirmation-dialog";
+import DeleteConfirmationDialog, {
+  DependencyItem,
+} from "@/components/ui/delete-confirmation-dialog";
 import {
   Wrench,
   ArrowLeft,
@@ -131,33 +133,16 @@ export default function EquipmentDetailPage() {
 
   const [equipment, setEquipment] = useState<Equipment | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [activeTab, setActiveTab] = useState<
-    "overview" | "maintenance" | "fuel" | "usage"
-  >("overview");
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [dependencies, setDependencies] = useState<any[]>([]);
-  const [deleting, setDeleting] = useState(false);
-
-  // Quick action modal states
+  const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("overview");
+  const [showHoursModal, setShowHoursModal] = useState(false);
   const [showMaintenanceModal, setShowMaintenanceModal] = useState(false);
   const [showFuelModal, setShowFuelModal] = useState(false);
-  const [showHoursModal, setShowHoursModal] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [dependencies, setDependencies] = useState<DependencyItem[]>([]);
+  const [deleting, setDeleting] = useState(false);
 
-  useEffect(() => {
-    if (!isLoaded) return;
-
-    if (!user) {
-      router.push("/sign-in");
-      return;
-    }
-
-    if (equipmentId) {
-      fetchEquipment();
-    }
-  }, [user, isLoaded, router, equipmentId]);
-
-  const fetchEquipment = async () => {
+  const fetchEquipment = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(
@@ -188,7 +173,20 @@ export default function EquipmentDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [equipmentId, setEquipment, setError, setLoading]);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    if (!user) {
+      router.push("/sign-in");
+      return;
+    }
+
+    if (equipmentId) {
+      fetchEquipment();
+    }
+  }, [user, isLoaded, router, equipmentId, fetchEquipment]);
 
   const getStatusBadge = (status: string) => {
     switch (status.toLowerCase()) {
@@ -1193,7 +1191,7 @@ export default function EquipmentDetailPage() {
                             <div>
                               <span className="farm-text-caption">Depth</span>
                               <p className="farm-text-body font-medium">
-                                {operation.depth}"
+                                {operation.depth}&quot;
                               </p>
                             </div>
 
@@ -1255,7 +1253,7 @@ export default function EquipmentDetailPage() {
 
       <DeleteConfirmationDialog
         isOpen={showDeleteDialog}
-        entityName={equipment?.name || ""}
+        entityName={equipment.name}
         entityType="Equipment"
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}
@@ -1263,35 +1261,30 @@ export default function EquipmentDetailPage() {
         loading={deleting}
       />
 
-      {/* Quick Action Modals */}
-      {equipment && (
-        <>
-          <MaintenanceLogModal
-            isOpen={showMaintenanceModal}
-            onClose={() => setShowMaintenanceModal(false)}
-            equipmentId={equipmentId}
-            equipmentName={equipment.name}
-            onSuccess={handleQuickActionSuccess}
-          />
+      <MaintenanceLogModal
+        isOpen={showMaintenanceModal}
+        onClose={() => setShowMaintenanceModal(false)}
+        equipmentId={equipmentId}
+        equipmentName={equipment.name}
+        onSuccess={handleQuickActionSuccess}
+      />
 
-          <FuelLogModal
-            isOpen={showFuelModal}
-            onClose={() => setShowFuelModal(false)}
-            equipmentId={equipmentId}
-            equipmentName={equipment.name}
-            onSuccess={handleQuickActionSuccess}
-          />
+      <FuelLogModal
+        isOpen={showFuelModal}
+        onClose={() => setShowFuelModal(false)}
+        equipmentId={equipmentId}
+        equipmentName={equipment.name}
+        onSuccess={handleQuickActionSuccess}
+      />
 
-          <HoursUpdateModal
-            isOpen={showHoursModal}
-            onClose={() => setShowHoursModal(false)}
-            equipmentId={equipmentId}
-            equipmentName={equipment.name}
-            currentHours={equipment.hoursUsed}
-            onSuccess={handleQuickActionSuccess}
-          />
-        </>
-      )}
+      <HoursUpdateModal
+        isOpen={showHoursModal}
+        onClose={() => setShowHoursModal(false)}
+        equipmentId={equipmentId}
+        equipmentName={equipment.name}
+        currentHours={equipment.hoursUsed}
+        onSuccess={handleQuickActionSuccess}
+      />
     </PageContainer>
   );
 }

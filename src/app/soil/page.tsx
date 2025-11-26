@@ -47,7 +47,7 @@ export default function SoilManagementPage() {
     }
   };
 
-  const handleCreateSoilTest = async (formData: any) => {
+  const handleCreateSoilTest = async (formData: unknown) => {
     try {
       setFormLoading(true);
       const response = await fetch("/api/soil/tests", {

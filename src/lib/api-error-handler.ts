@@ -6,18 +6,18 @@ export interface ApiError {
   status: number;
   message: string;
   code?: string;
-  details?: Record<string, any>;
-  timestamp?: string;
+  details?: Record<string, unknown>;
   path?: string;
+  timestamp?: string;
 }
 
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;
   message?: string;
   code?: string;
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
 }
 
 export class ApiErrorHandler {
@@ -53,10 +53,11 @@ export class ApiErrorHandler {
         apiError.message = "Request timed out. Please try again.";
       }
     } else if (typeof error === "object" && error !== null) {
-      const errorObj = error as any;
+      const errorObj = error as Partial<ApiError>;
       apiError = {
         status: errorObj.status || 500,
-        message: errorObj.message || errorObj.error || "An error occurred",
+        message:
+          errorObj.message || (errorObj as any).error || "An error occurred",
         code: errorObj.code,
         details: errorObj.details,
         timestamp: new Date().toISOString(),
@@ -154,7 +155,7 @@ export class ApiErrorHandler {
   /**
    * Log error for monitoring and debugging
    */
-  static logError(error: ApiError, context?: Record<string, any>): void {
+  static logError(error: ApiError, context?: Record<string, unknown>): void {
     const logData = {
       ...error,
       context,
@@ -182,7 +183,7 @@ export class ApiErrorHandler {
 /**
  * Enhanced fetch wrapper with comprehensive error handling
  */
-export async function apiRequest<T = any>(
+export async function apiRequest<T = unknown>(
   url: string,
   options: RequestInit = {},
   context?: string
@@ -269,7 +270,7 @@ export async function apiRequest<T = any>(
 /**
  * Retry wrapper for API requests
  */
-export async function apiRequestWithRetry<T = any>(
+export async function apiRequestWithRetry<T = unknown>(
   url: string,
   options: RequestInit = {},
   maxRetries: number = 3,

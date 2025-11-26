@@ -122,14 +122,19 @@ export default function CropRecommendationsCard() {
   };
 
   const getDifficultyColor = (difficulty: string) => {
-    if (difficulty === "Beginner") return "bg-green-100 text-green-800";
-    if (difficulty === "Intermediate") return "bg-yellow-100 text-yellow-800";
-    return "bg-red-100 text-red-800";
+    // Accept 'low', 'medium', 'high' values from recommendations
+    if (difficulty === "low") return "bg-green-100 text-green-800";
+    if (difficulty === "medium") return "bg-yellow-100 text-yellow-800";
+    if (difficulty === "high") return "bg-red-100 text-red-800";
+    // Fallback for unexpected values
+    return "bg-gray-100 text-gray-800";
   };
 
   const getMarketColor = (market: string) => {
-    if (market === "High") return "bg-green-100 text-green-800";
-    if (market === "Medium") return "bg-yellow-100 text-yellow-800";
+    // Accept 'high', 'medium', 'low' values from recommendations
+    if (market === "high") return "bg-green-100 text-green-800";
+    if (market === "medium") return "bg-yellow-100 text-yellow-800";
+    if (market === "low") return "bg-gray-100 text-gray-800";
     return "bg-gray-100 text-gray-800";
   };
 
@@ -230,7 +235,10 @@ export default function CropRecommendationsCard() {
                 onChange={(e) =>
                   setFactors({
                     ...factors,
-                    spaceAvailable: e.target.value as any,
+                    spaceAvailable: e.target.value as
+                      | "small"
+                      | "medium"
+                      | "large",
                   })
                 }
                 className="w-full text-xs border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -256,7 +264,10 @@ export default function CropRecommendationsCard() {
               <select
                 value={factors.budget}
                 onChange={(e) =>
-                  setFactors({ ...factors, budget: e.target.value as any })
+                  setFactors({
+                    ...factors,
+                    budget: e.target.value as any,
+                  })
                 }
                 className="w-full text-xs border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >

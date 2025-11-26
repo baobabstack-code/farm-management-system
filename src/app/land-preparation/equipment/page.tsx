@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -98,41 +98,7 @@ export default function EquipmentManagement() {
   const statuses = ["ACTIVE", "IDLE", "MAINTENANCE", "RETIRED"];
   const conditions = ["EXCELLENT", "GOOD", "FAIR", "POOR", "NEEDS_REPAIR"];
 
-  useEffect(() => {
-    if (isLoaded && user) {
-      fetchEquipment();
-    }
-  }, [isLoaded, user]);
-
-  useEffect(() => {
-    applyFilters();
-  }, [equipment, filters]);
-
-  const fetchEquipment = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(
-        "/api/land-preparation/equipment?includeDetails=true"
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch equipment");
-      }
-
-      const data = await response.json();
-      setEquipment(data.data.equipment || []);
-      setError(null);
-    } catch (error) {
-      console.error("Error fetching equipment:", error);
-      setError(
-        error instanceof Error ? error.message : "Failed to fetch equipment"
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     let filtered = [...equipment];
 
     // Search filter
@@ -163,6 +129,40 @@ export default function EquipmentManagement() {
     }
 
     setFilteredEquipment(filtered);
+  }, [equipment, filters]);
+
+  useEffect(() => {
+    if (isLoaded && user) {
+      fetchEquipment();
+    }
+  }, [isLoaded, user]);
+
+  useEffect(() => {
+    applyFilters();
+  }, [equipment, filters, applyFilters]);
+
+  const fetchEquipment = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        "/api/land-preparation/equipment?includeDetails=true"
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch equipment");
+      }
+
+      const data = await response.json();
+      setEquipment(data.data.equipment || []);
+      setError(null);
+    } catch (error) {
+      console.error("Error fetching equipment:", error);
+      setError(
+        error instanceof Error ? error.message : "Failed to fetch equipment"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleFilterChange = (key: keyof EquipmentFilters, value: string) => {

@@ -4,6 +4,8 @@ import { CropService } from "@/lib/db";
 import { cropUpdateSchema } from "@/lib/validations/crop";
 import { ActivityLogger } from "@/lib/activity-logger";
 import { ApiResponseHandler } from "@/lib/api-response-handler";
+import { z } from "zod"; // Import z from zod
+import { Crop } from "@prisma/client"; // Import Crop from Prisma
 
 export const GET = ApiResponseHandler.withErrorHandling(
   async (request: Request, { params }: { params: Promise<{ id: string }> }) => {
@@ -29,7 +31,7 @@ export const PUT = ApiResponseHandler.withErrorHandling(
     const validatedData = (await ApiResponseHandler.validateBody(
       request,
       cropUpdateSchema
-    )) as any;
+    )) as z.infer<typeof cropUpdateSchema>;
     const { id } = await params;
 
     // Check if crop exists and belongs to user
@@ -38,6 +40,7 @@ export const PUT = ApiResponseHandler.withErrorHandling(
       return ApiResponseHandler.notFound("Crop");
     }
 
+    // Convert date strings to Date objects for the service
     const updateData: any = { ...validatedData };
     if (validatedData.plantingDate) {
       updateData.plantingDate = new Date(validatedData.plantingDate);
@@ -51,11 +54,14 @@ export const PUT = ApiResponseHandler.withErrorHandling(
     const updatedCrop = await CropService.update(id, userId, updateData);
 
     // Log activity with changes
-    const changes: Record<string, any> = {};
+    const changes: Record<string, unknown> = {};
     if (validatedData && typeof validatedData === "object") {
       Object.entries(validatedData).forEach(([key, value]) => {
-        if (value !== (existingCrop as any)[key]) {
-          changes[key] = { from: (existingCrop as any)[key], to: value };
+        if (value !== (existingCrop as Record<string, unknown>)[key]) {
+          changes[key] = {
+            from: (existingCrop as Record<string, unknown>)[key],
+            to: value,
+          };
         }
       });
     }

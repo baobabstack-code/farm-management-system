@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
 
 const rotationPhaseSchema = z.object({
   phaseNumber: z.number().int().min(1),
@@ -9,8 +10,8 @@ const rotationPhaseSchema = z.object({
   variety: z.string().optional(),
   plantingWindow: z.string(),
   expectedDuration: z.number().int().min(1),
-  soilRequirements: z.any().optional(),
-  nutrients: z.any().optional(),
+  soilRequirements: z.unknown().optional(),
+  nutrients: z.unknown().optional(),
   waterRequirements: z.number().optional(),
   laborRequirements: z.number().optional(),
   expectedYield: z.number().optional(),
@@ -66,7 +67,7 @@ export async function GET(request: NextRequest) {
     const planId = searchParams.get("planId");
     const isActive = searchParams.get("isActive");
 
-    const whereClause: any = {
+    const whereClause: Prisma.CropRotationPlanWhereInput = {
       userId,
       ...(fieldId && { fieldId }),
       ...(planId && { planId }),
@@ -205,12 +206,12 @@ export async function POST(request: NextRequest) {
         ...rotationData,
         userId,
         rotationPhases: {
-          create: rotationPhases,
+          create: rotationPhases as any,
         },
         soilBenefits: {
-          create: soilBenefits,
+          create: soilBenefits as any,
         },
-      },
+      } as any,
       include: {
         field: {
           select: { id: true, name: true, area: true, unit: true },

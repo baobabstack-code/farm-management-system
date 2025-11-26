@@ -3,7 +3,7 @@
  */
 
 import { NextResponse } from "next/server";
-import { ZodError } from "zod";
+import { ZodError, z } from "zod";
 import { Prisma } from "@prisma/client";
 
 export interface ApiSuccessResponse<T = any> {
@@ -17,7 +17,7 @@ export interface ApiErrorResponse {
   success: false;
   error: string;
   code?: string;
-  details?: any;
+  details?: unknown;
   timestamp: string;
   path?: string;
 }
@@ -207,7 +207,7 @@ export class ApiResponseHandler {
   /**
    * Handle conflict errors
    */
-  static conflict(message: string, details?: any): NextResponse {
+  static conflict(message: string, details?: unknown): NextResponse {
     return this.error(message, 409, "CONFLICT", details);
   }
 
@@ -221,10 +221,13 @@ export class ApiResponseHandler {
   /**
    * Validate request body with Zod schema
    */
-  static async validateBody<T>(request: Request, schema: any): Promise<T> {
+  static async validateBody<T>(
+    request: Request,
+    schema: z.ZodSchema
+  ): Promise<T> {
     try {
       const body = await request.json();
-      return schema.parse(body);
+      return schema.parse(body) as T;
     } catch (error) {
       if (error instanceof ZodError) {
         throw error;
@@ -236,9 +239,12 @@ export class ApiResponseHandler {
   /**
    * Validate query parameters with Zod schema
    */
-  static validateQuery<T>(searchParams: URLSearchParams, schema: any): T {
+  static validateQuery<T>(
+    searchParams: URLSearchParams,
+    schema: z.ZodSchema
+  ): T {
     const query = Object.fromEntries(searchParams.entries());
-    return schema.parse(query);
+    return schema.parse(query) as T;
   }
 
   /**
@@ -253,7 +259,7 @@ export class ApiResponseHandler {
   /**
    * Wrap API handler with error handling
    */
-  static withErrorHandling<T extends any[]>(
+  static withErrorHandling<T extends unknown[]>(
     handler: (request: Request, ...args: T) => Promise<NextResponse>
   ) {
     return async (request: Request, ...args: T): Promise<NextResponse> => {
@@ -305,7 +311,7 @@ export class ApiUtils {
    * Parse filter parameters
    */
   static parseFilters(searchParams: URLSearchParams, allowedFilters: string[]) {
-    const filters: Record<string, any> = {};
+    const filters: Record<string, unknown> = {};
 
     allowedFilters.forEach((filter) => {
       const value = searchParams.get(filter);

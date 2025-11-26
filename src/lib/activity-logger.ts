@@ -7,7 +7,7 @@ interface LogActivityParams {
   entityId: string;
   actionType: ActivityType;
   description: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export async function logActivity({
@@ -26,7 +26,7 @@ export async function logActivity({
         entityId,
         actionType,
         description,
-        metadata,
+        metadata: metadata as any,
       },
     });
   } catch (error) {
@@ -51,7 +51,7 @@ export const ActivityLogger = {
     userId: string,
     cropId: string,
     cropName: string,
-    changes: Record<string, any>
+    changes: Record<string, unknown>
   ) =>
     logActivity({
       userId,
@@ -117,7 +117,7 @@ export const ActivityLogger = {
     userId: string,
     fieldId: string,
     fieldName: string,
-    changes: Record<string, any>
+    changes: Record<string, unknown>
   ) =>
     logActivity({
       userId,
@@ -155,7 +155,7 @@ export const ActivityLogger = {
     userId: string,
     equipmentId: string,
     equipmentName: string,
-    changes: Record<string, any>
+    changes: Record<string, unknown>
   ) =>
     logActivity({
       userId,

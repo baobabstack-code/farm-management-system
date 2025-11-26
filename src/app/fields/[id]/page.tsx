@@ -72,9 +72,9 @@ interface FieldDetail {
     costEntries: number;
   };
   analytics?: {
-    fieldAnalytics: any;
+    fieldAnalytics: unknown;
     currentSeasonCrops: Crop[];
-    costSummary: any[];
+    costSummary: unknown[];
     soilHealthTrend: SoilHealthPoint[];
     utilizationRate: number;
   };
@@ -156,7 +156,7 @@ export default function FieldDetailPage() {
     "overview" | "crops" | "soil" | "history"
   >("overview");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [dependencies, setDependencies] = useState<any[]>([]);
+  const [dependencies, setDependencies] = useState<unknown[]>([]);
   const [deleting, setDeleting] = useState(false);
 
   // Quick action modal states
@@ -1080,7 +1080,7 @@ export default function FieldDetailPage() {
         entityType="Field"
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}
-        dependencies={dependencies}
+        dependencies={dependencies as any}
         loading={deleting}
       />
 

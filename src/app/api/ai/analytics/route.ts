@@ -3,148 +3,18 @@ import { auth } from "@clerk/nextjs/server";
 import { isFeatureEnabled } from "@/lib/feature-flags";
 import { AIDataBridge } from "@/lib/ai-bridge/data-access";
 import { createGoogleAIService } from "@/lib/ai/google-ai-service";
-
-export async function POST(request: NextRequest) {
-  try {
-    // Check if AI analytics is enabled
-    if (!isFeatureEnabled("aiAnalytics")) {
-      return NextResponse.json(
-        { error: "AI analytics feature is not enabled" },
-        { status: 403 }
-      );
-    }
-
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const { request: aiRequest } = await request.json();
-    console.log("AI request:", aiRequest); // Log for debugging
-
-    // Get data using the bridge (no disruption to existing system)
-    const cropData = await AIDataBridge.getCropData(userId);
-    const financialData = await AIDataBridge.getFinancialSummary(userId);
-
-    if (!cropData.success || !financialData.success) {
-      return NextResponse.json(
-        { error: "Failed to fetch farm data" },
-        { status: 500 }
-      );
-    }
-
-    // Try to get AI-enhanced insights from Google AI first
-    let insights = null;
-    const googleAI = createGoogleAIService();
-
-    if (
-      googleAI &&
-      (process.env.AI_ADK_ENABLED === "true" || process.env.GOOGLE_AI_API_KEY)
-    ) {
-      try {
-        const aiResult = await googleAI.generateInsights(
-          {
-            userId,
-            crops: cropData.data || [],
-            activities: financialData.data || [],
-            weather: null, // Weather data not available in this context
-          },
-          "general"
-        );
-
-        if (aiResult.success) {
-          // Parse AI response into insights format
-          insights = parseAIInsights(
-            aiResult.content,
-            aiResult.model || "gemini-1.5-flash"
-          );
-        }
-      } catch (error) {
-        console.warn(
-          "Google AI insights failed, falling back to rule-based:",
-          error
-        );
-      }
-    }
-
-    // Fallback to rule-based insights if AI is not available
-    if (!insights || insights.length === 0) {
-      insights = generateAdvancedInsights(
-        cropData.data || [],
-        financialData.data || []
-      );
-    }
-
-    return NextResponse.json({
-      success: true,
-      insights,
-      timestamp: new Date().toISOString(),
-      source: "ai-analytics-beta",
-    });
-  } catch (error) {
-    console.error("AI Analytics API error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
-  }
-}
-
-interface Task {
-  id: string;
-  status: string;
-  title?: string;
-  description?: string | null;
-  dueDate?: Date;
-  [key: string]: any; // Allow additional properties from database
-}
-
-interface Log {
-  id: string;
-  date?: Date;
-  amount?: number;
-  notes?: string | null;
-  [key: string]: any; // Allow additional properties from database
-}
-
-interface CropData {
-  id: string;
-  name: string;
-  variety?: string | null;
-  plantingDate: Date;
-  expectedHarvestDate: Date;
-  actualHarvestDate?: Date | null;
-  status: string;
-  area?: number | null;
-  tasks?: any[]; // More flexible to accept actual database structure
-  irrigationLogs?: any[]; // More flexible to accept actual database structure
-  fertilizerLogs?: any[]; // More flexible to accept actual database structure
-  pestDiseaseLogs?: any[]; // More flexible to accept actual database structure
-  harvestLogs?: any[]; // More flexible to accept actual database structure
-  [key: string]: any; // Allow additional properties from database
-}
-
-interface ActivityData {
-  type: string;
-  cost: number;
-  createdAt: Date;
-  crop: { name: string; id: string };
-}
-
-interface Insight {
-  title: string;
-  description: string;
-  confidence: number;
-  actionable: boolean;
-  priority: "High" | "Medium" | "Low";
-  category: string;
-  source?: string;
-  model?: string;
-}
+import {
+  Task as PrismaTask,
+  IrrigationLog,
+  FertilizerLog,
+  PestDiseaseLog,
+  HarvestLog,
+} from "@prisma/client";
+import { AICropData, AIActivityData, Insight } from "@/types"; // Import new types
 
 function generateAdvancedInsights(
-  crops: CropData[],
-  activities: ActivityData[]
+  crops: AICropData[], // Updated type
+  activities: AIActivityData[] // Updated type
 ) {
   const insights: Insight[] = [];
   const now = new Date();

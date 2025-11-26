@@ -1,3 +1,5 @@
+// "use client";
+
 "use client";
 
 import { useState, useRef, useEffect } from "react";
@@ -8,6 +10,8 @@ declare global {
   interface Window {
     webkitSpeechRecognition: any;
   }
+  type SpeechRecognition = any;
+  type SpeechRecognitionEvent = any;
 }
 
 interface ChatMessage {
@@ -49,39 +53,34 @@ export default function AIChatAssistant() {
   const [isListening, setIsListening] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const recognitionRef = useRef<any>(null); // Speech recognition API types vary by browser
+  const recognitionRef = useRef<any>(null);
 
-  const aiChatEnabled = useFeatureFlag("aiChatAssistant") || true; // Enable for development
+  const aiChatEnabled = useFeatureFlag("aiChatAssistant") || true; // enable for dev
 
   // Initialize speech recognition
   useEffect(() => {
     if (typeof window !== "undefined" && "webkitSpeechRecognition" in window) {
-      const recognition = new (window as any).webkitSpeechRecognition();
+      const recognition = new window.webkitSpeechRecognition();
       recognition.continuous = false;
       recognition.interimResults = false;
       recognition.lang = "en-US";
 
-      recognition.onresult = (event: any) => {
+      recognition.onresult = (event: SpeechRecognitionEvent) => {
         const transcript = event.results[0][0].transcript;
         setInputMessage(transcript);
         setIsListening(false);
       };
 
-      recognition.onerror = () => {
-        setIsListening(false);
-      };
-
-      recognition.onend = () => {
-        setIsListening(false);
-      };
+      recognition.onerror = () => setIsListening(false);
+      recognition.onend = () => setIsListening(false);
 
       recognitionRef.current = recognition;
     }
   }, []);
 
-  // Auto-scroll to bottom when messages change
+  // Auto‑scroll to bottom when messages change
   useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   // Welcome message when chat opens
@@ -98,10 +97,6 @@ export default function AIChatAssistant() {
     }
   }, [isOpen, messages.length]);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
   const handleSendMessage = async (messageText?: string) => {
     const text = messageText || inputMessage.trim();
     if (!text || isLoading) return;
@@ -117,7 +112,7 @@ export default function AIChatAssistant() {
     setInputMessage("");
     setIsLoading(true);
 
-    // Add loading message
+    // loading placeholder
     const loadingMessage: ChatMessage = {
       id: "loading",
       role: "assistant",
@@ -133,14 +128,12 @@ export default function AIChatAssistant() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           message: text,
-          conversationHistory: messages.slice(-10), // Send last 10 messages for context
+          conversationHistory: messages.slice(-10),
         }),
       });
 
       if (response.ok) {
         const data = await response.json();
-
-        // Remove loading message and add actual response
         setMessages((prev) => {
           const withoutLoading = prev.filter((m) => m.id !== "loading");
           const assistantMessage: ChatMessage = {
@@ -179,7 +172,6 @@ export default function AIChatAssistant() {
       alert("Voice recognition is not supported in your browser.");
       return;
     }
-
     if (isListening) {
       recognitionRef.current.stop();
       setIsListening(false);
@@ -196,9 +188,7 @@ export default function AIChatAssistant() {
     }
   };
 
-  if (!aiChatEnabled) {
-    return null;
-  }
+  if (!aiChatEnabled) return null;
 
   return (
     <>
@@ -206,9 +196,7 @@ export default function AIChatAssistant() {
       <div className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-chat-button lg:bottom-6">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className={`bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white rounded-full p-3 sm:p-4 shadow-lg transition-all duration-300 transform hover:scale-110 touch-manipulation ${
-            isOpen ? "rotate-45" : ""
-          }`}
+          className={`bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white rounded-full p-3 sm:p-4 shadow-lg transition-all duration-300 transform hover:scale-110 touch-manipulation ${isOpen ? "rotate-45" : ""}`}
           aria-label="Open AI Chat Assistant"
         >
           {isOpen ? (
@@ -241,7 +229,6 @@ export default function AIChatAssistant() {
             </svg>
           )}
         </button>
-
         {/* Notification Badge */}
         {!isOpen && (
           <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center animate-pulse">
@@ -294,13 +281,7 @@ export default function AIChatAssistant() {
                 className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[85%] p-2 sm:p-3 rounded-lg ${
-                    message.role === "user"
-                      ? "bg-blue-500 text-white"
-                      : message.isLoading
-                        ? "bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 animate-pulse"
-                        : "bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-gray-200"
-                  }`}
+                  className={`max-w-[85%] p-2 sm:p-3 rounded-lg ${message.role === "user" ? "bg-blue-500 text-white" : message.isLoading ? "bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 animate-pulse" : "bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-gray-200"}`}
                 >
                   <p className="text-sm whitespace-pre-wrap">
                     {message.content}
@@ -324,9 +305,9 @@ export default function AIChatAssistant() {
                 Quick suggestions:
               </p>
               <div className="flex flex-wrap gap-1">
-                {QUICK_SUGGESTIONS.slice(0, 3).map((suggestion, index) => (
+                {QUICK_SUGGESTIONS.slice(0, 3).map((suggestion, idx) => (
                   <button
-                    key={index}
+                    key={idx}
                     onClick={() => handleSendMessage(suggestion.question)}
                     className="text-xs bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-full transition-colors"
                     disabled={isLoading}
@@ -349,16 +330,12 @@ export default function AIChatAssistant() {
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Ask me about your farm..."
-                  className="w-full p-2 sm:p-3 pr-10 sm:pr-12 text-base border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none touch-manipulation"
+                  className="w-full p-2 sm:p-3 pr-10 sm:pr-12 text-base border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                   disabled={isLoading}
                 />
                 <button
                   onClick={handleVoiceInput}
-                  className={`absolute right-2 top-1/2 transform -translate-y-1/2 p-1 rounded-full transition-colors ${
-                    isListening
-                      ? "text-red-500 animate-pulse"
-                      : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400"
-                  }`}
+                  className={`absolute right-2 top-1/2 transform -translate-y-1/2 p-1 rounded-full transition-colors ${isListening ? "text-red-500 animate-pulse" : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400"}`}
                   disabled={isLoading}
                   title="Voice input"
                 >
@@ -380,7 +357,7 @@ export default function AIChatAssistant() {
               <button
                 onClick={() => handleSendMessage()}
                 disabled={!inputMessage.trim() || isLoading}
-                className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 dark:disabled:bg-slate-600 text-white p-2 sm:p-3 rounded-lg transition-colors touch-manipulation min-h-[44px]"
+                className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 dark:disabled:bg-slate-600 text-white p-2 sm:p-3 rounded-lg transition-colors"
               >
                 <svg
                   className="w-5 h-5"

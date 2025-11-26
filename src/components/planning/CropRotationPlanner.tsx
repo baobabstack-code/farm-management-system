@@ -27,8 +27,8 @@ interface RotationPhase {
   variety?: string;
   plantingWindow: string;
   expectedDuration: number;
-  soilRequirements?: any;
-  nutrients?: any;
+  soilRequirements?: Record<string, unknown>;
+  nutrients?: Record<string, unknown>;
   waterRequirements?: number;
   laborRequirements?: number;
   expectedYield?: number;
@@ -523,7 +523,7 @@ export default function CropRotationPlanner({
         ].map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
+            onClick={() => setActiveTab(tab.id as "phases" | "benefits")}
             className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
               activeTab === tab.id
                 ? "bg-green-100 text-green-700 border-b-2 border-green-600"

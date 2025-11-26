@@ -1,0 +1,373 @@
+﻿
+> farm-management-system@0.1.0 build C:\Desktop\farmerflow_ai
+> next build
+
+   Γû▓ Next.js 15.5.6
+   - Environments: .env
+
+   Creating an optimized production build ...
+   Disabled SWC as replacement for Babel because of custom Babel configuration "babel.config.js" https://nextjs.org/docs/messages/swc-disabled
+   `compiler` options in `next.config.js` will be ignored while using Babel https://nextjs.org/docs/messages/ignored-compiler-options
+   Using external babel configuration from C:\Desktop\farmerflow_ai\babel.config.js
+   Disabled SWC as replacement for Babel because of custom Babel configuration "babel.config.js" https://nextjs.org/docs/messages/swc-disabled
+   `compiler` options in `next.config.js` will be ignored while using Babel https://nextjs.org/docs/messages/ignored-compiler-options
+   Using external babel configuration from C:\Desktop\farmerflow_ai\babel.config.js
+   Disabled SWC as replacement for Babel because of custom Babel configuration "babel.config.js" https://nextjs.org/docs/messages/swc-disabled
+   `compiler` options in `next.config.js` will be ignored while using Babel https://nextjs.org/docs/messages/ignored-compiler-options
+   Using external babel configuration from C:\Desktop\farmerflow_ai\babel.config.js
+ Γ£ô Compiled successfully in 114s
+   Linting and checking validity of types ...
+pnpm : 
+At line:1 char:1
++ pnpm build 2>&1 | Out-File -FilePath baseline-build.txt -Encoding utf ...
++ ~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Failed to compile.
+
+./src/app/activities/page.tsx
+15:3  Warning: 'FarmBadge' is defined but never used.  @typescript-eslint/no-unused-vars
+18:20  Warning: 'Plus' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/ai-companion/page.tsx
+13:15  Warning: 'Palette' is defined but never used.  @typescript-eslint/no-unused-vars
+13:24  Warning: 'Moon' is defined but never used.  @typescript-eslint/no-unused-vars
+13:30  Warning: 'Sun' is defined but never used.  @typescript-eslint/no-unused-vars
+18:11  Warning: 'trackAIUsage' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+18:25  Warning: 'trackUserAction' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/api/ai/analytics/route.ts
+1:10  Warning: 'NextRequest' is defined but never used.  @typescript-eslint/no-unused-vars
+1:23  Warning: 'NextResponse' is defined but never used.  @typescript-eslint/no-unused-vars
+2:10  Warning: 'auth' is defined but never used.  @typescript-eslint/no-unused-vars
+3:10  Warning: 'isFeatureEnabled' is defined but never used.  @typescript-eslint/no-unused-vars
+4:10  Warning: 'AIDataBridge' is defined but never used.  @typescript-eslint/no-unused-vars
+5:10  Warning: 'createGoogleAIService' is defined but never used.  @typescript-eslint/no-unused-vars
+7:11  Warning: 'PrismaTask' is defined but never used.  @typescript-eslint/no-unused-vars
+8:3  Warning: 'IrrigationLog' is defined but never used.  @typescript-eslint/no-unused-vars
+9:3  Warning: 'FertilizerLog' is defined but never used.  @typescript-eslint/no-unused-vars
+10:3  Warning: 'PestDiseaseLog' is defined but never used.  @typescript-eslint/no-unused-vars
+11:3  Warning: 'HarvestLog' is defined but never used.  @typescript-eslint/no-unused-vars
+15:10  Warning: 'generateAdvancedInsights' is defined but never used.  @typescript-eslint/no-unused-vars
+280:10  Warning: 'parseAIInsights' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/api/ai/chat/route.ts
+6:38  Warning: 'Insight' is defined but never used.  @typescript-eslint/no-unused-vars
+189:29  Warning: 'query' is defined but never used.  @typescript-eslint/no-unused-vars
+358:33  Warning: 'crops' is defined but never used.  @typescript-eslint/no-unused-vars
+375:35  Warning: 'crops' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/api/ai-bridge/financial/route.ts
+93:7  Warning: 'targetMetrics' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+97:37  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/analytics/route.ts
+3:9  Error: Replace `┬╖ActivityService,┬╖CropService,┬╖TaskService,┬╖FieldService┬╖` with 
+`ΓÅÄ┬╖┬╖ActivityService,ΓÅÄ┬╖┬╖CropService,ΓÅÄ┬╖┬╖TaskService,ΓÅÄ┬╖┬╖FieldService,ΓÅÄ`  prettier/prettier
+57:11  Error: Insert `┬╖┬╖`  prettier/prettier
+58:1  Error: Insert `┬╖┬╖`  prettier/prettier
+59:11  Error: Insert `┬╖┬╖`  prettier/prettier
+60:1  Error: Insert `┬╖┬╖`  prettier/prettier
+
+./src/app/api/crops/[id]/route.ts
+1:10  Warning: 'NextRequest' is defined but never used.  @typescript-eslint/no-unused-vars
+1:23  Warning: 'NextResponse' is defined but never used.  @typescript-eslint/no-unused-vars
+8:10  Warning: 'Crop' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/api/fields/[id]/route.ts
+1:10  Warning: 'NextRequest' is defined but never used.  @typescript-eslint/no-unused-vars
+1:23  Warning: 'NextResponse' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/crops/[id]/page.tsx
+3:10  Warning: 'NextRequest' is defined but never used.  @typescript-eslint/no-unused-vars
+3:23  Warning: 'NextResponse' is defined but never used.  @typescript-eslint/no-unused-vars
+4:10  Warning: 'auth' is defined but never used.  @typescript-eslint/no-unused-vars
+5:10  Warning: 'TaskService' is defined but never used.  @typescript-eslint/no-unused-vars
+6:10  Warning: 'taskUpdateSchema' is defined but never used.  @typescript-eslint/no-unused-vars
+22:10  Warning: 'DetailPageErrorBoundary' is defined but never used.  @typescript-eslint/no-unused-vars
+24:3  Warning: 'DetailPageErrorDisplay' is defined but never used.  @typescript-eslint/no-unused-vars
+93:5  Warning: 'clearError' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+94:5  Warning: 'updateEntity' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+96:5  Warning: 'isUpdating' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+224:14  Warning: 'err' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/equipment/[id]/page.tsx
+1095:40  Warning: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+1196:50  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+
+./src/app/fields/[id]/page.tsx
+22:3  Warning: 'Wheat' is defined but never used.  @typescript-eslint/no-unused-vars
+1002:56  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+
+./src/app/land-preparation/equipment/page.tsx
+5:16  Warning: 'CardHeader' is defined but never used.  @typescript-eslint/no-unused-vars
+22:3  Warning: 'Filter' is defined but never used.  @typescript-eslint/no-unused-vars
+28:3  Warning: 'Settings' is defined but never used.  @typescript-eslint/no-unused-vars
+109:6  Error: React Hook useEffect has a missing dependency: 'applyFilters'. Either include it or remove the 
+dependency array.  react-hooks/exhaustive-deps
+
+./src/app/land-preparation/page.tsx
+18:3  Warning: 'Calendar' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/reports/page.tsx
+14:31  Warning: 'Calendar' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/settings/data/page.tsx
+25:3  Warning: 'Calendar' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/settings/notifications/page.tsx
+279:43  Warning: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+305:30  Warning: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./src/app/settings/page.tsx
+15:3  Warning: 'CreditCard' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/settings/security/page.tsx
+147:14  Warning: 'err' is defined but never used.  @typescript-eslint/no-unused-vars
+165:14  Warning: 'err' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/soil/page.tsx
+8:20  Warning: 'SoilTestType' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/tasks/page.tsx
+19:29  Warning: 'Filter' is defined but never used.  @typescript-eslint/no-unused-vars
+19:47  Warning: 'AlertCircle' is defined but never used.  @typescript-eslint/no-unused-vars
+31:19  Warning: 'setFilters' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/weather/page.tsx
+5:10  Warning: 'Alert' is defined but never used.  @typescript-eslint/no-unused-vars
+5:17  Warning: 'AlertDescription' is defined but never used.  @typescript-eslint/no-unused-vars
+14:3  Warning: 'EmptyState' is defined but never used.  @typescript-eslint/no-unused-vars
+16:18  Warning: 'Settings' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/ai/AIChatAssistant.tsx
+9:30  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/ai/WeatherInsightsCard.tsx
+29:15  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+30:13  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/planning/CropRotationPlanner.tsx
+12:3  Warning: 'Edit' is defined but never used.  @typescript-eslint/no-unused-vars
+17:3  Warning: 'TrendingUp' is defined but never used.  @typescript-eslint/no-unused-vars
+19:3  Warning: 'CheckCircle' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/ui/activity-timeline.tsx
+4:34  Warning: 'EntityType' is defined but never used.  @typescript-eslint/no-unused-vars
+24:3  Warning: 'entityType' is defined but never used.  @typescript-eslint/no-unused-vars
+25:3  Warning: 'entityId' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/ui/async-error-boundary.tsx
+132:62  Warning: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./src/components/ui/delete-confirmation-dialog.tsx
+254:26  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+254:41  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+
+./src/components/ui/entity-detail-card.tsx
+27:21  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/ui/equipment-quick-action-modals.tsx
+13:43  Warning: 'Calendar' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/ui/error-boundary.tsx
+189:24  Warning: 'errorInfo' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/ui/error-display.tsx
+116:9  Warning: 'iconSizes' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/ui/farm-theme.tsx
+216:11  Warning: An interface declaring no members is equivalent to its supertype.  
+@typescript-eslint/no-empty-object-type
+246:11  Warning: An interface declaring no members is equivalent to its supertype.  
+@typescript-eslint/no-empty-object-type
+255:11  Warning: An interface declaring no members is equivalent to its supertype.  
+@typescript-eslint/no-empty-object-type
+269:11  Warning: An interface declaring no members is equivalent to its supertype.  
+@typescript-eslint/no-empty-object-type
+
+./src/components/ui/field-quick-action-modals.tsx
+789:3  Warning: 'fieldId' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/ui/use-toast.tsx
+16:7  Warning: 'actionTypes' is assigned a value but only used as a type.  @typescript-eslint/no-unused-vars
+
+./src/components/weather/EnhancedWeatherDashboard.tsx
+10:3  Warning: 'AgricultureWeatherInsight' is defined but never used.  @typescript-eslint/no-unused-vars
+13:10  Warning: 'WeatherAlertSeverity' is defined but never used.  @typescript-eslint/no-unused-vars
+17:3  Warning: 'CloudRain' is defined but never used.  @typescript-eslint/no-unused-vars
+18:3  Warning: 'Wind' is defined but never used.  @typescript-eslint/no-unused-vars
+21:3  Warning: 'Eye' is defined but never used.  @typescript-eslint/no-unused-vars
+30:3  Warning: 'XCircle' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/hooks/use-activities.ts
+102:6  Error: React Hook useEffect has a missing dependency: 'fetchActivities'. Either include it or remove the 
+dependency array.  react-hooks/exhaustive-deps
+112:6  Error: React Hook useEffect has a missing dependency: 'refetch'. Either include it or remove the 
+dependency array.  react-hooks/exhaustive-deps
+
+./src/hooks/use-analytics.ts
+8:21  Warning: 'FarmAnalyticsEvent' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/hooks/use-detail-page-error.ts
+43:25  Warning: 'setRetryFunction' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/hooks/useMobileGestures.tsx
+137:38  Warning: 'refreshingComponent' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/lib/ai/google-ai-service.ts
+3:3  Warning: 'HarmBlockThreshold' is defined but never used.  @typescript-eslint/no-unused-vars
+4:3  Warning: 'HarmCategory' is defined but never used.  @typescript-eslint/no-unused-vars
+6:3  Warning: 'Part' is defined but never used.  @typescript-eslint/no-unused-vars
+7:3  Warning: 'FunctionDeclaration' is defined but never used.  @typescript-eslint/no-unused-vars
+8:3  Warning: 'SafetySetting' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/lib/api-client.ts
+120:7  Warning: 'timeout' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/lib/api-response-handler.ts
+9:41  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+51:15  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/db/connection.ts
+65:21  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+117:19  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/db/services/crop-service.ts
+68:35  Warning: 'userId' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/lib/db/services/field-service.ts
+5:3  Error: Delete `┬╖┬╖`  prettier/prettier
+6:5  Error: Delete `┬╖┬╖┬╖┬╖`  prettier/prettier
+7:1  Error: Replace `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+8:1  Error: Replace `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+9:1  Error: Delete `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+10:11  Error: Delete `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+11:1  Error: Replace `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+12:1  Error: Delete `┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+13:5  Error: Delete `┬╖┬╖┬╖┬╖`  prettier/prettier
+14:1  Error: Delete `┬╖┬╖`  prettier/prettier
+16:3  Error: Delete `┬╖┬╖`  prettier/prettier
+17:5  Error: Delete `┬╖┬╖┬╖┬╖`  prettier/prettier
+18:1  Error: Replace `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+19:1  Error: Replace `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+20:1  Error: Delete `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+21:11  Error: Delete `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+22:1  Error: Replace `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+23:1  Error: Delete `┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+24:5  Error: Delete `┬╖┬╖┬╖┬╖`  prettier/prettier
+25:1  Error: Delete `┬╖┬╖`  prettier/prettier
+
+./src/lib/db/services/task-service.ts
+112:35  Warning: 'userId' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/lib/db/services/__tests__/field-service.test.ts
+3:8  Warning: 'DatabaseService' is defined but never used.  @typescript-eslint/no-unused-vars
+7:3  Error: Delete `┬╖┬╖`  prettier/prettier
+8:1  Error: Replace `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖`  prettier/prettier
+9:1  Error: Replace `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+10:1  Error: Replace `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+11:5  Error: Delete `┬╖┬╖┬╖┬╖`  prettier/prettier
+12:1  Error: Delete `┬╖┬╖`  prettier/prettier
+17:3  Error: Delete `┬╖┬╖`  prettier/prettier
+18:1  Error: Delete `┬╖┬╖┬╖┬╖`  prettier/prettier
+19:5  Error: Delete `┬╖┬╖┬╖┬╖`  prettier/prettier
+20:1  Error: Delete `┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+21:5  Error: Delete `┬╖┬╖┬╖┬╖`  prettier/prettier
+22:1  Error: Replace `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖`  prettier/prettier
+23:1  Error: Delete `┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+24:5  Error: Delete `┬╖┬╖┬╖┬╖`  prettier/prettier
+25:1  Error: Replace `┬╖┬╖┬╖┬╖` with `┬╖┬╖`  prettier/prettier
+29:3  Error: Delete `┬╖┬╖`  prettier/prettier
+30:1  Error: Replace `┬╖┬╖┬╖┬╖` with `┬╖┬╖`  prettier/prettier
+31:1  Error: Replace `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖`  prettier/prettier
+32:1  Error: Delete `┬╖┬╖┬╖┬╖`  prettier/prettier
+33:1  Error: Replace `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖`  prettier/prettier
+34:1  Error: Replace `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖`  prettier/prettier
+35:1  Error: Replace `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖`  prettier/prettier
+36:1  Error: Delete `┬╖┬╖`  prettier/prettier
+38:3  Error: Delete `┬╖┬╖`  prettier/prettier
+39:1  Error: Replace `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖`  prettier/prettier
+40:1  Error: Replace `┬╖┬╖┬╖┬╖` with `┬╖┬╖`  prettier/prettier
+42:1  Error: Delete `┬╖┬╖`  prettier/prettier
+43:1  Error: Replace `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖`  prettier/prettier
+44:1  Error: Replace `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+46:7  Error: Delete `┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+48:1  Error: Delete `┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+49:9  Error: Delete `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+50:1  Error: Replace `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+51:7  Error: Delete `┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+52:1  Error: Replace `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+53:1  Error: Replace `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖`  prettier/prettier
+54:1  Error: Replace `┬╖┬╖┬╖┬╖` with `┬╖┬╖`  prettier/prettier
+56:1  Error: Delete `┬╖┬╖`  prettier/prettier
+57:1  Error: Replace `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖`  prettier/prettier
+58:1  Error: Replace `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+60:1  Error: Delete `┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+62:7  Error: Delete `┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+63:1  Error: Replace `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+64:1  Error: Delete `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+65:7  Error: Delete `┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+66:1  Error: Delete `┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+67:1  Error: Replace `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖`  prettier/prettier
+69:1  Error: Delete `┬╖┬╖┬╖┬╖`  prettier/prettier
+70:1  Error: Replace `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+72:1  Error: Replace `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+74:7  Error: Delete `┬╖┬╖┬╖┬╖┬╖┬╖`  prettier/prettier
+75:5  Error: Delete `┬╖┬╖┬╖┬╖`  prettier/prettier
+76:1  Error: Delete `┬╖┬╖`  prettier/prettier
+
+./src/lib/services/crop-recommendations.ts
+94:5  Warning: '_historicalCrops' is defined but never used.  @typescript-eslint/no-unused-vars
+95:5  Warning: '_weatherData' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/lib/services/enhanced-weather-service.ts
+99:5  Warning: 'alerts' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/lib/services/quickbooks-service.ts
+94:45  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+94:73  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+96:36  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+96:49  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+106:38  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+106:52  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+108:45  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+108:63  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+121:18  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+200:37  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+200:73  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+202:50  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+202:63  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+255:35  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+255:49  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+257:30  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+257:45  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+269:16  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+345:34  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+345:48  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+347:29  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+347:43  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+359:15  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+401:14  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+422:22  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+450:41  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+450:54  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+516:41  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/services/soil-service.ts
+99:20  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+168:20  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+603:20  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/services/weather.ts
+302:45  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+303:39  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+330:47  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/types/index.ts
+478:29  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+info  - Need to disable some ESLint rules? Learn more here: 
+https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+ΓÇëELIFECYCLEΓÇë Command failed with exit code 1.

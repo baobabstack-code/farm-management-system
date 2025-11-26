@@ -51,7 +51,7 @@ export class DatabaseService {
   /**
    * Execute a raw query with retry logic
    */
-  static async query<T = any>(sql: string, values?: any[]): Promise<T> {
+  static async query<T = unknown>(sql: string, values?: unknown[]): Promise<T> {
     return this.execute(
       () => prisma.$queryRawUnsafe(sql, ...(values || [])),
       `raw query: ${sql.substring(0, 50)}...`

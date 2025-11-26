@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter, useParams } from "next/navigation";
 import {
@@ -62,22 +62,9 @@ export default function EditEquipmentPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [dependencies, setDependencies] = useState<any[]>([]);
+  const [dependencies, setDependencies] = useState<unknown[]>([]);
 
-  useEffect(() => {
-    if (!isLoaded) return;
-
-    if (!user) {
-      router.push("/sign-in");
-      return;
-    }
-
-    if (equipmentId) {
-      fetchEquipment();
-    }
-  }, [user, isLoaded, router, equipmentId]);
-
-  const fetchEquipment = async () => {
+  const fetchEquipment = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(
@@ -108,7 +95,20 @@ export default function EditEquipmentPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [equipmentId, setEquipment, setError, setLoading]);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    if (!user) {
+      router.push("/sign-in");
+      return;
+    }
+
+    if (equipmentId) {
+      fetchEquipment();
+    }
+  }, [user, isLoaded, router, equipmentId, fetchEquipment]);
 
   const handleSave = async () => {
     if (!equipment) return;
@@ -206,7 +206,10 @@ export default function EditEquipmentPage() {
     setDependencies([]);
   };
 
-  const updateEquipment = (field: keyof Equipment, value: any) => {
+  const updateEquipment = (
+    field: keyof Equipment,
+    value: Equipment[keyof Equipment]
+  ) => {
     if (!equipment) return;
     setEquipment({ ...equipment, [field]: value });
   };
@@ -685,7 +688,7 @@ export default function EditEquipmentPage() {
         entityType="Equipment"
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}
-        dependencies={dependencies}
+        dependencies={dependencies as any}
         loading={deleting}
       />
     </PageContainer>

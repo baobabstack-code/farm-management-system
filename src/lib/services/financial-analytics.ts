@@ -1,4 +1,5 @@
 import { AIDataBridge } from "@/lib/ai-bridge/data-access";
+import { Crop, Activity } from "@/types";
 
 export interface FinancialForecast {
   period: string; // 'next_month' | 'next_quarter' | 'next_year'
@@ -77,7 +78,10 @@ export class FinancialAnalyticsService {
       const crops = cropResult.success ? cropResult.data : [];
 
       // Generate comprehensive insights
-      const insights = this.generateFinancialInsights(activities, crops || []);
+      const insights = this.generateFinancialInsights(
+        activities as any,
+        (crops || []) as any
+      );
 
       return {
         success: true,
@@ -96,8 +100,8 @@ export class FinancialAnalyticsService {
    * Generate comprehensive financial insights
    */
   private static generateFinancialInsights(
-    activities: any[],
-    crops: any[]
+    activities: Activity[],
+    crops: Crop[]
   ): FinancialInsights {
     const summary = this.calculateSummary(activities);
     const forecasts = this.generateForecasts(activities, summary);
@@ -124,7 +128,7 @@ export class FinancialAnalyticsService {
   /**
    * Calculate financial summary
    */
-  private static calculateSummary(activities: any[]) {
+  private static calculateSummary(activities: Activity[]) {
     const totalCosts = activities.reduce(
       (sum, activity) => sum + (activity.cost || 0),
       0
@@ -133,8 +137,8 @@ export class FinancialAnalyticsService {
       .filter((activity) => activity.type === "HARVEST")
       .reduce((sum, activity) => {
         // Estimate revenue based on yield and market prices
-        const estimatedPrice = this.getEstimatedPrice(activity.notes);
-        return sum + (activity.yield * estimatedPrice || 0);
+        const estimatedPrice = this.getEstimatedPrice(activity.notes || "");
+        return sum + ((activity.yield || 0) * estimatedPrice || 0);
       }, 0);
 
     const netProfit = totalRevenue - totalCosts;
@@ -153,8 +157,8 @@ export class FinancialAnalyticsService {
    * Generate profit forecasts
    */
   private static generateForecasts(
-    activities: any[],
-    summary: any
+    activities: Activity[],
+    summary: FinancialInsights["summary"]
   ): FinancialForecast[] {
     const monthlyActivities = this.groupActivitiesByMonth(activities);
     const averageMonthlyRevenue =
@@ -216,7 +220,10 @@ export class FinancialAnalyticsService {
   /**
    * Analyze ROI for different crops
    */
-  private static analyzeROI(activities: any[], crops: any[]): ROIAnalysis[] {
+  private static analyzeROI(
+    activities: Activity[],
+    crops: Crop[]
+  ): ROIAnalysis[] {
     const cropROI = crops.map((crop) => {
       // Calculate costs for this crop
       const cropActivities = activities.filter(
@@ -233,8 +240,8 @@ export class FinancialAnalyticsService {
         (activity) => activity.type === "HARVEST"
       );
       const actualRevenue = harvestActivities.reduce((sum, activity) => {
-        const estimatedPrice = this.getEstimatedPrice(activity.notes);
-        return sum + (activity.yield * estimatedPrice || 0);
+        const estimatedPrice = this.getEstimatedPrice(activity.notes || "");
+        return sum + ((activity.yield || 0) * estimatedPrice || 0);
       }, 0);
 
       const actualROI =
@@ -270,7 +277,7 @@ export class FinancialAnalyticsService {
    * Identify cost optimization opportunities
    */
   private static identifyCostOptimizations(
-    activities: any[]
+    activities: Activity[]
   ): CostOptimization[] {
     const costsByCategory = this.groupCostsByCategory(activities);
     const optimizations: CostOptimization[] = [];
@@ -294,7 +301,7 @@ export class FinancialAnalyticsService {
   /**
    * Calculate financial trends
    */
-  private static calculateTrends(activities: any[]) {
+  private static calculateTrends(activities: Activity[]) {
     const monthlyData = this.groupActivitiesByMonth(activities);
 
     // Calculate growth trends
@@ -319,8 +326,8 @@ export class FinancialAnalyticsService {
    * Generate actionable recommendations
    */
   private static generateRecommendations(
-    summary: any,
-    trends: any,
+    summary: FinancialInsights["summary"],
+    trends: FinancialInsights["trends"],
     roiAnalysis: ROIAnalysis[],
     costOptimizations: CostOptimization[]
   ): string[] {
@@ -414,7 +421,7 @@ export class FinancialAnalyticsService {
     return 2.5; // Default price per kg
   }
 
-  private static getExpectedYield(crop: any): number {
+  private static getExpectedYield(crop: Crop): number {
     // Estimate yield based on crop size and type
     const yieldMap: Record<string, number> = {
       tomatoes: 3.0,
@@ -434,8 +441,10 @@ export class FinancialAnalyticsService {
     return yieldMap[crop.name.toLowerCase()] || 2.0;
   }
 
-  private static groupActivitiesByMonth(activities: any[]) {
-    const monthlyData: any[] = [];
+  private static groupActivitiesByMonth(
+    activities: Activity[]
+  ): Array<{ revenue: number; costs: number }> {
+    const monthlyData: Array<{ revenue: number; costs: number }> = [];
     const monthMap = new Map();
 
     activities.forEach((activity) => {
@@ -446,8 +455,8 @@ export class FinancialAnalyticsService {
 
       const data = monthMap.get(month);
       if (activity.type === "HARVEST") {
-        const price = this.getEstimatedPrice(activity.notes);
-        data.revenue += (activity.yield || 0) * price;
+        const estimatedPrice = this.getEstimatedPrice(activity.notes || "");
+        data.revenue += (activity.yield || 0) * estimatedPrice;
       }
       data.costs += activity.cost || 0;
     });
@@ -463,7 +472,9 @@ export class FinancialAnalyticsService {
     return 0.9;
   }
 
-  private static calculateGrowthFactor(monthlyData: any[]): number {
+  private static calculateGrowthFactor(
+    monthlyData: Array<{ revenue: number; costs: number }>
+  ): number {
     if (monthlyData.length < 2) return 1.0;
     const recentRevenue = monthlyData
       .slice(-3)
@@ -507,7 +518,7 @@ export class FinancialAnalyticsService {
     return "Poor";
   }
 
-  private static groupCostsByCategory(activities: any[]) {
+  private static groupCostsByCategory(activities: Activity[]) {
     const categories = {
       IRRIGATION: 0,
       FERTILIZER: 0,
@@ -533,7 +544,15 @@ export class FinancialAnalyticsService {
   ): CostOptimization | null {
     if (totalCosts < 50) return null; // Skip small cost categories
 
-    const optimizations: Record<string, any> = {
+    const optimizations: Record<
+      string,
+      {
+        optimizedCost: number;
+        recommendations: string[];
+        implementation: "Easy" | "Moderate" | "Complex";
+        priority: "High" | "Medium" | "Low";
+      }
+    > = {
       IRRIGATION: {
         optimizedCost: totalCosts * 0.8,
         recommendations: [

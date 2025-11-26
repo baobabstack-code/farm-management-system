@@ -31,26 +31,42 @@ export function useAnalytics() {
     trackEquipment: analytics.equipment,
     trackFinancial: analytics.financial,
     // Convenience methods - these can remain as they provide specific event structures
-    trackCropCreated: (cropType: string, fieldId?: string) =>
-      analytics.track("crop_created", {
+    trackCropCreated: (cropType: string, fieldId?: string) => {
+      const properties: { crop_type: string; field_id?: string } = {
         crop_type: cropType,
-        field_id: fieldId,
-      }),
+      };
+      if (fieldId) {
+        properties.field_id = fieldId;
+      }
+      analytics.track("crop_created", properties);
+    },
 
-    trackTaskCompleted: (taskType: string, duration?: number) =>
-      analytics.track("task_completed", {
+    trackTaskCompleted: (taskType: string, duration?: number) => {
+      const properties: { task_type: string; duration_minutes?: number } = {
         task_type: taskType,
-        duration_minutes: duration,
-      }),
+      };
+      if (duration !== undefined) {
+        properties.duration_minutes = duration;
+      }
+      analytics.track("task_completed", properties);
+    },
 
-    trackReportGenerated: (reportType: string, filters?: Record<string, any>) =>
+    trackReportGenerated: (
+      reportType: string,
+      filters?: Record<string, unknown>
+    ) =>
       analytics.track("report_generated", {
         report_type: reportType,
         ...filters,
       }),
 
-    trackWeatherViewed: (location?: string) =>
-      analytics.track("weather_viewed", { location }),
+    trackWeatherViewed: (location?: string) => {
+      const properties: { location?: string } = {};
+      if (location) {
+        properties.location = location;
+      }
+      analytics.track("weather_viewed", properties);
+    },
 
     trackSettingsUpdated: (settingCategory: string) =>
       analytics.track("settings_updated", { category: settingCategory }),
@@ -82,7 +98,7 @@ export function useComponentAnalytics(componentName: string) {
 
   const trackInteraction = (
     interactionType: string,
-    details?: Record<string, any>
+    details?: Record<string, unknown>
   ) => {
     trackUserAction("component_interaction", "ui", {
       component: componentName,
@@ -106,12 +122,20 @@ export function useFormAnalytics(formName: string) {
   };
 
   const trackFormSubmit = (success: boolean, errors?: string[]) => {
-    trackUserAction("form_submitted", "form", {
+    const properties: {
+      form_name: string;
+      success: boolean;
+      error_count: number;
+      errors?: string;
+    } = {
       form_name: formName,
       success,
       error_count: errors?.length || 0,
-      errors: errors?.join(", "),
-    });
+    };
+    if (errors && errors.length > 0) {
+      properties.errors = errors.join(", ");
+    }
+    trackUserAction("form_submitted", "form", properties);
   };
 
   const trackFormAbandoned = (completionPercentage: number) => {
@@ -152,12 +176,20 @@ export function useSearchAnalytics() {
     resultsCount: number,
     category?: string
   ) => {
-    trackUserAction("search_performed", "search", {
+    const properties: {
+      query: string;
+      results_count: number;
+      category?: string;
+      query_length: number;
+    } = {
       query,
       results_count: resultsCount,
-      category,
       query_length: query.length,
-    });
+    };
+    if (category) {
+      properties.category = category;
+    }
+    trackUserAction("search_performed", "search", properties);
   };
 
   const trackFilter = (

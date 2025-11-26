@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { ActivityLogger } from "@/lib/activity-logger";
+import { Prisma } from "@prisma/client";
 
 const createEquipmentSchema = z.object({
   name: z.string().min(1, "Equipment name is required"),
@@ -65,6 +66,7 @@ const createEquipmentSchema = z.object({
   horsepower: z.number().min(0).optional(),
   workingWidth: z.number().min(0).optional(),
   weight: z.number().min(0).optional(),
+  hoursUsed: z.number().min(0).optional(),
   lastServiceDate: z
     .string()
     .transform((str) => new Date(str))
@@ -104,12 +106,12 @@ export async function GET(request: NextRequest) {
     const includeMaintenanceAlerts =
       searchParams.get("includeMaintenanceAlerts") === "true";
 
-    const whereClause: any = {
+    const whereClause: Prisma.EquipmentWhereInput = {
       userId,
-      ...(category && { category }),
-      ...(equipmentType && { equipmentType }),
-      ...(status && { status }),
-      ...(condition && { condition }),
+      ...(category && { category: category as any }),
+      ...(equipmentType && { equipmentType: equipmentType as any }),
+      ...(status && { status: status as any }),
+      ...(condition && { condition: condition as any }),
     };
 
     const equipment = await prisma.equipment.findMany({

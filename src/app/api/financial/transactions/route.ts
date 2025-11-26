@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
 
 const createTransactionSchema = z.object({
   accountId: z.string().min(1, "Account ID is required"),
@@ -54,15 +55,21 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "50");
 
-    const where: any = { userId };
+    const where: Prisma.FinancialTransactionWhereInput = { userId };
 
     if (accountId) where.accountId = accountId;
     if (cropId) where.cropId = cropId;
     if (fieldId) where.fieldId = fieldId;
     if (categoryId) where.categoryId = categoryId;
     if (supplierId) where.supplierId = supplierId;
-    if (transactionType) where.transactionType = transactionType;
-    if (paymentStatus) where.paymentStatus = paymentStatus;
+    if (transactionType)
+      where.transactionType = transactionType as
+        | Prisma.EnumFinancialTransactionTypeFilter<"FinancialTransaction">
+        | undefined;
+    if (paymentStatus)
+      where.paymentStatus = paymentStatus as
+        | Prisma.EnumPaymentStatusFilter<"FinancialTransaction">
+        | undefined;
 
     if (startDate || endDate) {
       where.transactionDate = {};

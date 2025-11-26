@@ -85,24 +85,24 @@ interface UseAsyncOperationReturn<T> {
   data: T | null;
   loading: boolean;
   error: ApiError | null;
-  execute: (...args: any[]) => Promise<T | null>;
+  execute: (...args: unknown[]) => Promise<T | null>;
   retry: () => Promise<T | null>;
   reset: () => void;
 }
 
-export function useAsyncOperation<T = any>(
-  asyncFunction: (...args: any[]) => Promise<T>,
+export function useAsyncOperation<T = unknown>(
+  asyncFunction: (...args: unknown[]) => Promise<T>,
   options: UseAsyncOperationOptions<T> = {}
 ): UseAsyncOperationReturn<T> {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(false);
-  const [lastArgs, setLastArgs] = useState<any[]>([]);
+  const [lastArgs, setLastArgs] = useState<unknown[]>([]);
   const { error, handleError, clearError } = useApiError({
     onError: options.onError,
   });
 
   const execute = useCallback(
-    async (...args: any[]): Promise<T | null> => {
+    async (...args: unknown[]): Promise<T | null> => {
       try {
         setLoading(true);
         setLastArgs(args);
@@ -159,12 +159,12 @@ interface UseFormSubmissionOptions<T> {
 interface UseFormSubmissionReturn<T> {
   submitting: boolean;
   error: ApiError | null;
-  submit: (data: any) => Promise<T | null>;
+  submit: (data: unknown) => Promise<T | null>;
   reset: () => void;
 }
 
-export function useFormSubmission<T = any>(
-  submitFunction: (data: any) => Promise<T>,
+export function useFormSubmission<T = unknown>(
+  submitFunction: (data: unknown) => Promise<T>,
   options: UseFormSubmissionOptions<T> = {}
 ): UseFormSubmissionReturn<T> {
   const [submitting, setSubmitting] = useState(false);
@@ -173,7 +173,7 @@ export function useFormSubmission<T = any>(
   });
 
   const submit = useCallback(
-    async (data: any): Promise<T | null> => {
+    async (data: unknown): Promise<T | null> => {
       try {
         setSubmitting(true);
         clearError();

@@ -1,4 +1,4 @@
-import { TaskStatus, TaskPriority, TaskCategory } from "@prisma/client";
+import { TaskStatus, TaskPriority, TaskCategory, Prisma } from "@prisma/client";
 import { prisma } from "../connection";
 
 export interface TaskCreateData {
@@ -43,7 +43,7 @@ export class TaskService {
   }
 
   static async findAllByUser(userId: string, filters: TaskFilters = {}) {
-    const where: any = { userId };
+    const where: Prisma.TaskWhereInput = { userId };
 
     if (filters.status) where.status = filters.status;
     if (filters.priority) where.priority = filters.priority;

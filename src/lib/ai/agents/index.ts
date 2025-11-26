@@ -1,12 +1,13 @@
 import { createGoogleAIService } from "../google-ai-service";
 import { weatherService } from "../../services/weather";
+import { Crop, Activity, AICropData, AIActivityData } from "@/types";
 
 export interface ADKChatContext {
   userId: string;
   message: string;
   conversationHistory: Array<{ role: "user" | "assistant"; content: string }>;
-  crops: any[];
-  activities: any[];
+  crops: Crop[] | AICropData[];
+  activities: Activity[] | AIActivityData[];
 }
 
 export interface ADKChatResult {
@@ -65,9 +66,9 @@ export async function getChatResponseFromADK(
     // Build farm context for Google AI
     const farmContext = {
       userId: context.userId,
-      crops: context.crops || [],
-      activities: context.activities || [],
-      weather: weatherContext,
+      crops: (context.crops || []) as any,
+      activities: (context.activities || []) as any,
+      weather: weatherContext as any,
       location: "Farm location", // Could be enhanced with user's actual location
     };
 
@@ -100,7 +101,7 @@ export async function getChatResponseFromADK(
       // Fallback to simulation on API error
       return await simulateGoogleAICall(context);
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("ADK call error:", err);
 
     // Fallback to simulation on any error
@@ -110,13 +111,13 @@ export async function getChatResponseFromADK(
       return {
         success: false,
         content: "",
-        error: err?.message || "ADK call failed",
+        error: (err as any)?.message || "ADK call failed",
       };
     }
   }
 }
 
-function summarizeCrops(crops: any[]): string {
+function summarizeCrops(crops: Crop[]): string {
   if (!crops?.length) return "Crops: none tracked yet.";
   const types = [...new Set(crops.map((c) => c.name))];
   const overdue = crops.filter(
@@ -126,14 +127,17 @@ function summarizeCrops(crops: any[]): string {
   return `Crops: ${crops.length} total; Types: ${types.join(", ")}; Overdue to harvest: ${overdue.length}.`;
 }
 
-function summarizeActivities(activities: any[]): string {
+function summarizeActivities(activities: Activity[]): string {
   if (!activities?.length) return "Activities: none logged yet.";
-  const byType = activities.reduce((acc: any, a: any) => {
-    acc[a.type] = (acc[a.type] || 0) + 1;
-    return acc;
-  }, {});
+  const byType = activities.reduce(
+    (acc: Record<string, number>, a: Activity) => {
+      acc[a.actionType] = (acc[a.actionType] || 0) + 1;
+      return acc;
+    },
+    {}
+  );
   const top = Object.entries(byType)
-    .sort(([, a]: any, [, b]: any) => b - a)
+    .sort(([, a], [, b]) => b - a)
     .slice(0, 3)
     .map(([t, c]) => `${t}:${c}`)
     .join(", ");
@@ -148,15 +152,15 @@ async function simulateGoogleAICall(
 ): Promise<ADKChatResult> {
   // Build context summary
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const cropSummary = summarizeCrops(context.crops);
+  const cropSummary = summarizeCrops(context.crops as any);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const activitySummary = summarizeActivities(context.activities);
+  const activitySummary = summarizeActivities(context.activities as any);
 
   // Generate contextual response
   const response = generatePlaceholderResponse(
     context.message,
-    context.crops,
-    context.activities
+    context.crops as any,
+    context.activities as any
   );
 
   return {
@@ -173,8 +177,8 @@ async function simulateGoogleAICall(
 
 function generatePlaceholderResponse(
   message: string,
-  crops: any[],
-  activities: any[]
+  crops: Crop[],
+  activities: Activity[]
 ): string {
   const msg = message.toLowerCase();
 

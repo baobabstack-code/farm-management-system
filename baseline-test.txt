@@ -1,0 +1,20 @@
+﻿
+> farm-management-system@0.1.0 test C:\Desktop\farmerflow_ai
+> jest
+
+pnpm : PASS src/utils/__tests__/haptics.test.ts
+At line:1 char:1
++ pnpm test 2>&1 | Out-File -FilePath baseline-test.txt -Encoding utf8; ...
++ ~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (PASS src/utils/__tests__/haptics.test.ts:String) [], RemoteExcepti 
+   on
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+PASS src/lib/db/services/__tests__/field-service.test.ts
+PASS src/app/dashboard/__tests__/page.test.tsx (5.155 s)
+
+Test Suites: 3 passed, 3 total
+Tests:       12 passed, 12 total
+Snapshots:   0 total
+Time:        8.769 s, estimated 13 s
+Ran all test suites.

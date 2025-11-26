@@ -157,10 +157,9 @@ export const PUT = ApiResponseHandler.withErrorHandling(
 
     const { id } = await params;
 
-    const validatedData = await ApiResponseHandler.validateBody(
-      request,
-      updateEquipmentSchema
-    );
+    const validatedData = await ApiResponseHandler.validateBody<
+      z.infer<typeof updateEquipmentSchema>
+    >(request, updateEquipmentSchema);
 
     // Check if equipment exists and belongs to user
     const existingEquipment = await prisma.equipment.findFirst({
@@ -176,13 +175,13 @@ export const PUT = ApiResponseHandler.withErrorHandling(
 
     // Check for duplicate serial number if provided and different from current
     if (
-      (validatedData as any).serialNumber &&
-      (validatedData as any).serialNumber !== existingEquipment.serialNumber
+      validatedData.serialNumber &&
+      validatedData.serialNumber !== existingEquipment.serialNumber
     ) {
       const duplicateEquipment = await prisma.equipment.findFirst({
         where: {
           userId,
-          serialNumber: (validatedData as any).serialNumber,
+          serialNumber: validatedData.serialNumber,
           id: { not: id },
         },
       });
@@ -196,7 +195,7 @@ export const PUT = ApiResponseHandler.withErrorHandling(
 
     // Calculate next service due date if service interval is provided
     let nextServiceDue = existingEquipment.nextServiceDue;
-    const data = validatedData as any;
+    const data = validatedData;
     if (
       data.serviceInterval !== undefined ||
       data.lastServiceDate !== undefined
@@ -217,7 +216,7 @@ export const PUT = ApiResponseHandler.withErrorHandling(
     const equipment = await prisma.equipment.update({
       where: { id: id },
       data: {
-        ...(validatedData as any),
+        ...validatedData,
         nextServiceDue,
       },
       include: {
@@ -250,11 +249,14 @@ export const PUT = ApiResponseHandler.withErrorHandling(
     });
 
     // Log activity with changes
-    const changes: Record<string, any> = {};
+    const changes: Record<string, unknown> = {};
     if (validatedData && typeof validatedData === "object") {
       Object.entries(validatedData).forEach(([key, value]) => {
-        if (value !== (existingEquipment as any)[key]) {
-          changes[key] = { from: (existingEquipment as any)[key], to: value };
+        if (value !== (existingEquipment as Record<string, unknown>)[key]) {
+          changes[key] = {
+            from: (existingEquipment as Record<string, unknown>)[key],
+            to: value,
+          };
         }
       });
     }
