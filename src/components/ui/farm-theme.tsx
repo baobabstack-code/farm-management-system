@@ -113,13 +113,13 @@ FarmCardContent.displayName = "FarmCardContent";
 interface FarmButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?:
-    | "primary"
-    | "secondary"
-    | "success"
-    | "warning"
-    | "destructive"
-    | "outline"
-    | "ghost";
+  | "primary"
+  | "secondary"
+  | "success"
+  | "warning"
+  | "destructive"
+  | "outline"
+  | "ghost";
   size?: "default" | "sm" | "lg";
   loading?: boolean;
 }
@@ -213,7 +213,7 @@ FarmBadge.displayName = "FarmBadge";
 
 // === FORM COMPONENTS ===
 
-interface FarmFormProps extends React.FormHTMLAttributes<HTMLFormElement> {}
+interface FarmFormProps extends React.FormHTMLAttributes<HTMLFormElement> { }
 
 export const FarmForm = React.forwardRef<HTMLFormElement, FarmFormProps>(
   ({ className, ...props }, ref) => (
@@ -243,7 +243,7 @@ export const FarmFormGroup = React.forwardRef<
 ));
 FarmFormGroup.displayName = "FarmFormGroup";
 
-interface FarmInputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
+interface FarmInputProps extends React.InputHTMLAttributes<HTMLInputElement> { }
 
 export const FarmInput = React.forwardRef<HTMLInputElement, FarmInputProps>(
   ({ className, ...props }, ref) => (
@@ -253,7 +253,7 @@ export const FarmInput = React.forwardRef<HTMLInputElement, FarmInputProps>(
 FarmInput.displayName = "FarmInput";
 
 interface FarmSelectProps
-  extends React.SelectHTMLAttributes<HTMLSelectElement> {}
+  extends React.SelectHTMLAttributes<HTMLSelectElement> { }
 
 export const FarmSelect = React.forwardRef<HTMLSelectElement, FarmSelectProps>(
   ({ className, ...props }, ref) => (
@@ -267,7 +267,7 @@ export const FarmSelect = React.forwardRef<HTMLSelectElement, FarmSelectProps>(
 FarmSelect.displayName = "FarmSelect";
 
 interface FarmTextareaProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}
+  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> { }
 
 export const FarmTextarea = React.forwardRef<
   HTMLTextAreaElement,
@@ -313,7 +313,7 @@ interface LoadingStateProps {
 }
 
 export const LoadingState: React.FC<LoadingStateProps> = ({
-  message = "Loading...",
+  message = "Loading...", // Default message
 }) => (
   <div className="content-container py-6">
     <div className="flex items-center justify-center min-h-[400px]">
