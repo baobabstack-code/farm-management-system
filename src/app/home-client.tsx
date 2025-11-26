@@ -1,4 +1,4 @@
-"use client"; // This needs to be at the top if the component uses client-side features
+"use client";
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -6,24 +6,24 @@ import { Button } from "@/components/ui/button";
 export default function HomeClient() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-yellow-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-      {/* Navigation */}
+      {/* Navigation - Mobile Optimized */}
       <nav className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex justify-between items-center h-16 sm:h-20">
             <div className="flex items-center">
-              <span className="text-2xl font-bold text-green-600 dark:text-green-400">
+              <span className="text-xl sm:text-2xl font-bold text-green-600 dark:text-green-400">
                 🌱 FarmerFlow AI
               </span>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               <Link
                 href="/sign-in"
-                className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors"
               >
                 Sign In
               </Link>
               <Link href="/dashboard">
-                <Button className="bg-green-600 hover:bg-green-700 text-white flex justify-center items-center px-8 py-3">
+                <Button className="bg-green-600 hover:bg-green-700 text-white px-4 sm:px-8 py-2 sm:py-3 text-xs sm:text-base">
                   Get Started
                 </Button>
               </Link>
@@ -32,36 +32,36 @@ export default function HomeClient() {
         </div>
       </nav>
 
-      {/* Hero Section */}
+      {/* Hero Section - Mobile Optimized */}
       <section className="relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="text-center lg:text-left">
-              <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-gray-100 mb-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-24">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center">
+            <div className="text-center lg:text-left space-y-6 sm:space-y-8">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-gray-100 leading-tight">
                 Grow Your Farm with{" "}
                 <span className="text-green-600 dark:text-green-400">
                   Smart Management
                 </span>
               </h1>
-              <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
+              <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
                 Transform your farming operations with our comprehensive
                 management system. Track crops, manage tasks, log activities,
                 and boost your productivity with data-driven insights.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <Link href="/dashboard">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
+                <Link href="/dashboard" className="w-full sm:w-auto">
                   <Button
                     size="lg"
-                    className="btn-enhanced bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 flex justify-center items-center px-8 py-3 text-lg shadow-lg hover:shadow-xl"
+                    className="w-full sm:w-auto bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg shadow-lg hover:shadow-xl transition-all"
                   >
                     Start Free Trial
                   </Button>
                 </Link>
-                <Link href="/sign-in">
+                <Link href="/sign-in" className="w-full sm:w-auto">
                   <Button
                     size="lg"
                     variant="outline"
-                    className="btn-enhanced flex justify-center items-center px-8 py-3 text-lg border-green-600 dark:border-green-400 text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-slate-800 focus:ring-green-500"
+                    className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg border-green-600 dark:border-green-400 text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-slate-800 focus:ring-green-500"
                   >
                     Sign In
                   </Button>
@@ -69,32 +69,32 @@ export default function HomeClient() {
               </div>
             </div>
 
-            {/* Hero Image */}
-            <div className="relative">
-              <div className="bg-gradient-to-r from-green-400 to-blue-500 rounded-3xl p-8 shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-300">
-                <div className="bg-white dark:bg-slate-800 rounded-2xl p-6">
-                  <div className="text-6xl mb-4 text-center">👨‍🌾</div>
-                  <div className="grid grid-cols-3 gap-4 mb-4">
-                    <div className="bg-green-100 dark:bg-green-900/30 rounded-lg p-3 text-center">
-                      <div className="text-2xl mb-1">🌽</div>
-                      <div className="text-xs text-green-700 dark:text-green-300 font-medium">
+            {/* Hero Image - Mobile Optimized */}
+            <div className="relative mt-8 lg:mt-0">
+              <div className="bg-gradient-to-r from-green-400 to-blue-500 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl transform hover:rotate-0 transition-transform duration-300">
+                <div className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-4 sm:p-6">
+                  <div className="text-4xl sm:text-5xl md:text-6xl mb-3 sm:mb-4 text-center">👨‍🌾</div>
+                  <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-3 sm:mb-4">
+                    <div className="bg-green-100 dark:bg-green-900/30 rounded-lg p-2 sm:p-3 text-center">
+                      <div className="text-xl sm:text-2xl mb-1">🌽</div>
+                      <div className="text-[10px] sm:text-xs text-green-700 dark:text-green-300 font-medium">
                         Corn
                       </div>
                     </div>
-                    <div className="bg-red-100 dark:bg-red-900/30 rounded-lg p-3 text-center">
-                      <div className="text-2xl mb-1">🍅</div>
-                      <div className="text-xs text-red-700 dark:text-red-300 font-medium">
+                    <div className="bg-red-100 dark:bg-red-900/30 rounded-lg p-2 sm:p-3 text-center">
+                      <div className="text-xl sm:text-2xl mb-1">🍅</div>
+                      <div className="text-[10px] sm:text-xs text-red-700 dark:text-red-300 font-medium">
                         Tomatoes
                       </div>
                     </div>
-                    <div className="bg-orange-100 dark:bg-orange-900/30 rounded-lg p-3 text-center">
-                      <div className="text-2xl mb-1">🥕</div>
-                      <div className="text-xs text-orange-700 dark:text-orange-300 font-medium">
+                    <div className="bg-orange-100 dark:bg-orange-900/30 rounded-lg p-2 sm:p-3 text-center">
+                      <div className="text-xl sm:text-2xl mb-1">🥕</div>
+                      <div className="text-[10px] sm:text-xs text-orange-700 dark:text-orange-300 font-medium">
                         Carrots
                       </div>
                     </div>
                   </div>
-                  <div className="text-center text-sm text-gray-600 dark:text-gray-300 font-medium">
+                  <div className="text-center text-xs sm:text-sm text-gray-600 dark:text-gray-300 font-medium">
                     Happy Farming! 😊
                   </div>
                 </div>
@@ -104,71 +104,71 @@ export default function HomeClient() {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-20 bg-white dark:bg-slate-800">
+      {/* Features Section - Mobile Optimized */}
+      <section className="py-12 sm:py-16 md:py-20 bg-white dark:bg-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+          <div className="text-center mb-10 sm:mb-16 space-y-3 sm:space-y-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100">
               Everything You Need to Manage Your Farm
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto px-4">
               From crop planning to harvest tracking, our platform provides all
               the tools modern farmers need to succeed.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             {/* Feature 1 */}
-            <div className="text-center group hover:scale-105 transition-transform duration-300">
-              <div className="bg-green-100 dark:bg-green-900/30 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 group-hover:bg-green-200 dark:group-hover:bg-green-800/40 transition-colors">
-                <span className="text-3xl">🌱</span>
+            <div className="text-center group hover:scale-105 transition-transform duration-300 p-4 sm:p-0">
+              <div className="bg-green-100 dark:bg-green-900/30 rounded-full w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center mx-auto mb-3 sm:mb-4 group-hover:bg-green-200 dark:group-hover:bg-green-800/40 transition-colors">
+                <span className="text-2xl sm:text-3xl">🌱</span>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
                 Crop Management
               </h3>
-              <p className="text-gray-600 dark:text-gray-300">
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 px-2">
                 Track your crops from planting to harvest with detailed growth
                 stages and status updates.
               </p>
             </div>
 
             {/* Feature 2 */}
-            <div className="text-center group hover:scale-105 transition-transform duration-300">
-              <div className="bg-blue-100 dark:bg-blue-900/30 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-200 dark:group-hover:bg-blue-800/40 transition-colors">
-                <span className="text-3xl">📋</span>
+            <div className="text-center group hover:scale-105 transition-transform duration-300 p-4 sm:p-0">
+              <div className="bg-blue-100 dark:bg-blue-900/30 rounded-full w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center mx-auto mb-3 sm:mb-4 group-hover:bg-blue-200 dark:group-hover:bg-blue-800/40 transition-colors">
+                <span className="text-2xl sm:text-3xl">📋</span>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
                 Task Planning
               </h3>
-              <p className="text-gray-600 dark:text-gray-300">
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 px-2">
                 Organize daily and seasonal farming activities with
                 priority-based task management.
               </p>
             </div>
 
             {/* Feature 3 */}
-            <div className="text-center group hover:scale-105 transition-transform duration-300">
-              <div className="bg-purple-100 dark:bg-purple-900/30 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 group-hover:bg-purple-200 dark:group-hover:bg-purple-800/40 transition-colors">
-                <span className="text-3xl">💧</span>
+            <div className="text-center group hover:scale-105 transition-transform duration-300 p-4 sm:p-0">
+              <div className="bg-purple-100 dark:bg-purple-900/30 rounded-full w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center mx-auto mb-3 sm:mb-4 group-hover:bg-purple-200 dark:group-hover:bg-purple-800/40 transition-colors">
+                <span className="text-2xl sm:text-3xl">💧</span>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
                 Activity Logging
               </h3>
-              <p className="text-gray-600 dark:text-gray-300">
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 px-2">
                 Log irrigation, fertilization, pest control, and harvest
                 activities with detailed records.
               </p>
             </div>
 
             {/* Feature 4 */}
-            <div className="text-center group hover:scale-105 transition-transform duration-300">
-              <div className="bg-yellow-100 dark:bg-yellow-900/30 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 group-hover:bg-yellow-200 dark:group-hover:bg-yellow-800/40 transition-colors">
-                <span className="text-3xl">📈</span>
+            <div className="text-center group hover:scale-105 transition-transform duration-300 p-4 sm:p-0">
+              <div className="bg-yellow-100 dark:bg-yellow-900/30 rounded-full w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center mx-auto mb-3 sm:mb-4 group-hover:bg-yellow-200 dark:group-hover:bg-yellow-800/40 transition-colors">
+                <span className="text-2xl sm:text-3xl">📈</span>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
                 Analytics &amp; Reports
               </h3>
-              <p className="text-gray-600 dark:text-gray-300">
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 px-2">
                 Get insights into your farm&apos;s performance with
                 comprehensive analytics and reporting.
               </p>
@@ -177,100 +177,100 @@ export default function HomeClient() {
         </div>
       </section>
 
-      {/* Farmers Testimonial Section */}
-      <section className="py-20 bg-gradient-to-r from-green-600 to-blue-600">
+      {/* Testimonials - Mobile Optimized */}
+      <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-r from-green-600 to-blue-600">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+          <div className="text-center mb-10 sm:mb-16 space-y-3 sm:space-y-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">
               Trusted by Happy Farmers Worldwide
             </h2>
-            <p className="text-xl text-green-100 max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-green-100 max-w-3xl mx-auto px-4">
               Join thousands of farmers who have transformed their operations
               with FarmerFlow AI
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {/* Testimonial 1 */}
-            <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-xl transform hover:scale-105 transition-transform duration-300">
-              <div className="text-center mb-6">
-                <div className="text-6xl mb-4">👨‍🌾</div>
-                <h4 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+            <div className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-xl transform hover:scale-105 transition-transform duration-300">
+              <div className="text-center mb-4 sm:mb-6">
+                <div className="text-4xl sm:text-6xl mb-3 sm:mb-4">👨‍🌾</div>
+                <h4 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100">
                   John Martinez
                 </h4>
-                <p className="text-gray-600 dark:text-gray-300">
+                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
                   Organic Vegetable Farm
                 </p>
               </div>
-              <p className="text-gray-700 dark:text-gray-300 italic">
+              <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 italic leading-relaxed">
                 &quot;FarmerFlow AI has revolutionized how I manage my 50-acre
                 vegetable farm. The task scheduling and crop tracking features
                 have increased my productivity by 40%!&quot;
               </p>
-              <div className="flex justify-center mt-4">
-                <div className="flex text-yellow-400">⭐⭐⭐⭐⭐</div>
+              <div className="flex justify-center mt-3 sm:mt-4">
+                <div className="flex text-yellow-400 text-lg sm:text-xl">⭐⭐⭐⭐⭐</div>
               </div>
             </div>
 
             {/* Testimonial 2 */}
-            <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-xl transform hover:scale-105 transition-transform duration-300">
-              <div className="text-center mb-6">
-                <div className="text-6xl mb-4">👩‍🌾</div>
-                <h4 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+            <div className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-xl transform hover:scale-105 transition-transform duration-300">
+              <div className="text-center mb-4 sm:mb-6">
+                <div className="text-4xl sm:text-6xl mb-3 sm:mb-4">👩‍🌾</div>
+                <h4 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100">
                   Sarah Chen
                 </h4>
-                <p className="text-gray-600 dark:text-gray-300">
+                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
                   Fruit Orchard Owner
                 </p>
               </div>
-              <p className="text-gray-700 dark:text-gray-300 italic">
+              <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 italic leading-relaxed">
                 &quot;The analytics dashboard gives me incredible insights into
                 my orchard&apos;s performance. I can now make data-driven
                 decisions that have boosted my harvest quality!&quot;
               </p>
-              <div className="flex justify-center mt-4">
-                <div className="flex text-yellow-400">⭐⭐⭐⭐⭐</div>
+              <div className="flex justify-center mt-3 sm:mt-4">
+                <div className="flex text-yellow-400 text-lg sm:text-xl">⭐⭐⭐⭐⭐</div>
               </div>
             </div>
 
             {/* Testimonial 3 */}
-            <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-xl transform hover:scale-105 transition-transform duration-300">
-              <div className="text-center mb-6">
-                <div className="text-6xl mb-4">👨‍🌾</div>
-                <h4 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+            <div className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-xl transform hover:scale-105 transition-transform duration-300 md:col-span-2 lg:col-span-1">
+              <div className="text-center mb-4 sm:mb-6">
+                <div className="text-4xl sm:text-6xl mb-3 sm:mb-4">👨‍🌾</div>
+                <h4 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100">
                   Mike Thompson
                 </h4>
-                <p className="text-gray-600 dark:text-gray-300">
+                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
                   Grain Farm Manager
                 </p>
               </div>
-              <p className="text-gray-700 dark:text-gray-300 italic">
+              <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 italic leading-relaxed">
                 &quot;Managing multiple crops across 200 acres used to be
                 overwhelming. FarmerFlow AI&apos;s comprehensive system keeps
                 everything organized and efficient!&quot;
               </p>
-              <div className="flex justify-center mt-4">
-                <div className="flex text-yellow-400">⭐⭐⭐⭐⭐</div>
+              <div className="flex justify-center mt-3 sm:mt-4">
+                <div className="flex text-yellow-400 text-lg sm:text-xl">⭐⭐⭐⭐⭐</div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Crop Showcase Section */}
-      <section className="py-20 bg-gray-50 dark:bg-slate-900">
+      {/* Crop Showcase - Mobile Optimized */}
+      <section className="py-12 sm:py-16 md:py-20 bg-gray-50 dark:bg-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+          <div className="text-center mb-10 sm:mb-16 space-y-3 sm:space-y-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100">
               Manage Any Type of Crop
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto px-4">
               From vegetables to fruits, grains to herbs - our system adapts to
               your farming needs
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-3 sm:gap-4 md:gap-6">
             {[
               {
                 emoji: "🌽",
@@ -315,10 +315,10 @@ export default function HomeClient() {
             ].map((crop, index) => (
               <div
                 key={index}
-                className={`${crop.color} rounded-2xl p-6 text-center hover:scale-110 transition-transform duration-300 cursor-pointer`}
+                className={`${crop.color} rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 text-center hover:scale-110 transition-transform duration-300 cursor-pointer`}
               >
-                <div className="text-4xl mb-2">{crop.emoji}</div>
-                <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <div className="text-2xl sm:text-3xl md:text-4xl mb-1 sm:mb-2">{crop.emoji}</div>
+                <div className="text-[10px] sm:text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300">
                   {crop.name}
                 </div>
               </div>
@@ -327,278 +327,153 @@ export default function HomeClient() {
         </div>
       </section>
 
-      {/* App Overview Section */}
-      <section className="py-20 bg-white dark:bg-slate-800">
+      {/* Pricing - Mobile Optimized */}
+      <section className="py-12 sm:py-16 md:py-20 bg-white dark:bg-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-              How FarmerFlow AI Works
-            </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Simple, powerful tools designed specifically for modern farming
-              operations
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-20">
-            <div>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-                📱 Dashboard Overview
-              </h3>
-              <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">
-                Get a complete view of your farm operations at a glance. Monitor
-                crop health, track task completion, and view key performance
-                metrics all in one place.
-              </p>
-              <ul className="space-y-3">
-                <li className="flex items-center text-gray-700 dark:text-gray-300">
-                  <span className="text-green-500 dark:text-green-400 mr-3">
-                    ✓
-                  </span>
-                  Real-time farm statistics and KPIs
-                </li>
-                <li className="flex items-center text-gray-700 dark:text-gray-300">
-                  <span className="text-green-500 dark:text-green-400 mr-3">
-                    ✓
-                  </span>
-                  Weather integration and alerts
-                </li>
-                <li className="flex items-center text-gray-700 dark:text-gray-300">
-                  <span className="text-green-500 dark:text-green-400 mr-3">
-                    ✓
-                  </span>
-                  Upcoming tasks and deadlines
-                </li>
-              </ul>
-            </div>
-            <div className="bg-gradient-to-br from-blue-100 to-green-100 dark:from-blue-900/20 dark:to-green-900/20 rounded-2xl p-8">
-              <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-                <div className="flex items-center justify-between mb-4">
-                  <h4 className="font-semibold text-gray-900 dark:text-gray-100">
-                    Farm Dashboard
-                  </h4>
-                  <span className="text-2xl">📈</span>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-green-50 dark:bg-green-900/30 p-3 rounded-lg">
-                    <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-                      12
-                    </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-300">
-                      Active Crops
-                    </div>
-                  </div>
-                  <div className="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-lg">
-                    <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                      8
-                    </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-300">
-                      Tasks Today
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="bg-gradient-to-br from-green-100 to-yellow-100 dark:from-green-900/20 dark:to-yellow-900/20 rounded-2xl p-8 order-2 lg:order-1">
-              <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-                <div className="flex items-center justify-between mb-4">
-                  <h4 className="font-semibold text-gray-900 dark:text-gray-100">
-                    Crop Management
-                  </h4>
-                  <span className="text-2xl">🌱</span>
-                </div>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between p-2 bg-gray-50 dark:bg-slate-700 rounded">
-                    <span className="text-sm text-gray-900 dark:text-gray-100">
-                      🍅 Tomatoes
-                    </span>
-                    <span className="text-xs bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 px-2 py-1 rounded">
-                      Healthy
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between p-2 bg-gray-50 dark:bg-slate-700 rounded">
-                    <span className="text-sm text-gray-900 dark:text-gray-100">
-                      🌽 Corn
-                    </span>
-                    <span className="text-xs bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded">
-                      Growing
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between p-2 bg-gray-50 dark:bg-slate-700 rounded">
-                    <span className="text-sm text-gray-900 dark:text-gray-100">
-                      🥕 Carrots
-                    </span>
-                    <span className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-1 rounded">
-                      Planted
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="order-1 lg:order-2 text-center">
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-                Smart Crop Monitoring
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300 mb-6">
-                Track your crops&apos; health, growth stages, and harvest
-                readiness with our intelligent monitoring system. Get real-time
-                insights and recommendations to maximize your yield.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section className="py-20 bg-white dark:bg-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+          <div className="text-center mb-10 sm:mb-16 space-y-3 sm:space-y-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100">
               Choose Your Plan
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto px-4">
               Select the perfect plan for your farm management needs.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto">
             {/* Basic Plan */}
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 p-8 relative">
-              <div className="text-center">
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+            <div className="bg-white dark:bg-slate-900 rounded-xl sm:rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 p-6 sm:p-8 relative">
+              <div className="text-center space-y-3 sm:space-y-4">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
                   Basic Plan
                 </h3>
-                <div className="text-4xl font-bold text-green-600 dark:text-green-400 mb-2">
+                <div className="text-3xl sm:text-4xl font-bold text-green-600 dark:text-green-400">
                   $25
-                  <span className="text-lg font-normal text-gray-500">
+                  <span className="text-base sm:text-lg font-normal text-gray-500">
                     /month
                   </span>
                 </div>
-                <p className="text-gray-600 dark:text-gray-300 mb-6">
+                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
                   Perfect for small farms
                 </p>
               </div>
 
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center text-gray-700 dark:text-gray-300">
-                  <span className="text-green-500 mr-3">✓</span>
+              <ul className="space-y-2 sm:space-y-3 my-6 sm:my-8">
+                <li className="flex items-center text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500 mr-2 sm:mr-3">✓</span>
                   Up to 5 fields
                 </li>
-                <li className="flex items-center text-gray-700 dark:text-gray-300">
-                  <span className="text-green-500 mr-3">✓</span>
+                <li className="flex items-center text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500 mr-2 sm:mr-3">✓</span>
                   Basic crop tracking
                 </li>
-                <li className="flex items-center text-gray-700 dark:text-gray-300">
-                  <span className="text-green-500 mr-3">✓</span>
+                <li className="flex items-center text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500 mr-2 sm:mr-3">✓</span>
                   Weather updates
                 </li>
-                <li className="flex items-center text-gray-700 dark:text-gray-300">
-                  <span className="text-green-500 mr-3">✓</span>
+                <li className="flex items-center text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500 mr-2 sm:mr-3">✓</span>
                   Mobile access
                 </li>
               </ul>
 
               <Link href="/dashboard" className="block">
-                <Button className="w-full bg-green-600 hover:bg-green-700 text-white flex justify-center items-center py-3">
+                <Button className="w-full bg-green-600 hover:bg-green-700 text-white py-3 text-sm sm:text-base">
                   Get Started
                 </Button>
               </Link>
             </div>
 
             {/* Premium Plan - Most Popular */}
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border-2 border-green-500 p-8 relative transform scale-105">
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                <span className="bg-green-500 text-white px-4 py-2 rounded-full text-sm font-semibold">
+            <div className="bg-white dark:bg-slate-900 rounded-xl sm:rounded-2xl shadow-xl border-2 border-green-500 p-6 sm:p-8 relative md:col-span-2 lg:col-span-1">
+              <div className="absolute -top-3 sm:-top-4 left-1/2 transform -translate-x-1/2">
+                <span className="bg-green-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-semibold">
                   Most Popular
                 </span>
               </div>
 
-              <div className="text-center">
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+              <div className="text-center space-y-3 sm:space-y-4 mt-2 sm:mt-0">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
                   Premium Plan
                 </h3>
-                <div className="text-4xl font-bold text-green-600 dark:text-green-400 mb-2">
+                <div className="text-3xl sm:text-4xl font-bold text-green-600 dark:text-green-400">
                   $50
-                  <span className="text-lg font-normal text-gray-500">
+                  <span className="text-base sm:text-lg font-normal text-gray-500">
                     /month
                   </span>
                 </div>
-                <p className="text-gray-600 dark:text-gray-300 mb-6">
+                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
                   For growing operations
                 </p>
               </div>
 
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center text-gray-700 dark:text-gray-300">
-                  <span className="text-green-500 mr-3">✓</span>
+              <ul className="space-y-2 sm:space-y-3 my-6 sm:my-8">
+                <li className="flex items-center text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500 mr-2 sm:mr-3">✓</span>
                   Unlimited fields
                 </li>
-                <li className="flex items-center text-gray-700 dark:text-gray-300">
-                  <span className="text-green-500 mr-3">✓</span>
+                <li className="flex items-center text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500 mr-2 sm:mr-3">✓</span>
                   Advanced analytics
                 </li>
-                <li className="flex items-center text-gray-700 dark:text-gray-300">
-                  <span className="text-green-500 mr-3">✓</span>
+                <li className="flex items-center text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500 mr-2 sm:mr-3">✓</span>
                   AI recommendations
                 </li>
-                <li className="flex items-center text-gray-700 dark:text-gray-300">
-                  <span className="text-green-500 mr-3">✓</span>
+                <li className="flex items-center text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500 mr-2 sm:mr-3">✓</span>
                   Equipment tracking
                 </li>
               </ul>
 
               <Link href="/dashboard" className="block">
-                <Button className="w-full bg-green-600 hover:bg-green-700 text-white flex justify-center items-center py-3">
+                <Button className="w-full bg-green-600 hover:bg-green-700 text-white py-3 text-sm sm:text-base">
                   Get Started
                 </Button>
               </Link>
             </div>
 
             {/* Enterprise Plan */}
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 p-8 relative">
-              <div className="text-center">
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+            <div className="bg-white dark:bg-slate-900 rounded-xl sm:rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 p-6 sm:p-8 relative md:col-span-2 lg:col-span-1">
+              <div className="text-center space-y-3 sm:space-y-4">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
                   Enterprise
                 </h3>
-                <div className="text-4xl font-bold text-green-600 dark:text-green-400 mb-2">
+                <div className="text-3xl sm:text-4xl font-bold text-green-600 dark:text-green-400">
                   $100
-                  <span className="text-lg font-normal text-gray-500">
+                  <span className="text-base sm:text-lg font-normal text-gray-500">
                     /month
                   </span>
                 </div>
-                <p className="text-gray-600 dark:text-gray-300 mb-6">
+                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
                   For large operations
                 </p>
               </div>
 
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center text-gray-700 dark:text-gray-300">
-                  <span className="text-green-500 mr-3">✓</span>
+              <ul className="space-y-2 sm:space-y-3 my-6 sm:my-8">
+                <li className="flex items-center text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500 mr-2 sm:mr-3">✓</span>
                   Everything in Premium
                 </li>
-                <li className="flex items-center text-gray-700 dark:text-gray-300">
-                  <span className="text-green-500 mr-3">✓</span>
+                <li className="flex items-center text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500 mr-2 sm:mr-3">✓</span>
                   Multi-farm management
                 </li>
-                <li className="flex items-center text-gray-700 dark:text-gray-300">
-                  <span className="text-green-500 mr-3">✓</span>
+                <li className="flex items-center text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500 mr-2 sm:mr-3">✓</span>
                   Custom integrations
                 </li>
-                <li className="flex items-center text-gray-700 dark:text-gray-300">
-                  <span className="text-green-500 mr-3">✓</span>
+                <li className="flex items-center text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500 mr-2 sm:mr-3">✓</span>
                   Dedicated support
                 </li>
-                <li className="flex items-center text-gray-700 dark:text-gray-300">
-                  <span className="text-green-500 mr-3">✓</span>
+                <li className="flex items-center text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500 mr-2 sm:mr-3">✓</span>
                   API access
                 </li>
               </ul>
 
               <Link href="/dashboard" className="block">
-                <Button className="w-full bg-green-600 hover:bg-green-700 text-white flex justify-center items-center py-3">
+                <Button className="w-full bg-green-600 hover:bg-green-700 text-white py-3 text-sm sm:text-base">
                   Get Started
                 </Button>
               </Link>
@@ -607,31 +482,31 @@ export default function HomeClient() {
         </div>
       </section>
 
-      {/* Call to Action */}
-      <section className="bg-gradient-to-r from-green-600 to-blue-600 py-20">
-        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+      {/* Call to Action - Mobile Optimized */}
+      <section className="bg-gradient-to-r from-green-600 to-blue-600 py-12 sm:py-16 md:py-20">
+        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white leading-tight">
             Ready to Transform Your Farm?
           </h2>
-          <p className="text-xl text-green-100 mb-8">
+          <p className="text-base sm:text-lg md:text-xl text-green-100 leading-relaxed px-2">
             Join thousands of farmers who are already using FarmerFlow AI to
             increase productivity and reduce costs. Choose your plan and get
             started today!
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link href="/dashboard" className="inline-block">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center pt-2">
+            <Link href="/dashboard" className="w-full sm:w-auto">
               <Button
                 size="lg"
-                className="bg-white text-green-700 hover:bg-green-50 focus:ring-4 focus:ring-white/50 px-8 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border-2 border-white inline-flex items-center justify-center"
+                className="w-full sm:w-auto bg-white text-green-700 hover:bg-green-50 focus:ring-4 focus:ring-white/50 px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border-2 border-white"
               >
                 Choose Your Plan
               </Button>
             </Link>
-            <Link href="/sign-in" className="inline-block">
+            <Link href="/sign-in" className="w-full sm:w-auto">
               <Button
                 size="lg"
                 variant="outline"
-                className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-green-700 px-8 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 inline-flex items-center justify-center"
+                className="w-full sm:w-auto bg-transparent border-2 border-white text-white hover:bg-white hover:text-green-700 px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
               >
                 Sign In
               </Button>
@@ -640,37 +515,37 @@ export default function HomeClient() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
+      {/* Footer - Mobile Optimized */}
+      <footer className="bg-gray-900 text-white py-8 sm:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="text-3xl font-bold text-green-400 mb-4">
+          <div className="text-center space-y-4 sm:space-y-6">
+            <div className="text-2xl sm:text-3xl font-bold text-green-400">
               🌱 FarmerFlow AI
             </div>
-            <p className="text-gray-400 mb-6">
+            <p className="text-sm sm:text-base text-gray-400 px-4">
               Empowering farmers with smart management solutions
             </p>
-            <div className="flex justify-center space-x-6 mb-8">
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
               <Link
                 href="/dashboard"
-                className="text-gray-400 hover:text-green-400 transition-colors"
+                className="text-sm sm:text-base text-gray-400 hover:text-green-400 transition-colors"
               >
                 Pricing
               </Link>
               <Link
                 href="/sign-in"
-                className="text-gray-400 hover:text-green-400 transition-colors"
+                className="text-sm sm:text-base text-gray-400 hover:text-green-400 transition-colors"
               >
                 Sign In
               </Link>
               <Link
                 href="/dashboard"
-                className="text-gray-400 hover:text-green-400 transition-colors"
+                className="text-sm sm:text-base text-gray-400 hover:text-green-400 transition-colors"
               >
                 Get Started
               </Link>
             </div>
-            <div className="text-gray-500 text-sm">
+            <div className="text-gray-500 text-xs sm:text-sm pt-4 border-t border-gray-800">
               © 2024 FarmerFlow AI. All rights reserved.
             </div>
           </div>
