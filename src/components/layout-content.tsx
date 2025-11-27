@@ -22,10 +22,10 @@ export default function LayoutContent({ children }: LayoutContentProps) {
 
   if (showSidebar) {
     return (
-      <div className="flex h-screen bg-background">
+      <div className="flex h-screen overflow-hidden bg-background">
         <Navigation />
-        <main className="flex-1 overflow-auto mobile-header-spacing mobile-safe-area bg-background">
-          <div className="min-h-full bg-background">{children}</div>
+        <main className="flex-1 overflow-y-auto overflow-x-hidden mobile-header-spacing mobile-safe-area bg-background">
+          {children}
         </main>
         <AIChatAssistant />
       </div>
