@@ -94,13 +94,13 @@ export default function FinancialInsightsCard() {
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 sm:p-6">
+    <div className="farm-card">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-4 sm:mb-6">
         <div className="flex-1">
-          <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center">
+          <h2 className="farm-heading-card flex items-center">
             💰 Financial AI Analytics
           </h2>
-          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
+          <p className="farm-text-muted mt-1">
             Advanced insights with profit forecasting and ROI analysis
           </p>
         </div>
@@ -115,7 +115,7 @@ export default function FinancialInsightsCard() {
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex flex-wrap sm:flex-nowrap gap-1 sm:space-x-1 mb-4 sm:mb-6 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+      <div className="flex flex-wrap sm:flex-nowrap gap-1 sm:space-x-1 mb-4 sm:mb-6 bg-muted rounded-lg p-1 dark:bg-slate-700">
         {[
           { id: "overview", label: "Overview", icon: "📊" },
           { id: "forecasts", label: "Forecasts", icon: "🔮" },
@@ -143,7 +143,7 @@ export default function FinancialInsightsCard() {
       </div>
 
       {error && (
-        <div className="mb-4 p-3 bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-400 rounded text-xs">
+        <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 text-destructive rounded text-xs dark:bg-red-900/20 dark:border-red-700 dark:text-red-400">
           {error}
         </div>
       )}
@@ -152,9 +152,9 @@ export default function FinancialInsightsCard() {
       {isLoading ? (
         <div className="text-center py-8 sm:py-12">
           <div className="animate-pulse">
-            <div className="h-6 sm:h-8 bg-gray-300 dark:bg-gray-600 rounded w-3/4 mx-auto mb-4"></div>
-            <div className="h-3 sm:h-4 bg-gray-300 dark:bg-gray-600 rounded w-1/2 mx-auto mb-2"></div>
-            <div className="h-3 sm:h-4 bg-gray-300 dark:bg-gray-600 rounded w-2/3 mx-auto"></div>
+            <div className="h-6 sm:h-8 bg-muted rounded w-3/4 mx-auto mb-4"></div>
+            <div className="h-3 sm:h-4 bg-muted rounded w-1/2 mx-auto mb-2"></div>
+            <div className="h-3 sm:h-4 bg-muted rounded w-2/3 mx-auto"></div>
           </div>
         </div>
       ) : insights ? (
@@ -164,43 +164,43 @@ export default function FinancialInsightsCard() {
             <div className="space-y-6">
               {/* Financial Summary */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-                <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 sm:p-4 text-center">
-                  <div className="text-lg sm:text-2xl font-bold text-blue-700 dark:text-blue-300">
+                <div className="bg-info/10 rounded-lg p-3 sm:p-4 text-center border border-info/20 dark:bg-blue-900/20">
+                  <div className="text-lg sm:text-2xl font-bold text-info dark:text-blue-300">
                     {formatCurrency(insights.summary.totalRevenue)}
                   </div>
-                  <div className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                  <div className="text-xs text-info mt-1 dark:text-blue-400">
                     Total Revenue
                   </div>
                 </div>
-                <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-3 sm:p-4 text-center">
-                  <div className="text-lg sm:text-2xl font-bold text-red-700 dark:text-red-300">
+                <div className="bg-destructive/10 rounded-lg p-3 sm:p-4 text-center border border-destructive/20 dark:bg-red-900/20">
+                  <div className="text-lg sm:text-2xl font-bold text-destructive dark:text-red-300">
                     {formatCurrency(insights.summary.totalCosts)}
                   </div>
-                  <div className="text-xs text-red-600 dark:text-red-400 mt-1">
+                  <div className="text-xs text-destructive mt-1 dark:text-red-400">
                     Total Costs
                   </div>
                 </div>
-                <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-3 sm:p-4 text-center">
-                  <div className="text-lg sm:text-2xl font-bold text-green-700 dark:text-green-300">
+                <div className="bg-success/10 rounded-lg p-3 sm:p-4 text-center border border-success/20 dark:bg-green-900/20">
+                  <div className="text-lg sm:text-2xl font-bold text-success dark:text-green-300">
                     {formatCurrency(insights.summary.netProfit)}
                   </div>
-                  <div className="text-xs text-green-600 dark:text-green-400 mt-1">
+                  <div className="text-xs text-success mt-1 dark:text-green-400">
                     Net Profit
                   </div>
                 </div>
-                <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3 sm:p-4 text-center">
-                  <div className="text-lg sm:text-2xl font-bold text-purple-700 dark:text-purple-300">
+                <div className="bg-primary/10 rounded-lg p-3 sm:p-4 text-center border border-primary/20 dark:bg-purple-900/20">
+                  <div className="text-lg sm:text-2xl font-bold text-primary dark:text-purple-300">
                     {formatPercentage(insights.summary.profitMargin)}
                   </div>
-                  <div className="text-xs text-purple-600 dark:text-purple-400 mt-1">
+                  <div className="text-xs text-primary mt-1 dark:text-purple-400">
                     Profit Margin
                   </div>
                 </div>
               </div>
 
               {/* Trends */}
-              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 sm:p-4">
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">
+              <div className="bg-muted rounded-lg p-3 sm:p-4 dark:bg-slate-700">
+                <h3 className="text-sm font-semibold text-foreground mb-3">
                   Trends
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-center">
@@ -213,7 +213,7 @@ export default function FinancialInsightsCard() {
                         {formatPercentage(insights.trends.revenueGrowth)}
                       </span>
                     </div>
-                    <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                    <div className="text-xs text-muted-foreground mt-1">
                       Revenue Growth
                     </div>
                   </div>
@@ -226,7 +226,7 @@ export default function FinancialInsightsCard() {
                         {formatPercentage(insights.trends.costTrend)}
                       </span>
                     </div>
-                    <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                    <div className="text-xs text-muted-foreground mt-1">
                       Cost Trend
                     </div>
                   </div>
@@ -239,7 +239,7 @@ export default function FinancialInsightsCard() {
                         {formatPercentage(insights.trends.profitTrend)}
                       </span>
                     </div>
-                    <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                    <div className="text-xs text-muted-foreground mt-1">
                       Profit Trend
                     </div>
                   </div>
@@ -248,7 +248,7 @@ export default function FinancialInsightsCard() {
 
               {/* Recommendations */}
               <div>
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">
+                <h3 className="text-sm font-semibold text-foreground mb-3">
                   Key Recommendations
                 </h3>
                 <div className="space-y-2">
@@ -257,12 +257,10 @@ export default function FinancialInsightsCard() {
                       key={index}
                       className="flex items-start space-x-2 text-xs"
                     >
-                      <span className="text-blue-500 dark:text-blue-400 mt-0.5">
+                      <span className="text-info mt-0.5 dark:text-blue-400">
                         💡
                       </span>
-                      <span className="text-gray-700 dark:text-gray-300">
-                        {rec}
-                      </span>
+                      <span className="text-foreground">{rec}</span>
                     </div>
                   ))}
                 </div>
@@ -276,52 +274,50 @@ export default function FinancialInsightsCard() {
               {insights.forecasts.map((forecast, index) => (
                 <div
                   key={index}
-                  className="border border-gray-200 dark:border-gray-600 rounded-lg p-3 sm:p-4"
+                  className="border border-border rounded-lg p-3 sm:p-4 bg-card"
                 >
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 mb-3">
-                    <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 capitalize">
+                    <h3 className="text-sm font-semibold text-foreground capitalize">
                       {forecast.period.replace("_", " ")}
                     </h3>
-                    <span className="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 rounded-full">
+                    <span className="text-xs px-2 py-1 bg-info/10 text-info rounded-full border border-info/20 dark:bg-blue-900/20 dark:text-blue-300">
                       {forecast.confidence}% confidence
                     </span>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-3 text-center">
                     <div>
-                      <div className="font-bold text-sm text-green-600 dark:text-green-400">
+                      <div className="font-bold text-sm text-success dark:text-green-400">
                         {formatCurrency(forecast.projectedRevenue)}
                       </div>
-                      <div className="text-xs text-gray-600 dark:text-gray-400">
+                      <div className="text-xs text-muted-foreground">
                         Revenue
                       </div>
                     </div>
                     <div>
-                      <div className="font-bold text-sm text-red-600 dark:text-red-400">
+                      <div className="font-bold text-sm text-destructive dark:text-red-400">
                         {formatCurrency(forecast.projectedCosts)}
                       </div>
-                      <div className="text-xs text-gray-600 dark:text-gray-400">
-                        Costs
-                      </div>
+                      <div className="text-xs text-muted-foreground">Costs</div>
                     </div>
                     <div>
                       <div
-                        className={`font-bold text-sm ${forecast.projectedProfit >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
+                        className={`font-bold text-sm ${forecast.projectedProfit >= 0 ? "text-success dark:text-green-400" : "text-destructive dark:text-red-400"}`}
                       >
                         {formatCurrency(forecast.projectedProfit)}
                       </div>
-                      <div className="text-xs text-gray-600 dark:text-gray-400">
+                      <div className="text-xs text-muted-foreground">
                         Profit
                       </div>
                     </div>
                   </div>
 
-                  <div className="text-xs text-gray-600 dark:text-gray-400">
+                  <div className="text-xs text-muted-foreground">
                     <strong>Based on:</strong>
                     <ul className="mt-1 space-y-0.5">
                       {forecast.factors.map((factor, i) => (
                         <li key={i} className="flex items-start">
-                          <span className="text-blue-500 dark:text-blue-400 mr-1">
+                          <span className="text-info mr-1 dark:text-blue-400">
                             •
                           </span>
                           {factor}
@@ -340,10 +336,10 @@ export default function FinancialInsightsCard() {
               {insights.roiAnalysis.slice(0, 6).map((roi, index) => (
                 <div
                   key={index}
-                  className="border border-gray-200 rounded-lg p-4"
+                  className="border border-border rounded-lg p-4 bg-card"
                 >
                   <div className="flex justify-between items-center mb-3">
-                    <h3 className="text-sm font-semibold text-gray-900">
+                    <h3 className="text-sm font-semibold text-foreground">
                       {roi.cropName}
                     </h3>
                     <span
@@ -355,34 +351,40 @@ export default function FinancialInsightsCard() {
 
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3 text-center">
                     <div>
-                      <div className="font-bold text-xs text-gray-700">
+                      <div className="font-bold text-xs text-foreground">
                         {formatCurrency(roi.investmentCost)}
                       </div>
-                      <div className="text-xs text-gray-500">Investment</div>
+                      <div className="text-xs text-muted-foreground">
+                        Investment
+                      </div>
                     </div>
                     <div>
-                      <div className="font-bold text-xs text-gray-700">
+                      <div className="font-bold text-xs text-foreground">
                         {formatCurrency(roi.actualRevenue)}
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-muted-foreground">
                         Actual Revenue
                       </div>
                     </div>
                     <div>
-                      <div className="font-bold text-xs text-blue-600">
+                      <div className="font-bold text-xs text-info dark:text-blue-400">
                         {formatPercentage(roi.actualROI)}
                       </div>
-                      <div className="text-xs text-gray-500">Actual ROI</div>
+                      <div className="text-xs text-muted-foreground">
+                        Actual ROI
+                      </div>
                     </div>
                     <div>
-                      <div className="font-bold text-xs text-green-600">
+                      <div className="font-bold text-xs text-success dark:text-green-400">
                         {formatPercentage(roi.projectedROI)}
                       </div>
-                      <div className="text-xs text-gray-500">Projected ROI</div>
+                      <div className="text-xs text-muted-foreground">
+                        Projected ROI
+                      </div>
                     </div>
                   </div>
 
-                  <div className="text-xs text-gray-700">
+                  <div className="text-xs text-foreground">
                     <strong>Recommendation:</strong> {roi.recommendation}
                   </div>
                 </div>
@@ -399,7 +401,7 @@ export default function FinancialInsightsCard() {
                   className="border border-gray-200 rounded-lg p-4"
                 >
                   <div className="flex justify-between items-center mb-3">
-                    <h3 className="text-sm font-semibold text-gray-900 capitalize">
+                    <h3 className="text-sm font-semibold text-foreground capitalize">
                       {opt.category.toLowerCase().replace("_", " ")}
                     </h3>
                     <div className="flex items-center space-x-2">
@@ -408,7 +410,7 @@ export default function FinancialInsightsCard() {
                       >
                         {opt.priority} Priority
                       </span>
-                      <span className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded-full">
+                      <span className="text-xs px-2 py-1 bg-muted text-muted-foreground rounded-full border border-border">
                         {opt.implementation}
                       </span>
                     </div>
@@ -416,35 +418,39 @@ export default function FinancialInsightsCard() {
 
                   <div className="grid grid-cols-3 gap-4 mb-3 text-center">
                     <div>
-                      <div className="font-bold text-sm text-red-600">
+                      <div className="font-bold text-sm text-destructive dark:text-red-400">
                         {formatCurrency(opt.currentCost)}
                       </div>
-                      <div className="text-xs text-gray-600">Current Cost</div>
+                      <div className="text-xs text-muted-foreground">
+                        Current Cost
+                      </div>
                     </div>
                     <div>
-                      <div className="font-bold text-sm text-blue-600">
+                      <div className="font-bold text-sm text-info dark:text-blue-400">
                         {formatCurrency(opt.optimizedCost)}
                       </div>
-                      <div className="text-xs text-gray-600">
+                      <div className="text-xs text-muted-foreground">
                         Optimized Cost
                       </div>
                     </div>
                     <div>
-                      <div className="font-bold text-sm text-green-600">
+                      <div className="font-bold text-sm text-success dark:text-green-400">
                         {formatCurrency(opt.potentialSavings)}
                       </div>
-                      <div className="text-xs text-gray-600">
+                      <div className="text-xs text-muted-foreground">
                         Potential Savings
                       </div>
                     </div>
                   </div>
 
-                  <div className="text-xs text-gray-700">
+                  <div className="text-xs text-foreground">
                     <strong>Recommendations:</strong>
                     <ul className="mt-1 space-y-0.5">
                       {opt.recommendations.map((rec, i) => (
                         <li key={i} className="flex items-start">
-                          <span className="text-green-500 mr-1">•</span>
+                          <span className="text-success mr-1 dark:text-green-400">
+                            •
+                          </span>
                           {rec}
                         </li>
                       ))}

@@ -60,15 +60,15 @@ export default function WeatherDashboard({
   const getAlertColor = (severity: WeatherAlertSeverity) => {
     switch (severity) {
       case WeatherAlertSeverity.EXTREME:
-        return "bg-red-100 border-red-500 text-red-800";
+        return "bg-destructive/10 border-destructive text-destructive dark:bg-red-500/20 dark:text-red-400 dark:border-red-500/30";
       case WeatherAlertSeverity.SEVERE:
-        return "bg-orange-100 border-orange-500 text-orange-800";
+        return "bg-warning/10 border-warning text-warning dark:bg-orange-500/20 dark:text-orange-400 dark:border-orange-500/30";
       case WeatherAlertSeverity.HIGH:
-        return "bg-yellow-100 border-yellow-500 text-yellow-800";
+        return "bg-warning/10 border-warning text-warning dark:bg-amber-500/20 dark:text-amber-400 dark:border-amber-500/30";
       case WeatherAlertSeverity.MODERATE:
-        return "bg-blue-100 border-blue-500 text-blue-800";
+        return "bg-info/10 border-info text-info dark:bg-blue-500/20 dark:text-blue-400 dark:border-blue-500/30";
       default:
-        return "bg-gray-100 border-gray-500 text-gray-800";
+        return "bg-muted border-border text-muted-foreground dark:bg-slate-700/50 dark:text-slate-300 dark:border-slate-600/50";
     }
   };
 

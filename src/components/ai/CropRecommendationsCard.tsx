@@ -116,26 +116,32 @@ export default function CropRecommendationsCard() {
   };
 
   const getConfidenceColor = (confidence: number) => {
-    if (confidence >= 85) return "text-green-600";
-    if (confidence >= 70) return "text-yellow-600";
-    return "text-red-600";
+    if (confidence >= 85) return "text-success dark:text-green-400";
+    if (confidence >= 70) return "text-warning dark:text-amber-400";
+    return "text-destructive dark:text-red-400";
   };
 
   const getDifficultyColor = (difficulty: string) => {
     // Accept 'low', 'medium', 'high' values from recommendations
-    if (difficulty === "low") return "bg-green-100 text-green-800";
-    if (difficulty === "medium") return "bg-yellow-100 text-yellow-800";
-    if (difficulty === "high") return "bg-red-100 text-red-800";
+    if (difficulty === "low")
+      return "bg-success/10 text-success border border-success/20 dark:bg-green-500/20 dark:text-green-400 dark:border-green-500/30";
+    if (difficulty === "medium")
+      return "bg-warning/10 text-warning border border-warning/20 dark:bg-amber-500/20 dark:text-amber-400 dark:border-amber-500/30";
+    if (difficulty === "high")
+      return "bg-destructive/10 text-destructive border border-destructive/20 dark:bg-red-500/20 dark:text-red-400 dark:border-red-500/30";
     // Fallback for unexpected values
-    return "bg-gray-100 text-gray-800";
+    return "bg-muted text-muted-foreground border border-border dark:bg-slate-700/50 dark:text-slate-300 dark:border-slate-600/50";
   };
 
   const getMarketColor = (market: string) => {
     // Accept 'high', 'medium', 'low' values from recommendations
-    if (market === "high") return "bg-green-100 text-green-800";
-    if (market === "medium") return "bg-yellow-100 text-yellow-800";
-    if (market === "low") return "bg-gray-100 text-gray-800";
-    return "bg-gray-100 text-gray-800";
+    if (market === "high")
+      return "bg-success/10 text-success border border-success/20 dark:bg-green-500/20 dark:text-green-400 dark:border-green-500/30";
+    if (market === "medium")
+      return "bg-warning/10 text-warning border border-warning/20 dark:bg-amber-500/20 dark:text-amber-400 dark:border-amber-500/30";
+    if (market === "low")
+      return "bg-muted text-muted-foreground border border-border dark:bg-slate-700/50 dark:text-slate-300 dark:border-slate-600/50";
+    return "bg-muted text-muted-foreground border border-border dark:bg-slate-700/50 dark:text-slate-300 dark:border-slate-600/50";
   };
 
   if (!cropRecommendationsEnabled) {
@@ -365,7 +371,7 @@ export default function CropRecommendationsCard() {
                 {recommendation.tags.slice(0, 2).map((tag) => (
                   <span
                     key={tag}
-                    className="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full"
+                    className="text-xs px-2 py-1 bg-info/10 text-info border border-info/20 rounded-full dark:bg-blue-500/20 dark:text-blue-400 dark:border-blue-500/30"
                   >
                     {tag}
                   </span>
