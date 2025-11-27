@@ -143,13 +143,13 @@ export default function CropRecommendationsCard() {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
+    <div className="farm-card">
       <div className="flex justify-between items-center mb-4">
         <div>
-          <h2 className="text-xl font-semibold text-gray-900 flex items-center">
+          <h2 className="farm-heading-card flex items-center">
             🌱 Crop Recommendations
           </h2>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="farm-text-muted mt-1">
             AI-powered suggestions for your next planting
           </p>
         </div>
@@ -177,13 +177,13 @@ export default function CropRecommendationsCard() {
 
       {/* Customization Form */}
       {showForm && options && (
-        <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-          <h3 className="text-sm font-medium text-gray-900 mb-3">
+        <div className="mb-6 p-4 bg-muted/50 rounded-lg border border-border">
+          <h3 className="farm-text-body font-medium mb-3">
             Customize Recommendations
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
+              <label className="block farm-text-muted font-medium mb-1">
                 Season
               </label>
               <select
@@ -191,7 +191,7 @@ export default function CropRecommendationsCard() {
                 onChange={(e) =>
                   setFactors({ ...factors, currentSeason: e.target.value })
                 }
-                className="w-full text-xs border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="farm-form-select"
               >
                 {options.seasons.map((season) => (
                   <option key={season} value={season}>
@@ -202,7 +202,7 @@ export default function CropRecommendationsCard() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
+              <label className="block farm-text-muted font-medium mb-1">
                 Experience Level
               </label>
               <select
@@ -216,7 +216,7 @@ export default function CropRecommendationsCard() {
                       | "advanced",
                   })
                 }
-                className="w-full text-xs border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="farm-form-select"
               >
                 {options.experienceLevels.map((level) => (
                   <option key={level} value={level}>
@@ -227,7 +227,7 @@ export default function CropRecommendationsCard() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
+              <label className="block farm-text-muted font-medium mb-1">
                 Space Available
               </label>
               <select
@@ -241,7 +241,7 @@ export default function CropRecommendationsCard() {
                       | "large",
                   })
                 }
-                className="w-full text-xs border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="farm-form-select"
               >
                 {options.spaceOptions.map((space) => (
                   <option key={space} value={space}>
@@ -258,7 +258,7 @@ export default function CropRecommendationsCard() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
+              <label className="block farm-text-muted font-medium mb-1">
                 Budget
               </label>
               <select
@@ -269,7 +269,7 @@ export default function CropRecommendationsCard() {
                     budget: e.target.value as any,
                   })
                 }
-                className="w-full text-xs border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="farm-form-select"
               >
                 {options.budgetOptions.map((budget) => (
                   <option key={budget} value={budget}>
@@ -280,7 +280,7 @@ export default function CropRecommendationsCard() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
+              <label className="block farm-text-muted font-medium mb-1">
                 Soil Type (Optional)
               </label>
               <select
@@ -291,7 +291,7 @@ export default function CropRecommendationsCard() {
                     soilType: (e.target.value as any) || undefined,
                   })
                 }
-                className="w-full text-xs border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="farm-form-select"
               >
                 <option value="">Not sure</option>
                 {options.soilTypes.map((soil) => (
@@ -315,7 +315,7 @@ export default function CropRecommendationsCard() {
       )}
 
       {error && (
-        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded text-xs">
+        <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 text-destructive rounded farm-text-caption">
           {error}
         </div>
       )}
@@ -324,8 +324,8 @@ export default function CropRecommendationsCard() {
       {isLoading ? (
         <div className="text-center py-8">
           <div className="animate-pulse">
-            <div className="h-4 bg-gray-300 rounded w-3/4 mx-auto mb-2"></div>
-            <div className="h-4 bg-gray-300 rounded w-1/2 mx-auto"></div>
+            <div className="h-4 bg-muted rounded w-3/4 mx-auto mb-2"></div>
+            <div className="h-4 bg-muted rounded w-1/2 mx-auto"></div>
           </div>
         </div>
       ) : recommendations.length > 0 ? (
@@ -333,13 +333,13 @@ export default function CropRecommendationsCard() {
           {recommendations.slice(0, 6).map((recommendation, index) => (
             <div
               key={index}
-              className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+              className="border border-border rounded-lg p-4 hover:shadow-md transition-shadow bg-card"
             >
               <div className="flex justify-between items-start mb-2">
-                <h3 className="text-sm font-semibold text-gray-900">
+                <h3 className="farm-text-body font-semibold">
                   {recommendation.cropName}
                   {recommendation.variety && (
-                    <span className="text-xs text-gray-500 font-normal ml-1">
+                    <span className="farm-text-muted font-normal ml-1">
                       ({recommendation.variety})
                     </span>
                   )}
@@ -372,7 +372,7 @@ export default function CropRecommendationsCard() {
                 ))}
               </div>
 
-              <div className="text-xs text-gray-600 mb-2">
+              <div className="farm-text-caption mb-2">
                 <p>
                   <strong>Yield:</strong> {recommendation.expectedYield}
                 </p>
@@ -381,12 +381,12 @@ export default function CropRecommendationsCard() {
                 </p>
               </div>
 
-              <div className="text-xs text-gray-700">
+              <div className="farm-text-caption">
                 <strong>Why this crop:</strong>
                 <ul className="mt-1 space-y-0.5">
                   {recommendation.reasoning.slice(0, 2).map((reason, i) => (
                     <li key={i} className="flex items-start">
-                      <span className="text-green-500 mr-1">•</span>
+                      <span className="text-success mr-1">•</span>
                       {reason}
                     </li>
                   ))}
@@ -396,9 +396,11 @@ export default function CropRecommendationsCard() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-8 text-gray-500">
-          <p className="text-sm">No recommendations available at the moment.</p>
-          <p className="text-xs mt-2">
+        <div className="text-center py-8 farm-text-muted">
+          <p className="farm-text-body">
+            No recommendations available at the moment.
+          </p>
+          <p className="farm-text-caption mt-2">
             Try customizing your preferences or refresh to get suggestions.
           </p>
         </div>
@@ -406,7 +408,7 @@ export default function CropRecommendationsCard() {
 
       {recommendations.length > 6 && (
         <div className="mt-4 text-center">
-          <p className="text-xs text-gray-500">
+          <p className="farm-text-caption">
             Showing top 6 recommendations. Customize settings to see more
             options.
           </p>
