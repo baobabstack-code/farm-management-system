@@ -7,30 +7,51 @@ export default function HomeClient() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-yellow-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       {/* Navigation - Mobile Optimized */}
-      <nav className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16 sm:h-20">
-            <div className="flex items-center">
-              <span className="text-xl sm:text-2xl font-bold text-green-600 dark:text-green-400">
-                🌱 FarmerFlow AI
+      {/* Navigation - Floating & Centered */}
+      <div className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4">
+        <nav className="w-full max-w-5xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl shadow-2xl rounded-full border border-white/20 ring-1 ring-black/5 px-6 py-3 transition-all duration-300 hover:shadow-green-500/10 dark:hover:shadow-green-900/20">
+          <div className="flex justify-between items-center">
+            {/* Logo */}
+            <div className="flex items-center gap-2 cursor-pointer group">
+              <span className="text-2xl transform group-hover:rotate-12 transition-transform duration-300">
+                🌱
+              </span>
+              <span className="text-xl font-bold text-green-600 dark:text-green-400">
+                FarmerFlow AI
               </span>
             </div>
-            <div className="flex items-center gap-2 sm:gap-4">
+
+            {/* Desktop Nav Links - Centered */}
+            <div className="hidden md:flex items-center gap-8">
+              {["Features", "Solutions", "Resources", "Pricing"].map((item) => (
+                <Link
+                  key={item}
+                  href={`#${item.toLowerCase()}`}
+                  className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors relative group"
+                >
+                  {item}
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-600 dark:bg-green-400 transition-all duration-300 group-hover:w-full"></span>
+                </Link>
+              ))}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex items-center gap-3">
               <Link
                 href="/sign-in"
-                className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium transition-colors"
+                className="hidden sm:block text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 px-4 py-2 transition-colors"
               >
                 Sign In
               </Link>
               <Link href="/dashboard">
-                <Button className="bg-green-600 hover:bg-green-700 text-white px-4 sm:px-8 py-2 sm:py-3 text-xs sm:text-base">
+                <Button className="rounded-full bg-green-600 hover:bg-green-700 text-white px-6 py-2 shadow-lg hover:shadow-green-500/30 hover:scale-105 transition-all duration-300">
                   Get Started
                 </Button>
               </Link>
             </div>
           </div>
-        </div>
-      </nav>
+        </nav>
+      </div>
 
       {/* Hero Section - Mobile Optimized */}
       <section className="relative overflow-hidden">
@@ -73,7 +94,9 @@ export default function HomeClient() {
             <div className="relative mt-8 lg:mt-0">
               <div className="bg-gradient-to-r from-green-400 to-blue-500 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl transform hover:rotate-0 transition-transform duration-300">
                 <div className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-4 sm:p-6">
-                  <div className="text-4xl sm:text-5xl md:text-6xl mb-3 sm:mb-4 text-center">👨‍🌾</div>
+                  <div className="text-4xl sm:text-5xl md:text-6xl mb-3 sm:mb-4 text-center">
+                    👨‍🌾
+                  </div>
                   <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-3 sm:mb-4">
                     <div className="bg-green-100 dark:bg-green-900/30 rounded-lg p-2 sm:p-3 text-center">
                       <div className="text-xl sm:text-2xl mb-1">🌽</div>
@@ -105,7 +128,10 @@ export default function HomeClient() {
       </section>
 
       {/* Features Section - Mobile Optimized */}
-      <section className="py-12 sm:py-16 md:py-20 bg-white dark:bg-slate-800">
+      <section
+        id="features"
+        className="py-12 sm:py-16 md:py-20 bg-white dark:bg-slate-800"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10 sm:mb-16 space-y-3 sm:space-y-4">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100">
@@ -208,7 +234,9 @@ export default function HomeClient() {
                 have increased my productivity by 40%!&quot;
               </p>
               <div className="flex justify-center mt-3 sm:mt-4">
-                <div className="flex text-yellow-400 text-lg sm:text-xl">⭐⭐⭐⭐⭐</div>
+                <div className="flex text-yellow-400 text-lg sm:text-xl">
+                  ⭐⭐⭐⭐⭐
+                </div>
               </div>
             </div>
 
@@ -229,7 +257,9 @@ export default function HomeClient() {
                 decisions that have boosted my harvest quality!&quot;
               </p>
               <div className="flex justify-center mt-3 sm:mt-4">
-                <div className="flex text-yellow-400 text-lg sm:text-xl">⭐⭐⭐⭐⭐</div>
+                <div className="flex text-yellow-400 text-lg sm:text-xl">
+                  ⭐⭐⭐⭐⭐
+                </div>
               </div>
             </div>
 
@@ -250,7 +280,9 @@ export default function HomeClient() {
                 everything organized and efficient!&quot;
               </p>
               <div className="flex justify-center mt-3 sm:mt-4">
-                <div className="flex text-yellow-400 text-lg sm:text-xl">⭐⭐⭐⭐⭐</div>
+                <div className="flex text-yellow-400 text-lg sm:text-xl">
+                  ⭐⭐⭐⭐⭐
+                </div>
               </div>
             </div>
           </div>
@@ -317,7 +349,9 @@ export default function HomeClient() {
                 key={index}
                 className={`${crop.color} rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 text-center hover:scale-110 transition-transform duration-300 cursor-pointer`}
               >
-                <div className="text-2xl sm:text-3xl md:text-4xl mb-1 sm:mb-2">{crop.emoji}</div>
+                <div className="text-2xl sm:text-3xl md:text-4xl mb-1 sm:mb-2">
+                  {crop.emoji}
+                </div>
                 <div className="text-[10px] sm:text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300">
                   {crop.name}
                 </div>
@@ -328,7 +362,10 @@ export default function HomeClient() {
       </section>
 
       {/* Pricing - Mobile Optimized */}
-      <section className="py-12 sm:py-16 md:py-20 bg-white dark:bg-slate-800">
+      <section
+        id="pricing"
+        className="py-12 sm:py-16 md:py-20 bg-white dark:bg-slate-800"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10 sm:mb-16 space-y-3 sm:space-y-4">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100">
