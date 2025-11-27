@@ -288,25 +288,29 @@
 
   /* Enhanced text readability in dark theme */
   .farm-text-body {
-    @apply dark:text-slate-200;
+    @apply text-foreground;
+    @apply dark:text-slate-100;
   }
 
   .farm-text-muted {
     @apply text-muted-foreground;
-    @apply dark:text-slate-400;
+    @apply dark:text-slate-300;
   }
 
   .farm-text-accent {
-    @apply dark:text-slate-100;
+    @apply text-foreground;
+    @apply dark:text-slate-50;
   }
 
   /* Card content text improvements */
   .farm-card-content .farm-text-body {
-    @apply dark:text-slate-200;
+    @apply text-foreground;
+    @apply dark:text-slate-100;
   }
 
   .farm-card-content .farm-text-muted {
-    @apply dark:text-slate-400;
+    @apply text-muted-foreground;
+    @apply dark:text-slate-300;
   }
 
   /* === ENHANCED BUTTON SYSTEM === */
@@ -379,30 +383,37 @@
   /* === TYPOGRAPHY SYSTEM === */
   .farm-heading-display {
     @apply text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-foreground;
+    @apply dark:text-slate-50;
   }
 
   .farm-heading-page {
     @apply text-xl sm:text-2xl lg:text-3xl font-bold text-foreground;
+    @apply dark:text-slate-50;
   }
 
   .farm-heading-section {
     @apply text-lg sm:text-xl font-semibold text-foreground;
+    @apply dark:text-slate-100;
   }
 
   .farm-heading-card {
     @apply text-base sm:text-lg font-semibold text-foreground;
+    @apply dark:text-slate-100;
   }
 
   .farm-text-body {
     @apply text-sm sm:text-base text-foreground;
+    @apply dark:text-slate-100;
   }
 
   .farm-text-muted {
     @apply text-xs sm:text-sm text-muted-foreground;
+    @apply dark:text-slate-300;
   }
 
   .farm-text-caption {
     @apply text-xs text-muted-foreground;
+    @apply dark:text-slate-400;
   }
 
   /* === ENHANCED FORM SYSTEM === */
@@ -807,10 +818,12 @@
 
   .stat-value {
     @apply text-2xl sm:text-3xl font-bold text-foreground mb-1;
+    @apply dark:text-slate-50;
   }
 
   .stat-label {
     @apply text-sm text-muted-foreground font-medium;
+    @apply dark:text-slate-300;
   }
 
   /* === ENHANCED INTERACTIVE ELEMENTS === */

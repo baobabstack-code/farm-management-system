@@ -160,10 +160,8 @@ export default function WeatherDashboard({
       {/* Current Weather */}
       <div className="farm-card">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-gray-900">
-            Current Weather
-          </h2>
-          <span className="text-sm text-gray-500">
+          <h2 className="farm-heading-card text-foreground">Current Weather</h2>
+          <span className="farm-text-muted">
             {new Date(weatherData.timestamp).toLocaleString()}
           </span>
         </div>
@@ -171,46 +169,56 @@ export default function WeatherDashboard({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Temperature */}
           <div className="text-center">
-            <div className="text-3xl font-bold text-gray-900">
+            <div className="text-3xl font-bold text-foreground">
               {Math.round(weatherData.temperature)}°C
             </div>
-            <div className="text-sm text-gray-600 capitalize">
+            <div className="farm-text-body capitalize">
               {weatherData.description}
             </div>
-            <div className="text-xs text-gray-500 mt-1">{location}</div>
+            <div className="farm-text-muted mt-1">{location}</div>
           </div>
 
           {/* Weather Details */}
           <div className="space-y-2">
             <div className="flex justify-between">
-              <span className="text-gray-600">Humidity:</span>
-              <span className="font-medium">{weatherData.humidity}%</span>
+              <span className="farm-text-muted">Humidity:</span>
+              <span className="font-medium text-foreground">
+                {weatherData.humidity}%
+              </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Pressure:</span>
-              <span className="font-medium">{weatherData.pressure} hPa</span>
+              <span className="farm-text-muted">Pressure:</span>
+              <span className="font-medium text-foreground">
+                {weatherData.pressure} hPa
+              </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Visibility:</span>
-              <span className="font-medium">{weatherData.visibility} km</span>
+              <span className="farm-text-muted">Visibility:</span>
+              <span className="font-medium text-foreground">
+                {weatherData.visibility} km
+              </span>
             </div>
           </div>
 
           {/* Wind Information */}
           <div className="space-y-2">
             <div className="flex justify-between">
-              <span className="text-gray-600">Wind Speed:</span>
-              <span className="font-medium">{weatherData.windSpeed} m/s</span>
+              <span className="farm-text-muted">Wind Speed:</span>
+              <span className="font-medium text-foreground">
+                {weatherData.windSpeed} m/s
+              </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Direction:</span>
-              <span className="font-medium">
+              <span className="farm-text-muted">Direction:</span>
+              <span className="font-medium text-foreground">
                 {getWindDirection(weatherData.windDirection)}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Degrees:</span>
-              <span className="font-medium">{weatherData.windDirection}°</span>
+              <span className="farm-text-muted">Degrees:</span>
+              <span className="font-medium text-foreground">
+                {weatherData.windDirection}°
+              </span>
             </div>
           </div>
 
