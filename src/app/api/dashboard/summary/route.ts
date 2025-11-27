@@ -70,10 +70,24 @@ export async function GET(request: NextRequest) {
 
     let queryParams;
     try {
+      // Normalize raw values: convert null -> undefined and parse booleans
+      const rawStart = searchParams.get("startDate");
+      const rawEnd = searchParams.get("endDate");
+      const rawIncludeInactive = searchParams.get("includeInactive");
+
+      const normalizedIncludeInactive =
+        rawIncludeInactive === null
+          ? undefined
+          : rawIncludeInactive === "true"
+          ? true
+          : rawIncludeInactive === "false"
+          ? false
+          : undefined;
+
       queryParams = validateDashboardQueryParams({
-        startDate: searchParams.get("startDate") || undefined,
-        endDate: searchParams.get("endDate") || undefined,
-        includeInactive: searchParams.get("includeInactive") || undefined,
+        startDate: rawStart === null ? undefined : rawStart,
+        endDate: rawEnd === null ? undefined : rawEnd,
+        includeInactive: normalizedIncludeInactive,
       });
       console.log("Query params validated successfully:", queryParams);
     } catch (error) {
