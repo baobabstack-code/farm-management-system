@@ -39,7 +39,8 @@ export async function GET(request: NextRequest) {
     console.log("=== Dashboard API Request Started ===");
 
     // 1. Authentication
-    const { userId } = await auth();
+    const authResult = await auth();
+    const userId = authResult.userId;
     console.log("Authentication check:", {
       userId: userId || "NOT AUTHENTICATED",
     });

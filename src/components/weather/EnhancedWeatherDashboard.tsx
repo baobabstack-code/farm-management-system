@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import Image from "next/image";
+import WeatherIcon from "./WeatherIcon";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -369,11 +369,10 @@ export default function EnhancedWeatherDashboard({
 
               {/* Weather Icon */}
               <div className="text-center">
-                <Image
-                  src={`https://openweathermap.org/img/wn/${current.icon}@2x.png`}
-                  alt={current.description}
-                  width={64}
-                  height={64}
+                <WeatherIcon
+                  icon={current.icon}
+                  description={current.description}
+                  size="lg"
                   className="mx-auto mb-2"
                 />
                 <Button
@@ -400,11 +399,10 @@ export default function EnhancedWeatherDashboard({
                 <div className="font-medium text-gray-900 mb-2">
                   {formatDate(day.forecastDate)}
                 </div>
-                <Image
-                  src={`https://openweathermap.org/img/wn/${day.icon}.png`}
-                  alt={day.description}
-                  width={48}
-                  height={48}
+                <WeatherIcon
+                  icon={day.icon}
+                  description={day.description}
+                  size="md"
                   className="mx-auto mb-2"
                 />
                 <div className="text-sm text-gray-600 capitalize mb-2">

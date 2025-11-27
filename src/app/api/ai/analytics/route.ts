@@ -12,6 +12,84 @@ import {
 } from "@prisma/client";
 import { AICropData, AIActivityData, Insight } from "@/types"; // Import new types
 
+/**
+ * POST /api/ai/analytics
+ * Generate AI-powered farm analytics and insights
+ */
+export async function POST(request: NextRequest) {
+  try {
+    // Check if AI analytics feature is enabled
+    if (!isFeatureEnabled("aiAnalytics")) {
+      return NextResponse.json(
+        { error: "AI analytics feature is not enabled" },
+        { status: 403 }
+      );
+    }
+
+    const authResult = await auth();
+    const userId = authResult.userId;
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Get farm data
+    const cropsResult = await AIDataBridge.getCropData(userId);
+    const activitiesResult = await AIDataBridge.getFinancialSummary(userId);
+
+    if (!cropsResult.success || !activitiesResult.success) {
+      return NextResponse.json(
+        { error: "Failed to fetch farm data" },
+        { status: 500 }
+      );
+    }
+
+    const crops = cropsResult.data || [];
+    const activities = activitiesResult.data || [];
+
+    // Generate rule-based insights
+    const ruleBasedInsights = generateAdvancedInsights(crops, activities);
+
+    // Try to get AI-enhanced insights if Google AI is available
+    let aiInsights: Insight[] = [];
+    try {
+      const aiService = createGoogleAIService();
+      if (aiService) {
+        const farmContext = {
+          userId,
+          crops: crops as any[],
+          activities: activities as any[],
+        };
+
+        const aiResponse = await aiService.generateInsights(
+          farmContext,
+          "general"
+        );
+
+        if (aiResponse.success) {
+          aiInsights = parseAIInsights(aiResponse.content, aiResponse.model);
+        }
+      }
+    } catch (aiError) {
+      console.log("AI enhancement unavailable, using rule-based insights only");
+    }
+
+    // Combine insights (AI first, then rule-based)
+    const allInsights = [...aiInsights, ...ruleBasedInsights].slice(0, 5);
+
+    return NextResponse.json({
+      success: true,
+      insights: allInsights,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error("AI analytics API error:", error);
+    return NextResponse.json(
+      { error: "Failed to generate analytics" },
+      { status: 500 }
+    );
+  }
+}
+
 function generateAdvancedInsights(
   crops: AICropData[], // Updated type
   activities: AIActivityData[] // Updated type

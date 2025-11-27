@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import Image from "next/image";
+import WeatherIcon from "./WeatherIcon";
 import { WeatherData, WeatherAlert, WeatherAlertSeverity } from "@/types";
 
 interface WeatherDashboardProps {
@@ -217,11 +217,10 @@ export default function WeatherDashboard({
           {/* Additional Info */}
           <div className="space-y-2">
             <div className="text-center">
-              <Image
-                src={`https://openweathermap.org/img/wn/${weatherData.icon}@2x.png`}
-                alt={weatherData.description}
-                width={64}
-                height={64}
+              <WeatherIcon
+                icon={weatherData.icon}
+                description={weatherData.description}
+                size="lg"
                 className="mx-auto"
               />
             </div>

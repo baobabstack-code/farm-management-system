@@ -4,7 +4,8 @@ import { WeatherService } from "@/lib/services/weather-service";
 
 export async function GET(request: NextRequest) {
   try {
-    const { userId } = await auth();
+    const authResult = await auth();
+    const userId = authResult.userId;
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

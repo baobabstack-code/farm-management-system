@@ -8,92 +8,96 @@ import {
   WeatherAlertSeverity,
 } from "@/types";
 
-export interface OpenWeatherMapResponse {
-  coord: { lon: number; lat: number };
-  weather: Array<{
-    id: number;
-    main: string;
-    description: string;
-    icon: string;
-  }>;
-  main: {
-    temp: number;
-    feels_like: number;
-    temp_min: number;
-    temp_max: number;
-    pressure: number;
-    humidity: number;
+export interface OpenMeteoCurrentResponse {
+  latitude: number;
+  longitude: number;
+  current: {
+    time: string;
+    temperature_2m: number;
+    relative_humidity_2m: number;
+    precipitation: number;
+    weather_code: number;
+    wind_speed_10m: number;
+    wind_direction_10m: number;
+    surface_pressure: number;
+    visibility: number;
   };
-  visibility: number;
-  wind: { speed: number; deg: number };
-  clouds: { all: number };
-  dt: number;
-  sys: { country: string; sunrise: number; sunset: number };
-  name: string;
 }
 
-export interface OpenWeatherMapForecastResponse {
-  list: Array<{
-    dt: number;
-    main: {
-      temp_min: number;
-      temp_max: number;
-      humidity: number;
-    };
-    weather: Array<{ description: string; icon: string }>;
-    wind: { speed: number; deg: number };
-    pop: number; // Probability of precipitation
-    rain?: { "3h": number };
-    snow?: { "3h": number };
-  }>;
-  city: { coord: { lat: number; lon: number }; name: string };
+export interface OpenMeteoForecastResponse {
+  latitude: number;
+  longitude: number;
+  daily: {
+    time: string[];
+    temperature_2m_max: number[];
+    temperature_2m_min: number[];
+    precipitation_sum: number[];
+    precipitation_probability_max: number[];
+    wind_speed_10m_max: number[];
+    wind_direction_10m_dominant: number[];
+    weather_code: number[];
+  };
+  hourly: {
+    time: string[];
+    temperature_2m: number[];
+    relative_humidity_2m: number[];
+    precipitation: number[];
+    weather_code: number[];
+    wind_speed_10m: number[];
+    wind_direction_10m: number[];
+  };
 }
 
 export class WeatherService {
-  private static readonly API_KEY = process.env.OPENWEATHERMAP_API_KEY;
-  private static readonly BASE_URL = "https://api.openweathermap.org/data/2.5";
+  private static readonly BASE_URL = "https://api.open-meteo.com/v1";
 
   static async getCurrentWeather(
     latitude: number,
     longitude: number,
     location: string
   ): Promise<WeatherData> {
-    if (!this.API_KEY) {
-      throw new Error("OpenWeatherMap API key not configured");
-    }
-
     try {
-      const response = await axios.get<OpenWeatherMapResponse>(
-        `${this.BASE_URL}/weather`,
+      const response = await axios.get<OpenMeteoCurrentResponse>(
+        `${this.BASE_URL}/forecast`,
         {
           params: {
-            lat: latitude,
-            lon: longitude,
-            appid: this.API_KEY,
-            units: "metric",
+            latitude,
+            longitude,
+            current: [
+              "temperature_2m",
+              "relative_humidity_2m",
+              "precipitation",
+              "weather_code",
+              "wind_speed_10m",
+              "wind_direction_10m",
+              "surface_pressure",
+            ].join(","),
+            timezone: "auto",
           },
         }
       );
 
-      const data = response.data;
-      const weather = data.weather[0];
+      const data = response.data.current;
+      const { description, icon } = this.getWeatherDescription(
+        data.weather_code
+      );
 
       const weatherData: WeatherData = {
         id: `${latitude}-${longitude}-${Date.now()}`,
         location,
         latitude,
         longitude,
-        temperature: data.main.temp,
-        humidity: data.main.humidity,
-        precipitation: 0, // Current weather doesn't include precipitation amount
-        windSpeed: data.wind.speed,
-        windDirection: data.wind.deg,
-        pressure: data.main.pressure,
-        uvIndex: 0, // Would need separate UV Index API call
-        visibility: data.visibility / 1000, // Convert from meters to km
-        description: weather.description,
-        icon: weather.icon,
-        timestamp: new Date(data.dt * 1000),
+        temperature: data.temperature_2m,
+        humidity: data.relative_humidity_2m,
+        precipitation: data.precipitation,
+        windSpeed: data.wind_speed_10m,
+        windDirection: data.wind_direction_10m,
+        pressure: data.surface_pressure,
+        uvIndex: 0, // Open-Meteo doesn't provide UV index in free tier
+        visibility: 10, // Default visibility
+        description,
+        icon,
+        timestamp: new Date(data.time),
       };
 
       // Store weather data in database
@@ -112,48 +116,52 @@ export class WeatherService {
     location: string,
     days: number = 5
   ): Promise<WeatherForecast[]> {
-    if (!this.API_KEY) {
-      throw new Error("OpenWeatherMap API key not configured");
-    }
-
     try {
-      const response = await axios.get<OpenWeatherMapForecastResponse>(
+      const response = await axios.get<OpenMeteoForecastResponse>(
         `${this.BASE_URL}/forecast`,
         {
           params: {
-            lat: latitude,
-            lon: longitude,
-            appid: this.API_KEY,
-            units: "metric",
-            cnt: days * 8, // 8 forecasts per day (3-hour intervals)
+            latitude,
+            longitude,
+            daily: [
+              "temperature_2m_max",
+              "temperature_2m_min",
+              "precipitation_sum",
+              "precipitation_probability_max",
+              "wind_speed_10m_max",
+              "wind_direction_10m_dominant",
+              "weather_code",
+            ].join(","),
+            timezone: "auto",
+            forecast_days: days,
           },
         }
       );
 
-      const forecasts: WeatherForecast[] = response.data.list.map(
-        (item, index) => {
-          const precipitation =
-            (item.rain?.["3h"] || 0) + (item.snow?.["3h"] || 0);
+      const daily = response.data.daily;
+      const forecasts: WeatherForecast[] = daily.time.map((time, index) => {
+        const { description, icon } = this.getWeatherDescription(
+          daily.weather_code[index]
+        );
 
-          return {
-            id: `${latitude}-${longitude}-${item.dt}-${index}`,
-            location,
-            latitude,
-            longitude,
-            forecastDate: new Date(item.dt * 1000),
-            tempMin: item.main.temp_min,
-            tempMax: item.main.temp_max,
-            humidity: item.main.humidity,
-            precipitation,
-            precipitationChance: item.pop * 100,
-            windSpeed: item.wind.speed,
-            windDirection: item.wind.deg,
-            description: item.weather[0].description,
-            icon: item.weather[0].icon,
-            timestamp: new Date(),
-          };
-        }
-      );
+        return {
+          id: `${latitude}-${longitude}-${time}-${index}`,
+          location,
+          latitude,
+          longitude,
+          forecastDate: new Date(time),
+          tempMin: daily.temperature_2m_min[index],
+          tempMax: daily.temperature_2m_max[index],
+          humidity: 0, // Daily doesn't include humidity, would need hourly
+          precipitation: daily.precipitation_sum[index],
+          precipitationChance: daily.precipitation_probability_max[index],
+          windSpeed: daily.wind_speed_10m_max[index],
+          windDirection: daily.wind_direction_10m_dominant[index],
+          description,
+          icon,
+          timestamp: new Date(),
+        };
+      });
 
       // Store forecast data in database
       await this.storeWeatherForecasts(forecasts);
@@ -163,6 +171,50 @@ export class WeatherService {
       console.error("Error fetching weather forecast:", error);
       throw new Error("Failed to fetch weather forecast");
     }
+  }
+
+  /**
+   * Convert Open-Meteo weather code to description and icon
+   * Based on WMO Weather interpretation codes
+   */
+  private static getWeatherDescription(code: number): {
+    description: string;
+    icon: string;
+  } {
+    const weatherCodes: Record<number, { description: string; icon: string }> =
+      {
+        0: { description: "Clear sky", icon: "01d" },
+        1: { description: "Mainly clear", icon: "02d" },
+        2: { description: "Partly cloudy", icon: "03d" },
+        3: { description: "Overcast", icon: "04d" },
+        45: { description: "Foggy", icon: "50d" },
+        48: { description: "Depositing rime fog", icon: "50d" },
+        51: { description: "Light drizzle", icon: "09d" },
+        53: { description: "Moderate drizzle", icon: "09d" },
+        55: { description: "Dense drizzle", icon: "09d" },
+        61: { description: "Slight rain", icon: "10d" },
+        63: { description: "Moderate rain", icon: "10d" },
+        65: { description: "Heavy rain", icon: "10d" },
+        71: { description: "Slight snow", icon: "13d" },
+        73: { description: "Moderate snow", icon: "13d" },
+        75: { description: "Heavy snow", icon: "13d" },
+        77: { description: "Snow grains", icon: "13d" },
+        80: { description: "Slight rain showers", icon: "09d" },
+        81: { description: "Moderate rain showers", icon: "09d" },
+        82: { description: "Violent rain showers", icon: "09d" },
+        85: { description: "Slight snow showers", icon: "13d" },
+        86: { description: "Heavy snow showers", icon: "13d" },
+        95: { description: "Thunderstorm", icon: "11d" },
+        96: { description: "Thunderstorm with slight hail", icon: "11d" },
+        99: { description: "Thunderstorm with heavy hail", icon: "11d" },
+      };
+
+    return (
+      weatherCodes[code] || {
+        description: "Unknown",
+        icon: "01d",
+      }
+    );
   }
 
   static async analyzeWeatherAlerts(

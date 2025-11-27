@@ -20,7 +20,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { userId } = await auth();
+    const authResult = await auth();
+    const userId = authResult.userId;
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -96,7 +97,8 @@ function getCurrentSeason(): string {
  */
 export async function GET() {
   try {
-    const { userId } = await auth();
+    const authResult = await auth();
+    const userId = authResult.userId;
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

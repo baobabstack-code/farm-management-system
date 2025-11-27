@@ -31,26 +31,24 @@ export default function AICompanionPage() {
   }
 
   return (
-    <div className="page-container">
-      <div className="content-container padding-responsive-lg mobile-header-spacing content-spacing">
-        <PageHeader
-          title="AI Farm Companion"
-          description="Get intelligent insights and recommendations for your farm operations"
-          icon={<Bot className="w-6 h-6" />}
-        />
+    <div className="content-container padding-responsive-lg mobile-header-spacing content-spacing">
+      <PageHeader
+        title="AI Farm Companion"
+        description="Get intelligent insights and recommendations for your farm operations"
+        icon={<Bot className="w-6 h-6" />}
+      />
 
-        {/* AI Insights Grid */}
-        <div className="farm-grid grid-cols-1 xl:grid-cols-2">
-          <AIInsightsCard />
-          <WeatherInsightsCard />
-        </div>
-
-        {/* Crop Recommendations */}
-        <CropRecommendationsCard />
-
-        {/* Financial Insights */}
-        <FinancialInsightsCard />
+      {/* AI Insights Grid */}
+      <div className="farm-grid grid-cols-1 xl:grid-cols-2">
+        <AIInsightsCard />
+        <WeatherInsightsCard />
       </div>
+
+      {/* Crop Recommendations */}
+      <CropRecommendationsCard />
+
+      {/* Financial Insights */}
+      <FinancialInsightsCard />
     </div>
   );
 }
