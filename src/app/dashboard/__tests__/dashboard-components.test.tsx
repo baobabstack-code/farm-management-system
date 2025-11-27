@@ -22,6 +22,7 @@ jest.mock("@clerk/nextjs", () => ({
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
+  usePathname: jest.fn(() => "/dashboard"),
 }));
 
 jest.mock("@/hooks/useMobileGestures", () => ({

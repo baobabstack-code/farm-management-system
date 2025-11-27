@@ -27,6 +27,7 @@ export default function DashboardPage() {
   const [dashboardData, setDashboardData] =
     useState<DashboardSummaryResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { trackEvent, trackUserAction } = useAnalytics();
   const { toast } = useToast();
 
@@ -61,6 +62,7 @@ export default function DashboardPage() {
         // Handle error response
         const errorMessage =
           json.error?.message || `HTTP error! status: ${response.status}`;
+        setError(errorMessage);
         toast({
           title: "Error loading dashboard",
           description: errorMessage,
@@ -71,6 +73,7 @@ export default function DashboardPage() {
       console.error("Dashboard fetch error:", err);
       const errorMessage =
         err instanceof Error ? err.message : "Error fetching dashboard data";
+      setError(errorMessage);
       toast({
         title: "Error loading dashboard",
         description: errorMessage,
@@ -114,6 +117,36 @@ export default function DashboardPage() {
         description={`Welcome back, ${user?.firstName || user?.username}! Here's your comprehensive farm overview and key insights.`}
         icon={<span className="text-2xl">📊</span>}
       />
+
+      {error && !dashboardData && (
+        <div className="farm-card" role="alert">
+          <div className="farm-card-content">
+            <div className="flex-center flex-col gap-content py-8">
+              <div className="w-16 h-16 bg-destructive/10 rounded-full flex-center">
+                <span className="text-3xl">⚠️</span>
+              </div>
+              <h3 className="farm-heading-card text-destructive">
+                Unable to Load Dashboard
+              </h3>
+              <p className="farm-text-muted text-center max-w-md">{error}</p>
+              <p className="farm-text-sm text-muted-foreground text-center max-w-md">
+                This might be due to a database connection issue. Please check
+                your internet connection and try again.
+              </p>
+              <button
+                onClick={() => {
+                  setError(null);
+                  setLoading(true);
+                  fetchAnalytics();
+                }}
+                className="farm-btn farm-btn-primary"
+              >
+                Retry
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {dashboardData && (
         <React.Fragment>

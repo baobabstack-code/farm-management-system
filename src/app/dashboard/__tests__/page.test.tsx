@@ -13,7 +13,10 @@ jest.mock("@clerk/nextjs", () => ({
 jest.mock("next/navigation", () => ({
   useRouter: () => ({
     push: jest.fn(),
+    replace: jest.fn(),
+    prefetch: jest.fn(),
   }),
+  usePathname: () => "/dashboard",
 }));
 
 jest.mock("@vercel/analytics", () => ({
