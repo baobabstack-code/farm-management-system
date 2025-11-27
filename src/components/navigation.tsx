@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUser, useClerk } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -27,7 +27,22 @@ export default function Navigation() {
   const { user, isLoaded } = useUser();
   const { signOut } = useClerk();
   const pathname = usePathname();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile screen size
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+      if (window.innerWidth < 1024) {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const handleSignOut = () => {
     signOut({ redirectUrl: "/sign-in" });
@@ -39,34 +54,43 @@ export default function Navigation() {
 
   return (
     <>
-      {/* Mobile menu button */}
-      <div className="lg:hidden fixed top-4 left-4 z-nav-button">
-        <button
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="bg-card p-3 rounded-lg shadow-lg border border-border hover:bg-accent transition-colors touch-manipulation"
-          aria-label="Open sidebar"
-          aria-expanded={isSidebarOpen}
+      {/* Toggle button - shows on all screens */}
+      <button
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        className={`fixed top-4 z-nav-button bg-card p-3 rounded-lg shadow-lg border border-border hover:bg-accent transition-all touch-manipulation ${
+          isSidebarOpen && !isMobile ? "left-[17rem]" : "left-4"
+        }`}
+        aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
+        aria-expanded={isSidebarOpen}
+      >
+        <svg
+          className="h-6 w-6 text-foreground"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
         >
-          <svg
-            className="h-6 w-6 text-foreground"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
+          {isSidebarOpen ? (
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
+            />
+          ) : (
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth={2}
               d="M4 6h16M4 12h16M4 18h16"
             />
-          </svg>
-        </button>
-      </div>
+          )}
+        </svg>
+      </button>
 
       {/* Sidebar overlay for mobile */}
-      {isSidebarOpen && (
+      {isSidebarOpen && isMobile && (
         <div
-          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-nav-overlay"
+          className="fixed inset-0 bg-black bg-opacity-50 z-nav-overlay"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
@@ -74,16 +98,16 @@ export default function Navigation() {
       {/* Sidebar */}
       <div
         className={`
-        fixed inset-y-0 left-0 z-nav-sidebar w-64 bg-card shadow-xl border-r border-border transform transition-transform duration-300 ease-in-out
-        ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} 
-        lg:translate-x-0 lg:static lg:inset-0
+        fixed inset-y-0 left-0 z-nav-sidebar bg-card shadow-xl border-r border-border transition-all duration-300 ease-in-out overflow-hidden
+        ${isSidebarOpen ? "w-64" : "w-0"} 
+        ${isMobile ? "fixed" : "relative"}
       `}
         role="navigation"
         aria-label="Main navigation"
       >
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full w-64 overflow-y-auto">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-border">
+          <div className="flex items-center justify-between p-6 border-b border-border flex-shrink-0">
             <Link href="/dashboard" className="flex items-center space-x-2">
               <span className="text-2xl">🌱</span>
               <div>
@@ -91,31 +115,11 @@ export default function Navigation() {
                 <p className="text-sm text-muted-foreground">Farm Management</p>
               </div>
             </Link>
-            <div className="flex items-center space-x-2">
-              <ThemeToggle />
-              <button
-                onClick={() => setIsSidebarOpen(false)}
-                className="lg:hidden p-1 rounded-md hover:bg-accent"
-              >
-                <svg
-                  className="h-5 w-5 text-muted-foreground"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
+            <ThemeToggle />
           </div>
 
-          {/* Navigation */}
-          <nav className="flex-1 px-4 py-6 space-y-2">
+          {/* Navigation - Scrollable */}
+          <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
             {navigation.map((item) => (
               <Link
                 key={item.name}
@@ -136,10 +140,10 @@ export default function Navigation() {
             ))}
           </nav>
 
-          {/* User section */}
-          <div className="p-4 border-t border-border">
+          {/* User section - Fixed at bottom */}
+          <div className="p-4 border-t border-border flex-shrink-0">
             <div className="flex items-center space-x-3 mb-4">
-              <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+              <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
                 <span className="text-primary font-semibold text-lg">
                   {(
                     user.firstName?.[0] ||

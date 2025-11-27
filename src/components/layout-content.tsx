@@ -24,8 +24,8 @@ export default function LayoutContent({ children }: LayoutContentProps) {
     return (
       <div className="flex h-screen overflow-hidden bg-background">
         <Navigation />
-        <main className="flex-1 overflow-y-auto overflow-x-hidden mobile-header-spacing mobile-safe-area bg-background">
-          {children}
+        <main className="flex-1 overflow-y-auto overflow-x-hidden mobile-header-spacing mobile-safe-area bg-background pt-16 lg:pt-0">
+          <div className="h-full">{children}</div>
         </main>
         <AIChatAssistant />
       </div>
