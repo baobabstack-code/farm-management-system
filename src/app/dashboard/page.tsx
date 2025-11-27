@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { usePullToRefresh, useIsMobile } from "@/hooks/useMobileGestures";
+import { useOnboarding } from "@/hooks/use-onboarding";
 import WeatherDashboard from "@/components/weather/WeatherDashboard";
 import {
   PageHeader,
@@ -22,6 +23,7 @@ import { useToast } from "@/components/ui/use-toast";
 export default function DashboardPage() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
+  const { checking: checkingOnboarding } = useOnboarding();
   const [dashboardData, setDashboardData] =
     useState<DashboardSummaryResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -96,7 +98,7 @@ export default function DashboardPage() {
     threshold: 80,
   });
 
-  if (!isLoaded || loading) {
+  if (!isLoaded || loading || checkingOnboarding) {
     return <LoadingState message="Loading dashboard..." />;
   }
 

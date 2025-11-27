@@ -12,6 +12,7 @@ const isProtectedRoute = createRouteMatcher([
   "/planning(.*)",
   "/weather(.*)",
   "/settings(.*)",
+  "/onboarding(.*)",
   "/api/analytics(.*)",
   "/api/crops(.*)",
   "/api/tasks(.*)",
