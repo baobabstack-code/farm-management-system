@@ -283,6 +283,82 @@ export default function DashboardPage() {
             </div>
           </div>
 
+          {/* Quick Actions */}
+          <div className="farm-card">
+            <div className="farm-card-header">
+              <div className="icon-text">
+                <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary-hover rounded-lg flex-center">
+                  <span className="text-white text-lg">⚡</span>
+                </div>
+                <h3 className="farm-heading-card">Quick Actions</h3>
+              </div>
+            </div>
+            <div className="farm-card-content">
+              <div className="farm-grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
+                <button
+                  onClick={() => {
+                    trackUserAction("quick_action_clicked", "dashboard", {
+                      action: "ai_companion",
+                    });
+                    router.push("/ai-companion");
+                  }}
+                  className="farm-btn farm-btn-success w-full"
+                >
+                  <span className="text-lg">🤖</span>
+                  AI Companion
+                </button>
+                <button
+                  onClick={() => {
+                    trackUserAction("quick_action_clicked", "dashboard", {
+                      action: "manage_crops",
+                    });
+                    router.push("/crops");
+                  }}
+                  className="farm-btn farm-btn-success w-full"
+                >
+                  <span className="text-lg">🌱</span>
+                  Manage Crops
+                </button>
+                <button
+                  onClick={() => {
+                    trackUserAction("quick_action_clicked", "dashboard", {
+                      action: "view_tasks",
+                    });
+                    router.push("/tasks");
+                  }}
+                  className="farm-btn farm-btn-success w-full"
+                >
+                  <span className="text-lg">✅</span>
+                  View Tasks
+                </button>
+                <button
+                  onClick={() => {
+                    trackUserAction("quick_action_clicked", "dashboard", {
+                      action: "log_activity",
+                    });
+                    router.push("/activities");
+                  }}
+                  className="farm-btn farm-btn-success w-full"
+                >
+                  <span className="text-lg">📋</span>
+                  Log Activity
+                </button>
+                <button
+                  onClick={() => {
+                    trackUserAction("quick_action_clicked", "dashboard", {
+                      action: "view_reports",
+                    });
+                    router.push("/reports");
+                  }}
+                  className="farm-btn farm-btn-success w-full"
+                >
+                  <span className="text-lg">📈</span>
+                  View Reports
+                </button>
+              </div>
+            </div>
+          </div>
+
           {/* AI Insights */}
           <AIInsightsCard />
 
@@ -859,82 +935,6 @@ export default function DashboardPage() {
                     {dashboardData.pestDisease.diseaseCount}
                   </span>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="farm-card">
-            <div className="farm-card-header">
-              <div className="icon-text">
-                <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary-hover rounded-lg flex-center">
-                  <span className="text-white text-lg">⚡</span>
-                </div>
-                <h3 className="farm-heading-card">Quick Actions</h3>
-              </div>
-            </div>
-            <div className="farm-card-content">
-              <div className="farm-grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
-                <button
-                  onClick={() => {
-                    trackUserAction("quick_action_clicked", "dashboard", {
-                      action: "ai_companion",
-                    });
-                    router.push("/ai-companion");
-                  }}
-                  className="farm-btn farm-btn-success w-full"
-                >
-                  <span className="text-lg">🤖</span>
-                  AI Companion
-                </button>
-                <button
-                  onClick={() => {
-                    trackUserAction("quick_action_clicked", "dashboard", {
-                      action: "manage_crops",
-                    });
-                    router.push("/crops");
-                  }}
-                  className="farm-btn farm-btn-success w-full"
-                >
-                  <span className="text-lg">🌱</span>
-                  Manage Crops
-                </button>
-                <button
-                  onClick={() => {
-                    trackUserAction("quick_action_clicked", "dashboard", {
-                      action: "view_tasks",
-                    });
-                    router.push("/tasks");
-                  }}
-                  className="farm-btn farm-btn-success w-full"
-                >
-                  <span className="text-lg">✅</span>
-                  View Tasks
-                </button>
-                <button
-                  onClick={() => {
-                    trackUserAction("quick_action_clicked", "dashboard", {
-                      action: "log_activity",
-                    });
-                    router.push("/activities");
-                  }}
-                  className="farm-btn farm-btn-success w-full"
-                >
-                  <span className="text-lg">📋</span>
-                  Log Activity
-                </button>
-                <button
-                  onClick={() => {
-                    trackUserAction("quick_action_clicked", "dashboard", {
-                      action: "view_reports",
-                    });
-                    router.push("/reports");
-                  }}
-                  className="farm-btn farm-btn-success w-full"
-                >
-                  <span className="text-lg">📈</span>
-                  View Reports
-                </button>
               </div>
             </div>
           </div>
