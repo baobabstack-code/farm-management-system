@@ -36,10 +36,16 @@ import { z } from "zod";
  */
 export async function GET(request: NextRequest) {
   try {
+    console.log("=== Dashboard API Request Started ===");
+
     // 1. Authentication
     const { userId } = await auth();
+    console.log("Authentication check:", {
+      userId: userId || "NOT AUTHENTICATED",
+    });
 
     if (!userId) {
+      console.log("Authentication failed - no userId");
       return NextResponse.json(
         {
           success: false,
@@ -55,16 +61,26 @@ export async function GET(request: NextRequest) {
 
     // 2. Parse and validate query parameters
     const { searchParams } = new URL(request.url);
+    console.log("Query parameters:", {
+      startDate: searchParams.get("startDate"),
+      endDate: searchParams.get("endDate"),
+      includeInactive: searchParams.get("includeInactive"),
+    });
 
     let queryParams;
     try {
       queryParams = validateDashboardQueryParams({
-        startDate: searchParams.get("startDate"),
-        endDate: searchParams.get("endDate"),
-        includeInactive: searchParams.get("includeInactive"),
+        startDate: searchParams.get("startDate") || undefined,
+        endDate: searchParams.get("endDate") || undefined,
+        includeInactive: searchParams.get("includeInactive") || undefined,
       });
+      console.log("Query params validated successfully:", queryParams);
     } catch (error) {
       if (error instanceof z.ZodError) {
+        console.error(
+          "Query parameter validation failed:",
+          error.flatten().fieldErrors
+        );
         return NextResponse.json(
           {
             success: false,
@@ -118,16 +134,24 @@ export async function GET(request: NextRequest) {
     }
 
     // 5. Fetch dashboard data
+    console.log("Fetching dashboard data for userId:", userId);
     const data = await DashboardService.getDashboardSummary(userId, options);
+    console.log(
+      "Dashboard data fetched successfully:",
+      JSON.stringify(data, null, 2)
+    );
 
     // 6. Validate response data
     let validatedData: DashboardSummaryResponse;
     try {
+      console.log("Validating dashboard data...");
       validatedData = validateDashboardSummary(data);
+      console.log("Dashboard data validated successfully");
     } catch (error) {
       if (error instanceof z.ZodError) {
         // Log validation error for debugging
         console.error("Dashboard data validation failed:", error.issues);
+        console.error("Failed data:", JSON.stringify(data, null, 2));
 
         return NextResponse.json(
           {
@@ -146,6 +170,8 @@ export async function GET(request: NextRequest) {
     }
 
     // 7. Return success response
+    console.log("Returning success response");
+    console.log("=== Dashboard API Request Completed Successfully ===");
     return NextResponse.json(
       {
         success: true,
@@ -161,7 +187,12 @@ export async function GET(request: NextRequest) {
     );
   } catch (error) {
     // 8. Handle unexpected errors
-    console.error("Dashboard API error:", error);
+    console.error("=== Dashboard API Error ===");
+    console.error("Error details:", error);
+    console.error(
+      "Error stack:",
+      error instanceof Error ? error.stack : "No stack trace"
+    );
 
     // Check for specific error types
     if (error instanceof Error) {
