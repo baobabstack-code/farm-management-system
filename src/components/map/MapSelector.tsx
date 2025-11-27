@@ -144,9 +144,26 @@ export default function MapSelector({ onLocationSelect }: MapSelectorProps) {
       },
       (error) => {
         console.error("Geolocation error:", error);
-        alert(
-          "Unable to retrieve your location. Please select manually on the map."
-        );
+        let errorMessage = "Unable to retrieve your location. ";
+
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage +=
+              "Please allow location access in your browser settings and try again.";
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage +=
+              "Location information is unavailable. Please select manually on the map.";
+            break;
+          case error.TIMEOUT:
+            errorMessage +=
+              "Location request timed out. Please try again or select manually on the map.";
+            break;
+          default:
+            errorMessage += "Please select manually on the map.";
+        }
+
+        alert(errorMessage);
       }
     );
   };
