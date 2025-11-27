@@ -73,7 +73,7 @@ export default function HomeClient() {
                 <Link href="/dashboard" className="w-full sm:w-auto">
                   <Button
                     size="lg"
-                    className="w-full sm:w-auto bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg shadow-lg hover:shadow-xl transition-all"
+                    className="w-full sm:w-auto px-8 py-4 text-lg shadow-xl hover:shadow-2xl hover:shadow-green-500/40"
                   >
                     Start Free Trial
                   </Button>
@@ -82,7 +82,7 @@ export default function HomeClient() {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg border-green-600 dark:border-green-400 text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-slate-800 focus:ring-green-500"
+                    className="w-full sm:w-auto px-8 py-4 text-lg border-2 border-green-600 dark:border-green-400 text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20"
                   >
                     Sign In
                   </Button>
@@ -414,7 +414,7 @@ export default function HomeClient() {
               </ul>
 
               <Link href="/dashboard" className="block">
-                <Button className="w-full bg-green-600 hover:bg-green-700 text-white py-3 text-sm sm:text-base">
+                <Button className="w-full py-6 text-lg shadow-lg hover:shadow-green-500/30">
                   Get Started
                 </Button>
               </Link>
@@ -463,7 +463,7 @@ export default function HomeClient() {
               </ul>
 
               <Link href="/dashboard" className="block">
-                <Button className="w-full bg-green-600 hover:bg-green-700 text-white py-3 text-sm sm:text-base">
+                <Button className="w-full py-6 text-lg shadow-lg hover:shadow-green-500/30">
                   Get Started
                 </Button>
               </Link>
@@ -510,7 +510,7 @@ export default function HomeClient() {
               </ul>
 
               <Link href="/dashboard" className="block">
-                <Button className="w-full bg-green-600 hover:bg-green-700 text-white py-3 text-sm sm:text-base">
+                <Button className="w-full py-6 text-lg shadow-lg hover:shadow-green-500/30">
                   Get Started
                 </Button>
               </Link>
@@ -534,7 +534,7 @@ export default function HomeClient() {
             <Link href="/dashboard" className="w-full sm:w-auto">
               <Button
                 size="lg"
-                className="w-full sm:w-auto bg-white text-green-700 hover:bg-green-50 focus:ring-4 focus:ring-white/50 px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border-2 border-white"
+                className="w-full sm:w-auto bg-white text-green-700 hover:bg-green-50 px-8 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl hover:scale-105 border-2 border-white"
               >
                 Choose Your Plan
               </Button>
@@ -543,7 +543,7 @@ export default function HomeClient() {
               <Button
                 size="lg"
                 variant="outline"
-                className="w-full sm:w-auto bg-transparent border-2 border-white text-white hover:bg-white hover:text-green-700 px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                className="w-full sm:w-auto bg-transparent border-2 border-white text-white hover:bg-white hover:text-green-700 px-8 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl hover:scale-105"
               >
                 Sign In
               </Button>
