@@ -213,10 +213,14 @@ export const dashboardQueryParamsSchema = z.object({
       message: "Invalid end date",
     })
     .optional(),
+  // Accept either string (from searchParams) or boolean (if caller normalizes)
   includeInactive: z
-    .string()
-    .transform((val) => val === "true")
-    .optional(),
+    .union([z.string(), z.boolean()])
+    .optional()
+    .transform((val) => {
+      if (val === undefined) return undefined;
+      return typeof val === "boolean" ? val : val === "true";
+    }),
 });
 
 export type DashboardQueryParams = z.infer<typeof dashboardQueryParamsSchema>;
