@@ -79,10 +79,10 @@ export async function GET(request: NextRequest) {
         rawIncludeInactive === null
           ? undefined
           : rawIncludeInactive === "true"
-          ? true
-          : rawIncludeInactive === "false"
-          ? false
-          : undefined;
+            ? true
+            : rawIncludeInactive === "false"
+              ? false
+              : undefined;
 
       queryParams = validateDashboardQueryParams({
         startDate: rawStart === null ? undefined : rawStart,

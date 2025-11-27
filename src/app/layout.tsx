@@ -112,8 +112,8 @@ export default function RootLayout({
           <ClerkProvider
             signInUrl="/sign-in"
             signUpUrl="/sign-up"
-            signInForceRedirectUrl="/dashboard"
-            signUpForceRedirectUrl="/dashboard"
+            signInForceRedirectUrl="/onboarding"
+            signUpForceRedirectUrl="/onboarding"
           >
             <LayoutContent>{children}</LayoutContent>
             <AnalyticsWrapper />

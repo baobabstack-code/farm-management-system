@@ -4,6 +4,7 @@ import { useUser } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 import Navigation from "./navigation";
 import AIChatAssistant from "./ai/AIChatAssistant";
+import { useOnboarding } from "@/hooks/use-onboarding";
 
 interface LayoutContentProps {
   children: React.ReactNode;
@@ -12,10 +13,13 @@ interface LayoutContentProps {
 export default function LayoutContent({ children }: LayoutContentProps) {
   const { user, isLoaded } = useUser();
   const pathname = usePathname();
+  useOnboarding(); // Enforce mandatory onboarding
 
-  // Don't show sidebar on auth pages
+  // Don't show sidebar on auth pages or onboarding
   const isAuthPage =
-    pathname.startsWith("/sign-in") || pathname.startsWith("/sign-up");
+    pathname.startsWith("/sign-in") ||
+    pathname.startsWith("/sign-up") ||
+    pathname === "/onboarding";
 
   // Show sidebar only for authenticated users on non-auth pages
   const showSidebar = isLoaded && user && !isAuthPage;
