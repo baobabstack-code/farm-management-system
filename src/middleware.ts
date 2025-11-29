@@ -3,7 +3,10 @@ import { NextResponse } from "next/server";
 
 const isProtectedRoute = createRouteMatcher([
   "/dashboard(.*)",
+  "/animals(.*)",
   "/crops(.*)",
+  "/fields(.*)",
+  "/equipment(.*)",
   "/tasks(.*)",
   "/activities(.*)",
   "/reports(.*)",
@@ -24,11 +27,8 @@ const isProtectedRoute = createRouteMatcher([
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
-  console.log("Middleware starting for:", req.nextUrl.pathname);
   const { userId } = await auth();
-  console.log("Middleware auth completed, userId:", userId);
   const pathname = req.nextUrl.pathname;
-  console.log("Current pathname:", pathname); // Added console log
 
   // Public routes that don't require authentication
   const isPublicRoute =
