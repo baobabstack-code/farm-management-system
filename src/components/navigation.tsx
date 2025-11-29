@@ -8,6 +8,7 @@ import { ThemeToggle } from "./theme-toggle";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: "📊" },
+  { name: "My Animals", href: "/animals", icon: "🐔" },
   { name: "AI Companion", href: "/ai-companion", icon: "🤖" },
   { name: "Crops", href: "/crops", icon: "🌱" },
   { name: "Fields", href: "/fields", icon: "🏞️" },

@@ -20,6 +20,18 @@ const prisma = new PrismaClient();
 const TEST_USER_ID = "user_test_dashboard_123";
 
 async function main() {
+  // Seed Animal Species
+  const chicken = await prisma.animalSpecies.upsert({
+    where: { slug: "chicken" },
+    update: {},
+    create: {
+      name: "Chicken",
+      slug: "chicken",
+      description: "Poultry - chickens for egg or meat production",
+    },
+  });
+  console.log({ chicken });
+
   console.log("🌱 Starting database seed...");
 
   // Clean up existing test data

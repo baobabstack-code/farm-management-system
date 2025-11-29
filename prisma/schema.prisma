@@ -798,6 +798,132 @@ model LandPreparationPlan {
 }
 
 // Preparation Workflow
+// ... (existing content)
+
+// Animal Production Module
+
+model AnimalSpecies {
+  id          String        @id @default(cuid())
+  name        String
+  slug        String        @unique
+  description String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  groups      AnimalGroup[]
+  
+  @@map("animal_species")
+}
+
+model AnimalGroup {
+  id             String             @id @default(cuid())
+  userId         String
+  speciesId      String
+  farmId         String?            // optional link to Farm/Field table if needed, or just string
+  name           String
+  quantity       Int
+  startDate      DateTime
+  notes          String?
+  status         String             @default("active") // active, sold, archived
+
+  species        AnimalSpecies      @relation(fields: [speciesId], references: [id])
+  // User relation is managed by Clerk, so we just store userId
+  
+  production     AnimalProduction[]
+  feedRecords    AnimalFeedRecord[]
+  healthRecords  AnimalHealthRecord[]
+  expenses       AnimalExpense[]
+  forecasts      AnimalForecast[]
+
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+
+  @@index([userId])
+  @@index([speciesId])
+  @@index([farmId])
+  @@map("animal_groups")
+}
+
+model AnimalProduction {
+  id           String       @id @default(cuid())
+  groupId      String
+  date         DateTime
+  eggs         Int?         // chicken-specific
+  weightKg     Float?       // growth tracking
+  notes        String?
+
+  group        AnimalGroup  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  @@unique([groupId, date])
+  @@map("animal_production")
+}
+
+model AnimalFeedRecord {
+  id          String       @id @default(cuid())
+  groupId     String
+  date        DateTime
+  feedType    String
+  quantityKg  Float
+  cost        Float?
+
+  group       AnimalGroup  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  
+  @@map("animal_feed_records")
+}
+
+model AnimalHealthRecord {
+  id         String       @id @default(cuid())
+  groupId    String
+  date       DateTime
+  issue      String
+  treatment  String?
+  cost       Float?
+
+  group      AnimalGroup  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  
+  @@map("animal_health_records")
+}
+
+model AnimalExpense {
+  id         String       @id @default(cuid())
+  groupId    String
+  date       DateTime
+  category   String
+  cost       Float
+
+  group      AnimalGroup  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  
+  @@map("animal_expenses")
+}
+
+model AnimalForecast {
+  id            String    @id @default(cuid())
+  groupId       String
+  type          String    // "egg_production", "growth", "mortality", etc
+  modelName     String
+  modelVersion  String?
+  inputJson     Json
+  outputJson    Json?
+  status        String    @default("pending") // pending, running, completed, failed
+  score         Float?
+  runAt         DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  group         AnimalGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  @@index([groupId])
+  @@map("animal_forecasts")
+}
+
 model PreparationWorkflow {
   id              String                @id @default(cuid())
   preparationPlanId String
