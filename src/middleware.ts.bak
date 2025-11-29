@@ -28,7 +28,6 @@ export default clerkMiddleware(async (auth, req) => {
   const { userId } = await auth();
   console.log("Middleware auth completed, userId:", userId);
   const pathname = req.nextUrl.pathname;
-  console.log("Current pathname:", pathname); // Added console log
 
   // Public routes that don't require authentication
   const isPublicRoute =
@@ -66,10 +65,7 @@ export default clerkMiddleware(async (auth, req) => {
 
   // Check authentication for protected routes
   if (isProtectedRoute(req)) {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.redirect(new URL("/sign-in", req.url));
-    }
+    (await auth()).protect();
   }
 
   return NextResponse.next();
