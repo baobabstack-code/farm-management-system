@@ -21,16 +21,43 @@ const TEST_USER_ID = "user_test_dashboard_123";
 
 async function main() {
   // Seed Animal Species
-  const chicken = await prisma.animalSpecies.upsert({
-    where: { slug: "chicken" },
-    update: {},
-    create: {
+  // Seed Animal Species
+  const speciesData = [
+    {
       name: "Chicken",
       slug: "chicken",
       description: "Poultry - chickens for egg or meat production",
     },
-  });
-  console.log({ chicken });
+    {
+      name: "Cattle",
+      slug: "cattle",
+      description: "Livestock - cows for milk or meat production",
+    },
+    {
+      name: "Sheep",
+      slug: "sheep",
+      description: "Livestock - sheep for wool or meat production",
+    },
+    {
+      name: "Goat",
+      slug: "goat",
+      description: "Livestock - goats for milk or meat production",
+    },
+    {
+      name: "Pig",
+      slug: "pig",
+      description: "Livestock - pigs for meat production",
+    },
+  ];
+
+  for (const species of speciesData) {
+    await prisma.animalSpecies.upsert({
+      where: { slug: species.slug },
+      update: {},
+      create: species,
+    });
+  }
+  console.log("✅ Seeded animal species");
 
   console.log("🌱 Starting database seed...");
 
