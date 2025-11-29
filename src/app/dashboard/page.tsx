@@ -19,6 +19,7 @@ import {
   type DashboardSummaryResponse,
 } from "@/lib/validations/dashboard";
 import { useToast } from "@/components/ui/use-toast";
+import { VoiceAssistant } from "@/components/VoiceAssistant";
 
 export default function DashboardPage() {
   const { user, isLoaded } = useUser();
@@ -361,6 +362,9 @@ export default function DashboardPage() {
 
           {/* AI Insights */}
           <AIInsightsCard />
+
+          {/* Voice Assistant */}
+          <VoiceAssistant />
 
           {/* Crop Recommendations */}
           <CropRecommendationsCard />

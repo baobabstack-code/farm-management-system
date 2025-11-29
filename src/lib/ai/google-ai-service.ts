@@ -361,6 +361,59 @@ Focus on solutions that improve crop yield, reduce costs, and promote sustainabl
     const { current } = weather;
     return `Temperature: ${current.temperature}°C, Humidity: ${current.humidity}%, Conditions: ${current.description}, Wind: ${current.windSpeed} km/h`;
   }
+
+  /**
+   * Generate a concise response for voice interaction
+   */
+  async generateVoiceResponse(
+    message: string,
+    context: FarmContext
+  ): Promise<GoogleAIResponse> {
+    try {
+      const prompt = this.buildVoicePrompt(message, context);
+      const result = await this.model.generateContent(prompt);
+      const response = await result.response;
+      const text = response.text();
+
+      return {
+        success: true,
+        content: text,
+        model: this.config.model || "gemini-1.5-flash",
+      };
+    } catch (error: unknown) {
+      console.error("Google AI Voice Response Error:", error);
+      return {
+        success: false,
+        content: "I'm sorry, I encountered an error processing your request.",
+        model: this.config.model || "gemini-1.5-flash",
+        error: (error as any)?.message || "Unknown error",
+      };
+    }
+  }
+
+  private buildVoicePrompt(message: string, context: FarmContext): string {
+    const { crops, activities, weather, location } = context;
+
+    // Create a simplified context for voice
+    const contextSummary = [
+      crops?.length ? `${crops.length} crops active.` : "No active crops.",
+      weather?.current
+        ? `Weather: ${weather.current.temperature}°C, ${weather.current.description}.`
+        : "",
+      location ? `Location: ${location}.` : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
+
+    return `
+      You are a helpful farm assistant talking to a farmer.
+      Context: ${contextSummary}
+      User asked: "${message}"
+      
+      Provide a helpful, conversational response. Keep it concise (under 3 sentences) as it will be spoken aloud. 
+      Avoid markdown, lists, or complex formatting. Use natural language.
+    `;
+  }
 }
 
 /**

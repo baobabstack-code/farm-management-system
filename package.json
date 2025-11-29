@@ -37,6 +37,7 @@
     "clsx": "^2.1.1",
     "crypto-js": "^4.2.0",
     "date-fns": "^4.1.0",
+    "elevenlabs": "^1.59.0",
     "ioredis": "^5.8.2",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.545.0",
