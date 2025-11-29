@@ -13,10 +13,7 @@ export const createGroupSchema = z.object({
   speciesId: z.string().cuid(),
   name: z.string().min(2).max(100),
   quantity: z.number().int().nonnegative(),
-  startDate: z
-    .string()
-    .datetime()
-    .or(z.date().transform((d) => d.toISOString())),
+  startDate: z.coerce.date(),
   notes: z.string().optional(),
   farmId: z.string().optional(),
 });
@@ -30,10 +27,7 @@ export const updateGroupSchema = z.object({
 
 export const productionEntrySchema = z.object({
   groupId: z.string().cuid(),
-  date: z
-    .string()
-    .datetime()
-    .or(z.date().transform((d) => d.toISOString())),
+  date: z.coerce.date(),
   eggs: z.number().int().nonnegative().optional(),
   weightKg: z.number().positive().optional(),
   notes: z.string().optional(),
@@ -41,10 +35,7 @@ export const productionEntrySchema = z.object({
 
 export const feedRecordSchema = z.object({
   groupId: z.string().cuid(),
-  date: z
-    .string()
-    .datetime()
-    .or(z.date().transform((d) => d.toISOString())),
+  date: z.coerce.date(),
   feedType: z.string().min(1),
   quantityKg: z.number().positive(),
   cost: z.number().nonnegative().optional(),
@@ -52,10 +43,7 @@ export const feedRecordSchema = z.object({
 
 export const healthRecordSchema = z.object({
   groupId: z.string().cuid(),
-  date: z
-    .string()
-    .datetime()
-    .or(z.date().transform((d) => d.toISOString())),
+  date: z.coerce.date(),
   issue: z.string().min(1),
   treatment: z.string().optional(),
   cost: z.number().nonnegative().optional(),
@@ -63,10 +51,7 @@ export const healthRecordSchema = z.object({
 
 export const expenseSchema = z.object({
   groupId: z.string().cuid(),
-  date: z
-    .string()
-    .datetime()
-    .or(z.date().transform((d) => d.toISOString())),
+  date: z.coerce.date(),
   category: z.string().min(1),
   cost: z.number().nonnegative(),
 });
