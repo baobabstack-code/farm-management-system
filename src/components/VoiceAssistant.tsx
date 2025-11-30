@@ -11,6 +11,7 @@ export function VoiceAssistant() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [response, setResponse] = useState("");
+  const [isSupported, setIsSupported] = useState(false);
 
   const recognitionRef = useRef<any>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -20,6 +21,7 @@ export function VoiceAssistant() {
       typeof window !== "undefined" &&
       (window as any).webkitSpeechRecognition
     ) {
+      setIsSupported(true);
       const SpeechRecognition = (window as any).webkitSpeechRecognition;
       recognitionRef.current = new SpeechRecognition();
       recognitionRef.current.continuous = false;
@@ -44,6 +46,13 @@ export function VoiceAssistant() {
   }, []);
 
   const toggleListening = () => {
+    if (!isSupported) {
+      alert(
+        "Voice recognition is not supported in this browser. Please use Google Chrome or Microsoft Edge."
+      );
+      return;
+    }
+
     if (isListening) {
       recognitionRef.current?.stop();
     } else {
@@ -93,10 +102,6 @@ export function VoiceAssistant() {
     audio.play().catch((e) => console.error("Audio play error:", e));
   };
 
-  if (!recognitionRef.current) {
-    return null; // Browser doesn't support speech recognition
-  }
-
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
       {(transcript || response) && (
@@ -118,9 +123,16 @@ export function VoiceAssistant() {
           isListening
             ? "bg-red-500 hover:bg-red-600 animate-pulse"
             : "bg-primary hover:bg-primary/90",
-          isPlaying && "ring-4 ring-primary/30"
+          isPlaying && "ring-4 ring-primary/30",
+          !isSupported &&
+            "opacity-50 cursor-not-allowed bg-gray-400 hover:bg-gray-400"
         )}
         onClick={toggleListening}
+        title={
+          isSupported
+            ? "Click to speak"
+            : "Voice recognition not supported in this browser"
+        }
       >
         {isProcessing ? (
           <Loader2 className="h-6 w-6 animate-spin" />
